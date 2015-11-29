@@ -29,6 +29,8 @@ public class Game implements Runnable, KeyListener {
 	private int nTick = 0;
 
 	private boolean bMuted = true;
+
+	private boolean bExitLevel = false;
 	
 
 	private final int PAUSE = 80, // p key
@@ -120,7 +122,7 @@ public class Game implements Runnable, KeyListener {
 			//this might be a god place to check if the level is clear (no more foes)
 			//if the level is clear then spawn some big asteroids -- the number of asteroids 
 			//should increase with the level. 
-			//checkNewLevel();
+			checkNewLevel();
 
 			try {
 				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update) 
@@ -170,6 +172,11 @@ public class Game implements Runnable, KeyListener {
 				// collision if blast and wall same square AND wall is breakable
 				if (blastSquare.equals(wallSquare) && wall.isBreakable()) {
 					CommandCenter.getInstance().getOpsList().enqueue(movWall, CollisionOp.Operation.REMOVE);
+
+					// check to reveal exit
+					if (wallSquare.isExit()) {
+						CommandCenter.getInstance().getOpsList().enqueue(new Exit(wallSquare), CollisionOp.Operation.ADD);
+					}
 				}
 			}
 
@@ -209,7 +216,22 @@ public class Game implements Runnable, KeyListener {
 			}
 		}
 
+		// check Exit
+		for (Movable movExit : CommandCenter.getInstance().getMovExits()) {
+			// get square for foe
+			Square exitSquare = movExit.getCurrentSquare();
 
+			// check exit against Falcon
+			if (CommandCenter.getInstance().getFalcon() != null) {
+				// get square for falcon
+				Square falconSquare = CommandCenter.getInstance().getFalcon().getCurrentSquare();
+
+				// collision if exit and falcon same square
+				if (exitSquare.equals(falconSquare)) {
+					exitLevel();
+				}
+			}
+		}
 
 		//check for collisions between falcon and floaters
 		// CODE HERE
@@ -271,6 +293,12 @@ public class Game implements Runnable, KeyListener {
 						mov.getCurrentSquare().removeWall();
 					}
 					break;
+				case EXIT:
+					if (operation == CollisionOp.Operation.ADD){
+						CommandCenter.getInstance().getMovExits().add(mov);
+					} else {
+						CommandCenter.getInstance().getMovExits().remove(mov);
+					}
 			}
 
 		}
@@ -350,7 +378,10 @@ public class Game implements Runnable, KeyListener {
 		}
 	}
 	
-	
+	private void exitLevel() {
+		bExitLevel = true;
+	}
+
 	private boolean isLevelClear(){
 		//if there are no more Asteroids on the screen
 		boolean bAsteroidFree = true;
@@ -368,12 +399,11 @@ public class Game implements Runnable, KeyListener {
 	
 	private void checkNewLevel(){
 		
-		if (isLevelClear() ){
+		if (bExitLevel){
 			if (CommandCenter.getInstance().getFalcon() !=null)
 				CommandCenter.getInstance().getFalcon().setProtected(true);
-
-			spawnAsteroids(CommandCenter.getInstance().getLevel() + 2);
-			CommandCenter.getInstance().setLevel(CommandCenter.getInstance().getLevel() + 1);
+			bExitLevel = false;
+			CommandCenter.getInstance().startNextLevel();
 
 		}
 	}

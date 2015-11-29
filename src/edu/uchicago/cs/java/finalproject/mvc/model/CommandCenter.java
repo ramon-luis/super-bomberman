@@ -25,6 +25,7 @@ public class CommandCenter {
     private List<Movable> movFriends = new ArrayList<Movable>(100);
     private List<Movable> movFoes = new ArrayList<Movable>(200);
     private List<Movable> movFloaters = new ArrayList<Movable>(50);
+    private List<Movable> movExits = new ArrayList<>();
 
     private GameOpsList opsList = new GameOpsList();
 
@@ -50,6 +51,18 @@ public class CommandCenter {
         setNumFalcons(3);
         setGameBoard();
         spawnFalcon(true);
+    }
+
+    public void startNextLevel() {
+        clearAll();
+        System.out.println("clear all");
+        setLevel(1); // NEED TO INCREMENT?
+        setScore(0);
+        setNumFalcons(3);
+        setGameBoard();
+        System.out.println("set gameboard");
+        spawnFalcon(true);
+
     }
 
     public GameBoard getGameBoard() {
@@ -93,6 +106,7 @@ public class CommandCenter {
         movFriends.clear();
         movFoes.clear();
         movFloaters.clear();
+        movExits.clear();
     }
 
     public boolean isPlaying() {
@@ -176,5 +190,5 @@ public class CommandCenter {
         return movFloaters;
     }
 
-
+    public List<Movable> getMovExits() {return movExits;}
 }

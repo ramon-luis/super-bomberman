@@ -97,7 +97,8 @@ public class GamePanel extends Panel {
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovFloaters(),
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovBombs(),
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovWalls(),
-					(ArrayList<Movable>)  CommandCenter.getInstance().getMovBlasts());
+					(ArrayList<Movable>)  CommandCenter.getInstance().getMovBlasts(),
+					(ArrayList<Movable>) CommandCenter.getInstance().getMovExits());
 
 
 			drawNumberShipsLeft(grpOff);

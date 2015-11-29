@@ -94,6 +94,8 @@ public class GameBoard {
                 CommandCenter.getInstance().getOpsList().enqueue(new Wall(square, Wall.Type.SOLID), CollisionOp.Operation.ADD);
             }
 
+            // inner breakable walls
+            // add shuffle to rows
             if ((iRow == 1 && (iCol == 8 || iCol == 9))
                     || (iRow == 2 && (iCol == 3 || iCol == 7 || iCol == 9))
                     || (iRow == 3 && (iCol == 2 || iCol == 3 || iCol == 4 || iCol == 10))
@@ -109,6 +111,12 @@ public class GameBoard {
                 Wall wall = new Wall(square, Wall.Type.BREAKABLE);
                 square.addWall();
                 CommandCenter.getInstance().getOpsList().enqueue(wall, CollisionOp.Operation.ADD);
+            }
+
+            // add exit
+            // shuffle among breakable walls
+            if ((iRow == 1 && iCol == 8)) {
+                square.addExit();
             }
 
         }

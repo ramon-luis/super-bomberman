@@ -42,6 +42,13 @@ public class Square extends Sprite {
 
     }
 
+    public boolean isExit() {
+        return mIsExit;
+    }
+
+    public void addExit() {
+        mIsExit = true;
+    }
 
     public boolean isWall() {
         return mIsWall;
