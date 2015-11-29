@@ -1,9 +1,7 @@
 package edu.uchicago.cs.java.finalproject.mvc.view;
 
 import edu.uchicago.cs.java.finalproject.mvc.controller.Game;
-import edu.uchicago.cs.java.finalproject.mvc.model.CommandCenter;
-import edu.uchicago.cs.java.finalproject.mvc.model.Falcon;
-import edu.uchicago.cs.java.finalproject.mvc.model.Movable;
+import edu.uchicago.cs.java.finalproject.mvc.model.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ public class GamePanel extends Panel {
 		initView();
 		
 		gmf.setSize(dim);
-		gmf.setTitle("Game Base");
+		gmf.setTitle("Super Bomberman");
 		gmf.setResizable(false);
 		gmf.setVisible(true);
 		this.setFocusable(true);
@@ -57,13 +55,20 @@ public class GamePanel extends Panel {
 	private void drawScore(Graphics g) {
 		g.setColor(Color.white);
 		g.setFont(fnt);
-		if (CommandCenter.getInstance().getScore() != 0) {
-			g.drawString("SCORE :  " + CommandCenter.getInstance().getScore(), nFontWidth, nFontHeight);
-		} else {
-			g.drawString("NO SCORE", nFontWidth, nFontHeight);
-		}
+		//if (CommandCenter.getInstance().getScore() != 0) {
+			g.drawString("SCORE :  " + CommandCenter.getInstance().getScore(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, nFontHeight * 2);
+		//} else {
+		//	g.drawString("NO SCORE", GameBoard.COL_COUNT * 50 + Square.SQUARE_LENGTH / 2 + nFontWidth, nFontHeight);
+	//	}
 	}
-	
+
+	private void drawLevel(Graphics g) {
+		g.setColor(Color.white);
+		g.setFont(fnt);
+		g.drawString("LEVEL :  " + CommandCenter.getInstance().getLevel(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, nFontHeight * 4);
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public void update(Graphics g) {
 		if (grpOff == null || Game.DIM.width != dimOff.width
@@ -88,7 +93,7 @@ public class GamePanel extends Panel {
 		
 		//playing and not paused!
 		else {
-			
+
 			//draw them in decreasing level of importance
 			//friends will be on top layer and debris on the bottom
 			iterateMovables(grpOff,
@@ -102,6 +107,7 @@ public class GamePanel extends Panel {
 
 
 			drawNumberShipsLeft(grpOff);
+			drawLevel(grpOff);
 			if (CommandCenter.getInstance().isGameOver()) {
 				CommandCenter.getInstance().setPlaying(false);
 				//bPlaying = false;
@@ -151,8 +157,8 @@ public class GamePanel extends Panel {
 		for (int nD = 1; nD < CommandCenter.getInstance().getNumFalcons(); nD++) {
 			//create x and y values for the objects to the bottom right using cartesean points again
 			for (int nC = 0; nC < fal.getDegrees().length; nC++) {
-				nXs[nC] = pntMs[nC].x + Game.DIM.width - (20 * nD);
-				nYs[nC] = pntMs[nC].y + Game.DIM.height - 40;
+				nXs[nC] = pntMs[nC].x + GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + (nD - 1) * nFontWidth + 8;
+				nYs[nC] = pntMs[nC].y + nFontHeight * 6;
 			}
 			g.drawPolygon(nXs, nYs, nLen);
 		} 
