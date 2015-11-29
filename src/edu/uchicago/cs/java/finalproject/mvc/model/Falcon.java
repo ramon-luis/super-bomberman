@@ -1,8 +1,7 @@
 package edu.uchicago.cs.java.finalproject.mvc.model;
 
-import edu.uchicago.cs.java.finalproject.mvc.controller.Game;
-
 import java.awt.*;
+import java.awt.image.PackedColorModel;
 import java.util.ArrayList;
 
 
@@ -11,8 +10,18 @@ public class Falcon extends Sprite {
 	// ==============================================================
 	// FIELDS 
 	// ==============================================================
-	
-	private final double THRUST = .65;
+
+	public enum Direction {UP, DOWN, LEFT, RIGHT};
+	private Direction mDirectionToMove;
+	private int mRow;
+	private int mColumn;
+	private Square mCurrentSquare;
+
+	private int mBombCount;
+
+	private final int THRUST = 10;
+	private final int RADIUS = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
+	private final int MOVES_PER_SQUARE = Square.SQUARE_LENGTH / THRUST;
 
 	final int DEGREE_STEP = 7;
 	
@@ -42,63 +51,78 @@ public class Falcon extends Sprite {
 	public Falcon() {
 		super();
 		setTeam(Team.FRIEND);
+		mBombCount = 1;
+
 		ArrayList<Point> pntCs = new ArrayList<Point>();
 		
 		// Robert Alef's awesome falcon design
-		pntCs.add(new Point(0,9));
-		pntCs.add(new Point(-1, 6));
-		pntCs.add(new Point(-1,3));
-		pntCs.add(new Point(-4, 1));
-		pntCs.add(new Point(4,1));
-		pntCs.add(new Point(-4,1));
+//		pntCs.add(new Point(0,9));
+//		pntCs.add(new Point(-1, 6));
+//		pntCs.add(new Point(-1,3));
+//		pntCs.add(new Point(-4, 1));
+//		pntCs.add(new Point(4,1));
+//		pntCs.add(new Point(-4,1));
+//
+//		pntCs.add(new Point(-4, -2));
+//		pntCs.add(new Point(-1, -2));
+//		pntCs.add(new Point(-1, -9));
+//		pntCs.add(new Point(-1, -2));
+//		pntCs.add(new Point(-4, -2));
+//
+//		pntCs.add(new Point(-10, -8));
+//		pntCs.add(new Point(-5, -9));
+//		pntCs.add(new Point(-7, -11));
+//		pntCs.add(new Point(-4, -11));
+//		pntCs.add(new Point(-2, -9));
+//		pntCs.add(new Point(-2, -10));
+//		pntCs.add(new Point(-1, -10));
+//		pntCs.add(new Point(-1, -9));
+//		pntCs.add(new Point(1, -9));
+//		pntCs.add(new Point(1, -10));
+//		pntCs.add(new Point(2, -10));
+//		pntCs.add(new Point(2, -9));
+//		pntCs.add(new Point(4, -11));
+//		pntCs.add(new Point(7, -11));
+//		pntCs.add(new Point(5, -9));
+//		pntCs.add(new Point(10, -8));
+//		pntCs.add(new Point(4, -2));
+//
+//		pntCs.add(new Point(1, -2));
+//		pntCs.add(new Point(1, -9));
+//		pntCs.add(new Point(1, -2));
+//		pntCs.add(new Point(4,-2));
+//
+//
+//		pntCs.add(new Point(4, 1));
+//		pntCs.add(new Point(1, 3));
+//		pntCs.add(new Point(1,6));
+//		pntCs.add(new Point(0,9));
 
-		pntCs.add(new Point(-4, -2));
-		pntCs.add(new Point(-1, -2));
-		pntCs.add(new Point(-1, -9));
-		pntCs.add(new Point(-1, -2));
-		pntCs.add(new Point(-4, -2));
-
-		pntCs.add(new Point(-10, -8));
-		pntCs.add(new Point(-5, -9));
-		pntCs.add(new Point(-7, -11));
-		pntCs.add(new Point(-4, -11));
-		pntCs.add(new Point(-2, -9));
-		pntCs.add(new Point(-2, -10));
-		pntCs.add(new Point(-1, -10));
-		pntCs.add(new Point(-1, -9));
-		pntCs.add(new Point(1, -9));
-		pntCs.add(new Point(1, -10));
-		pntCs.add(new Point(2, -10));
-		pntCs.add(new Point(2, -9));
-		pntCs.add(new Point(4, -11));
-		pntCs.add(new Point(7, -11));
-		pntCs.add(new Point(5, -9));
-		pntCs.add(new Point(10, -8));
-		pntCs.add(new Point(4, -2));
-
-		pntCs.add(new Point(1, -2));
-		pntCs.add(new Point(1, -9));
-		pntCs.add(new Point(1, -2));
-		pntCs.add(new Point(4,-2));
-
-
-		pntCs.add(new Point(4, 1));
-		pntCs.add(new Point(1, 3));
-		pntCs.add(new Point(1,6));
-		pntCs.add(new Point(0,9));
-
+		pntCs.add(new Point(1,1));
+		pntCs.add(new Point(1,0));
+		pntCs.add(new Point(-1,-1));
+		pntCs.add(new Point (-1,1));
 		assignPolarPoints(pntCs);
 
 		setColor(Color.white);
-		
+
+		// place in bottom upper left corner
+		mRow = 1;
+		mColumn = 1;
+		mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
+		setCenter(mCurrentSquare.getCenter());
+
 		//put falcon in the middle.
-		setCenter(new Point(Game.DIM.width / 2, Game.DIM.height / 2));
+		//setCenter(new Point(Game.DIM.width / 2, Game.DIM.height / 2));
 		
 		//with random orientation
-		setOrientation(Game.R.nextInt(360));
-		
+		//setOrientation(Game.R.nextInt(360));
+
+		// set orientation to straight up
+		//setOrientation(270);
+
 		//this is the size of the falcon
-		setRadius(35);
+		setRadius(RADIUS);
 
 		//these are falcon specific
 		setProtected(true);
@@ -111,28 +135,48 @@ public class Falcon extends Sprite {
 	// ==============================================================
 
 	public void move() {
-		super.move();
+
 		if (bThrusting) {
 			bFlame = true;
-			double dAdjustX = Math.cos(Math.toRadians(getOrientation()))
-					* THRUST;
-			double dAdjustY = Math.sin(Math.toRadians(getOrientation()))
-					* THRUST;
-			setDeltaX(getDeltaX() + dAdjustX);
-			setDeltaY(getDeltaY() + dAdjustY);
-		}
-		if (bTurningLeft) {
 
-			if (getOrientation() <= 0 && bTurningLeft) {
-				setOrientation(360);
+			int iAdjustRow = 0;
+			int iAdjustColumn = 0;
+			double dAdjustX = 0;
+			double dAdjustY = 0;
+
+			if (mDirectionToMove == Direction.DOWN) {
+				iAdjustRow = 1;
+				dAdjustY = THRUST;
+			} else if (mDirectionToMove == Direction.UP) {
+				iAdjustRow = -1;
+				dAdjustY = -THRUST;
+			} else if (mDirectionToMove == Direction.LEFT) {
+				iAdjustColumn = -1;
+				dAdjustX = -THRUST;
+			} else if (mDirectionToMove == Direction.RIGHT) {
+				iAdjustColumn = 1;
+				dAdjustX = THRUST;
+
 			}
-			setOrientation(getOrientation() - DEGREE_STEP);
-		} 
-		if (bTurningRight) {
-			if (getOrientation() >= 360 && bTurningRight) {
-				setOrientation(0);
+
+			int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
+			int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
+
+			Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
+
+			System.out.println("Current square: " + getCurrentSquare());
+
+			System.out.println("Target square: " + targetSquare);
+
+			if (!targetSquare.isBlocked() || !isPastSquareMidPoint()) {
+				setDeltaX(dAdjustX);
+				setDeltaY(dAdjustY);
+				super.move();
+
 			}
-			setOrientation(getOrientation() + DEGREE_STEP);
+//			else {
+//				setCenter(getCurrentSquare().getCenter());
+//			}
 		}
 
 
@@ -144,21 +188,64 @@ public class Falcon extends Sprite {
 			setProtected(false);
 		}
 
-
-
 	} //end move
 
-	public void rotateLeft() {
-		bTurningLeft = true;
+
+	public void finishMove() {
+
+		setCenter(getCurrentSquare().getCenter());
+//
+//		int iAdjustRow = 0;
+//		int iAdjustColumn = 0;
+//
+//		if (mDirectionToMove == Direction.DOWN ) {
+//			iAdjustRow = 1;
+//		} else if (mDirectionToMove == Direction.UP ) {
+//			iAdjustRow = -1;
+//		} else if (mDirectionToMove == Direction.LEFT ) {
+//			iAdjustColumn = -1;
+//		} else if (mDirectionToMove == Direction.RIGHT ) {
+//			iAdjustColumn = 1;
+//		}
+//
+//
+//		int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
+//		int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
+//		Square finalSquare = CommandCenter.gameBoardSquares[iNextRow][iNextCol];
+//		if (!finalSquare.isBlocked()) {
+//			setCenter(finalSquare.getCenter());
+//		}
+
 	}
 
-	public void rotateRight() {
-		bTurningRight = true;
+
+	public void useBomb() {
+		mBombCount--;
 	}
 
-	public void stopRotating() {
-		bTurningRight = false;
-		bTurningLeft = false;
+	public boolean hasBombToUse() {
+		return mBombCount > 0;
+	}
+
+	public void addBombToUse() {
+		mBombCount++;
+	}
+
+	private boolean isPastSquareMidPoint() {
+		if (mDirectionToMove == Direction.DOWN) {
+			return getCenter().getY() >= getCurrentSquare().getCenter().getY();
+		} else if (mDirectionToMove == Direction.UP) {
+			return getCenter().getY() <= getCurrentSquare().getCenter().getY();
+		} else if (mDirectionToMove == Direction.LEFT) {
+			return getCenter().getX() <= getCurrentSquare().getCenter().getX();
+		} else if (mDirectionToMove == Direction.RIGHT) {
+			return getCenter().getX() >= getCurrentSquare().getCenter().getX();
+		}
+		throw new IllegalArgumentException("could not determine direction");
+	}
+
+	public void setDirectionToMove(Direction direction) {
+		mDirectionToMove = direction;
 	}
 
 	public void thrustOn() {

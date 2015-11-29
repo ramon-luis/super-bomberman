@@ -48,7 +48,7 @@ public class Cruise extends Sprite {
 		pntAs.add(new Point(-1, 3));
 		assignPolorPointsAlts(pntAs);
 
-		//a cruis missile expires after 25 frames
+		//a cruise missile expires after 25 frames
 		setExpire(MAX_EXPIRE);
 		setRadius(20);
 
@@ -85,7 +85,7 @@ public class Cruise extends Sprite {
 
 
 		if (getExpire() == 0)
-			Cc.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);
+			CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);
 
 		else
 			setExpire(getExpire() - 1);

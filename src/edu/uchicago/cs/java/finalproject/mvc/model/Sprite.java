@@ -77,6 +77,9 @@ public abstract class Sprite implements Movable {
 
 	}
 
+
+
+
 	public Sprite() {
 
 	//you can override this and many more in the subclasses
@@ -117,6 +120,13 @@ public abstract class Sprite implements Movable {
 		this.col = col;
 
 	}
+
+	public Square getCurrentSquare() {
+		int iRow = (int) getCenter().getY() / Square.SQUARE_LENGTH;
+		int iColumn = (int) getCenter().getX() / Square.SQUARE_LENGTH;
+		return CommandCenter.getInstance().getGameBoard().getSquare(iRow, iColumn);
+	}
+
 
 	public int points() {
 		//default is zero
