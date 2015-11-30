@@ -1,8 +1,6 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.awt.Point;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 /**
  * Created by RAM0N on 11/27/15.

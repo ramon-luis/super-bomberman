@@ -1,9 +1,9 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 
 import java.util.Arrays;
 
-import edu.uchicago.cs.java.finalproject.mvc.controller.Game;
+import superBomberman.mvc.controller.Game;
 
 public class Asteroid extends Sprite {
 

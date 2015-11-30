@@ -1,11 +1,10 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.awt.*;
-import java.awt.image.PackedColorModel;
 import java.util.ArrayList;
 
 
-public class Falcon extends Sprite {
+public class Bomberman extends Sprite {
 
 	// ==============================================================
 	// FIELDS 
@@ -48,60 +47,73 @@ public class Falcon extends Sprite {
 	// CONSTRUCTOR 
 	// ==============================================================
 	
-	public Falcon() {
+	public Bomberman() {
 		super();
 		setTeam(Team.FRIEND);
 		mBombCount = 1;
 
 		ArrayList<Point> pntCs = new ArrayList<Point>();
 		
-		// Robert Alef's awesome falcon design
-//		pntCs.add(new Point(0,9));
-//		pntCs.add(new Point(-1, 6));
-//		pntCs.add(new Point(-1,3));
-//		pntCs.add(new Point(-4, 1));
-//		pntCs.add(new Point(4,1));
-//		pntCs.add(new Point(-4,1));
-//
-//		pntCs.add(new Point(-4, -2));
-//		pntCs.add(new Point(-1, -2));
-//		pntCs.add(new Point(-1, -9));
-//		pntCs.add(new Point(-1, -2));
-//		pntCs.add(new Point(-4, -2));
-//
-//		pntCs.add(new Point(-10, -8));
-//		pntCs.add(new Point(-5, -9));
-//		pntCs.add(new Point(-7, -11));
-//		pntCs.add(new Point(-4, -11));
-//		pntCs.add(new Point(-2, -9));
-//		pntCs.add(new Point(-2, -10));
-//		pntCs.add(new Point(-1, -10));
-//		pntCs.add(new Point(-1, -9));
-//		pntCs.add(new Point(1, -9));
-//		pntCs.add(new Point(1, -10));
-//		pntCs.add(new Point(2, -10));
-//		pntCs.add(new Point(2, -9));
-//		pntCs.add(new Point(4, -11));
-//		pntCs.add(new Point(7, -11));
-//		pntCs.add(new Point(5, -9));
-//		pntCs.add(new Point(10, -8));
-//		pntCs.add(new Point(4, -2));
-//
-//		pntCs.add(new Point(1, -2));
-//		pntCs.add(new Point(1, -9));
-//		pntCs.add(new Point(1, -2));
-//		pntCs.add(new Point(4,-2));
-//
-//
-//		pntCs.add(new Point(4, 1));
-//		pntCs.add(new Point(1, 3));
-//		pntCs.add(new Point(1,6));
-//		pntCs.add(new Point(0,9));
+		// draw the bomberman
+		pntCs.add(new Point(0,5));
+		pntCs.add(new Point(1,6));
+		pntCs.add(new Point(2,6));
+		pntCs.add(new Point(2,5));
+		pntCs.add(new Point(4,5));
+		pntCs.add(new Point(4,6));
+		pntCs.add(new Point(5,5));
+		pntCs.add(new Point(6,4));
+		pntCs.add(new Point(6,-4));
+		pntCs.add(new Point(5,-5));
+		pntCs.add(new Point(4,-6));
+		pntCs.add(new Point(4,-5));
+		pntCs.add(new Point(2,-5));
+		pntCs.add(new Point(2,-6));
+		pntCs.add(new Point(1,-6));
+		pntCs.add(new Point(0,-2));
 
-		pntCs.add(new Point(1,1));
-		pntCs.add(new Point(1,0));
-		pntCs.add(new Point(-1,-1));
-		pntCs.add(new Point (-1,1));
+		pntCs.add(new Point(-1,-5));
+		pntCs.add(new Point(-2,-6));
+		pntCs.add(new Point(-4,-6));
+		pntCs.add(new Point(-4,-5));
+		pntCs.add(new Point(-3,-5));
+
+		pntCs.add(new Point(-3,-4));
+		pntCs.add(new Point(-4,-3));
+		pntCs.add(new Point(-5,-4));
+		pntCs.add(new Point(-5,-5));
+		pntCs.add(new Point(-6,-5));
+		pntCs.add(new Point(-6,-2));
+		pntCs.add(new Point(-5,-2));
+		pntCs.add(new Point(-5,2));
+
+		pntCs.add(new Point(-6,2));
+		pntCs.add(new Point(-6,5));
+		pntCs.add(new Point(-5,5));
+		pntCs.add(new Point(-5,4));
+		pntCs.add(new Point(-4,3));
+		pntCs.add(new Point(-3,4));
+		pntCs.add(new Point(-3,5));
+		pntCs.add(new Point(-4,5));
+		pntCs.add(new Point(-4,6));
+		pntCs.add(new Point(-2,6));
+		pntCs.add(new Point(-1,5));
+		pntCs.add(new Point(0,2));
+		pntCs.add(new Point(1,6));
+
+
+		pntCs.add(new Point(2,6));
+		pntCs.add(new Point(2,5));
+		pntCs.add(new Point(4,5));
+		pntCs.add(new Point(4,-5));
+		pntCs.add(new Point(2,-5));
+		pntCs.add(new Point(2,-3));
+		pntCs.add(new Point(3,-2));
+		pntCs.add(new Point(3,2));
+		pntCs.add(new Point(2,3));
+		pntCs.add(new Point(2,5));
+
+		// assign to polar points
 		assignPolarPoints(pntCs);
 
 		setColor(Color.white);
@@ -193,7 +205,7 @@ public class Falcon extends Sprite {
 
 	public void finishMove() {
 
-		setCenter(getCurrentSquare().getCenter());
+		//setCenter(getCurrentSquare().getCenter());
 //
 //		int iAdjustRow = 0;
 //		int iAdjustColumn = 0;
@@ -336,7 +348,8 @@ public class Falcon extends Sprite {
 	public void drawShipWithColor(Graphics g, Color col) {
 		super.draw(g);
 		g.setColor(col);
-		g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
+		g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+		//g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
 	}
 
 

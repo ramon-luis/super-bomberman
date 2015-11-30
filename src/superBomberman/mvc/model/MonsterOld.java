@@ -1,8 +1,7 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by RAM0N on 11/28/15.
@@ -711,10 +710,10 @@ public class MonsterOld extends Sprite {
 //            setColor(ghostColor);
 //
 //
-//            if (CommandCenter.getInstance().getFalcon() != null)
+//            if (CommandCenter.getInstance().getBomberman() != null)
 //            {
 //
-//                Square falconSquare = CommandCenter.getInstance().getFalcon().getCurrentSquare();
+//                Square falconSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
 //
 //                int iCurrentRow = getCurrentSquare().getRow();
 //                int iCurrentCol = getCurrentSquare().getColumn();

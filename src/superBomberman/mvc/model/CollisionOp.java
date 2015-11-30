@@ -1,4 +1,4 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 /**
  * Created by ag on 6/17/2015.

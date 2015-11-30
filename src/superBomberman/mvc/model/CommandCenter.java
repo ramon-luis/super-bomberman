@@ -1,7 +1,6 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
-import com.sun.xml.internal.ws.policy.sourcemodel.ModelNode;
-import edu.uchicago.cs.java.finalproject.sounds.Sound;
+import superBomberman.sounds.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +10,10 @@ public class CommandCenter {
 
     private GameBoard mGameBoard;
 
-    private int nNumFalcon;
+    private int nNumBombermans;
     private int nLevel;
     private long lScore;
-    private Falcon falShip;
+    private Bomberman mBomberman;
     private boolean bPlaying;
     private boolean bPaused;
 
@@ -48,9 +47,9 @@ public class CommandCenter {
     public void initGame() {
         setLevel(1);
         setScore(0);
-        setNumFalcons(3);
+        setNumBombermans(3);
         setGameBoard();
-        spawnFalcon(true);
+        spawnBomberman(true);
     }
 
     public void startNextLevel() {
@@ -58,10 +57,10 @@ public class CommandCenter {
         System.out.println("clear all");
         setLevel(1); // NEED TO INCREMENT?
         setScore(0);
-        setNumFalcons(3);
+        setNumBombermans(3);
         setGameBoard();
         System.out.println("set gameboard");
-        spawnFalcon(true);
+        spawnBomberman(true);
 
     }
 
@@ -77,14 +76,14 @@ public class CommandCenter {
 
 
     // The parameter is true if this is for the beginning of the game, otherwise false
-    // When you spawn a new falcon, you need to decrement its number
-    public void spawnFalcon(boolean bFirst) {
-        if (getNumFalcons() != 0) {
-            falShip = new Falcon();
-            //movFriends.enqueue(falShip);
-            opsList.enqueue(falShip, CollisionOp.Operation.ADD);
+    // When you spawn a new bomberman, you need to decrement its number
+    public void spawnBomberman(boolean bFirst) {
+        if (getNumBombermans() != 0) {
+            mBomberman = new Bomberman();
+            //movFriends.enqueue(mBomberman);
+            opsList.enqueue(mBomberman, CollisionOp.Operation.ADD);
             if (!bFirst)
-                setNumFalcons(getNumFalcons() - 1);
+                setNumBombermans(getNumBombermans() - 1);
         }
 
         Sound.playSound("shipspawn.wav");
@@ -125,8 +124,8 @@ public class CommandCenter {
         this.bPaused = bPaused;
     }
 
-    public boolean isGameOver() {        //if the number of falcons is zero, then game over
-        if (getNumFalcons() == 0) {
+    public boolean isGameOver() {        //if the number of bombermans is zero, then game over
+        if (getNumBombermans() == 0) {
             return true;
         }
         return false;
@@ -148,20 +147,20 @@ public class CommandCenter {
         nLevel = n;
     }
 
-    public int getNumFalcons() {
-        return nNumFalcon;
+    public int getNumBombermans() {
+        return nNumBombermans;
     }
 
-    public void setNumFalcons(int nParam) {
-        nNumFalcon = nParam;
+    public void setNumBombermans(int nParam) {
+        nNumBombermans = nParam;
     }
 
-    public Falcon getFalcon() {
-        return falShip;
+    public Bomberman getBomberman() {
+        return mBomberman;
     }
 
-    public void setFalcon(Falcon falParam) {
-        falShip = falParam;
+    public void setBomberman(Bomberman bombermanParam) {
+        mBomberman = bombermanParam;
     }
 
     public List<Movable> getMovBombs() {

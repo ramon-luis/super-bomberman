@@ -1,4 +1,4 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ public class Bullet extends Sprite {
 
 	 
 	
-public Bullet(Falcon fal){
+public Bullet(Bomberman fal){
 		
 		super();
 	    setTeam(Team.FRIEND);

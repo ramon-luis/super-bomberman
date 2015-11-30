@@ -1,11 +1,10 @@
-package edu.uchicago.cs.java.finalproject.mvc.view;
+package superBomberman.mvc.view;
 
-import edu.uchicago.cs.java.finalproject.mvc.controller.Game;
-import edu.uchicago.cs.java.finalproject.mvc.model.*;
+import superBomberman.mvc.controller.Game;
+import superBomberman.mvc.model.*;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.awt.event.MouseEvent;
 
 
 public class GamePanel extends Panel {
@@ -136,7 +135,7 @@ public class GamePanel extends Panel {
 
 	// Draw the number of falcons left on the bottom-right of the screen. 
 	private void drawNumberShipsLeft(Graphics g) {
-		Falcon fal = CommandCenter.getInstance().getFalcon();
+		Bomberman fal = CommandCenter.getInstance().getBomberman();
 		double[] dLens = fal.getLengths();
 		int nLen = fal.getDegrees().length;
 		Point[] pntMs = new Point[nLen];
@@ -154,7 +153,7 @@ public class GamePanel extends Panel {
 		//set the color to white
 		g.setColor(Color.white);
 		//for each falcon left (not including the one that is playing)
-		for (int nD = 1; nD < CommandCenter.getInstance().getNumFalcons(); nD++) {
+		for (int nD = 1; nD < CommandCenter.getInstance().getNumBombermans(); nD++) {
 			//create x and y values for the objects to the bottom right using cartesean points again
 			for (int nC = 0; nC < fal.getDegrees().length; nC++) {
 				nXs[nC] = pntMs[nC].x + GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + (nD - 1) * nFontWidth + 8;

@@ -1,4 +1,4 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;

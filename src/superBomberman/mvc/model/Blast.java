@@ -1,4 +1,4 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.ArrayList;

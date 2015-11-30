@@ -1,6 +1,6 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
-import edu.uchicago.cs.java.finalproject.mvc.controller.Game;
+import superBomberman.mvc.controller.Game;
 
 import java.awt.*;
 import java.util.ArrayList;

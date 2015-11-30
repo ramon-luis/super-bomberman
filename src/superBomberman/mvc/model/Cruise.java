@@ -1,4 +1,4 @@
-package edu.uchicago.cs.java.finalproject.mvc.model;
+package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class Cruise extends Sprite {
 		public double[] dLengthsAlts;
 		public double[] dDegreesAlts;
 
-	public Cruise(Falcon fal) {
+	public Cruise(Bomberman fal) {
 
 		super();
 		setTeam(Team.FRIEND);

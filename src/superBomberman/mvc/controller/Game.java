@@ -1,8 +1,8 @@
-package edu.uchicago.cs.java.finalproject.mvc.controller;
+package superBomberman.mvc.controller;
 
-import edu.uchicago.cs.java.finalproject.mvc.model.*;
-import edu.uchicago.cs.java.finalproject.mvc.view.GamePanel;
-import edu.uchicago.cs.java.finalproject.sounds.Sound;
+import superBomberman.mvc.view.GamePanel;
+import superBomberman.sounds.Sound;
+import superBomberman.mvc.model.*;
 
 import javax.sound.sampled.Clip;
 import java.awt.*;
@@ -181,16 +181,16 @@ public class Game implements Runnable, KeyListener {
 			}
 
 
-			// check blast against Falcon
-			if (CommandCenter.getInstance().getFalcon() != null) {
-				// get square falcon
-				Square falconSquare = CommandCenter.getInstance().getFalcon().getCurrentSquare();
+			// check blast against bomberman
+			if (CommandCenter.getInstance().getBomberman() != null) {
+				// get square bomberman
+				Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
 
-				// collision if blast and falcon same square
-				if (blastSquare.equals(falconSquare)) {
-					if (!CommandCenter.getInstance().getFalcon().getProtected()) {
-						CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getFalcon(), CollisionOp.Operation.REMOVE);
-						CommandCenter.getInstance().spawnFalcon(false);
+				// collision if blast and bomberman same square
+				if (blastSquare.equals(bombermanSquare)) {
+					if (!CommandCenter.getInstance().getBomberman().getProtected()) {
+						CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getBomberman(), CollisionOp.Operation.REMOVE);
+						CommandCenter.getInstance().spawnBomberman(false);
 					}
 				}
 			}
@@ -201,16 +201,16 @@ public class Game implements Runnable, KeyListener {
 			// get square for foe
 			Square foeSquare = movFoe.getCurrentSquare();
 
-			// check foes against Falcon
-			if (CommandCenter.getInstance().getFalcon() != null) {
-				// get square for falcon
-				Square falconSquare = CommandCenter.getInstance().getFalcon().getCurrentSquare();
+			// check foes against bomberman
+			if (CommandCenter.getInstance().getBomberman() != null) {
+				// get square for bomberman
+				Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
 
-				// collision if blast and falcon same square
-				if (foeSquare.equals(falconSquare)) {
-					if (!CommandCenter.getInstance().getFalcon().getProtected()) {
-						CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getFalcon(), CollisionOp.Operation.REMOVE);
-						CommandCenter.getInstance().spawnFalcon(false);
+				// collision if blast and bomberman same square
+				if (foeSquare.equals(bombermanSquare)) {
+					if (!CommandCenter.getInstance().getBomberman().getProtected()) {
+						CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getBomberman(), CollisionOp.Operation.REMOVE);
+						CommandCenter.getInstance().spawnBomberman(false);
 					}
 				}
 			}
@@ -221,19 +221,19 @@ public class Game implements Runnable, KeyListener {
 			// get square for foe
 			Square exitSquare = movExit.getCurrentSquare();
 
-			// check exit against Falcon
-			if (CommandCenter.getInstance().getFalcon() != null) {
-				// get square for falcon
-				Square falconSquare = CommandCenter.getInstance().getFalcon().getCurrentSquare();
+			// check exit against bomberman
+			if (CommandCenter.getInstance().getBomberman() != null) {
+				// get square for bomberman
+				Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
 
-				// collision if exit and falcon same square
-				if (exitSquare.equals(falconSquare)) {
+				// collision if exit and bomberman same square
+				if (exitSquare.equals(bombermanSquare)) {
 					exitLevel();
 				}
 			}
 		}
 
-		//check for collisions between falcon and floaters
+		//check for collisions between bomberman and floaters
 		// CODE HERE
 
 
@@ -275,7 +275,7 @@ public class Game implements Runnable, KeyListener {
 					} else {
 						CommandCenter.getInstance().getMovBombs().remove(mov);
 						mov.getCurrentSquare().removeBomb();
-						CommandCenter.getInstance().getFalcon().addBombToUse();
+						CommandCenter.getInstance().getBomberman().addBombToUse();
 					}
 					break;
 				case BLAST:
@@ -400,8 +400,8 @@ public class Game implements Runnable, KeyListener {
 	private void checkNewLevel(){
 		
 		if (bExitLevel){
-			if (CommandCenter.getInstance().getFalcon() !=null)
-				CommandCenter.getInstance().getFalcon().setProtected(true);
+			if (CommandCenter.getInstance().getBomberman() !=null)
+				CommandCenter.getInstance().getBomberman().setProtected(true);
 			bExitLevel = false;
 			CommandCenter.getInstance().startNextLevel();
 
@@ -424,14 +424,14 @@ public class Game implements Runnable, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Falcon fal = CommandCenter.getInstance().getFalcon();
+		Bomberman bomberman = CommandCenter.getInstance().getBomberman();
 		int nKey = e.getKeyCode();
 		// System.out.println(nKey);
 
 		if (nKey == START && !CommandCenter.getInstance().isPlaying())
 			startGame();
 
-		if (fal != null) {
+		if (bomberman != null) {
 
 			switch (nKey) {
 			case PAUSE:
@@ -446,27 +446,27 @@ public class Game implements Runnable, KeyListener {
 				break;
 			case UP:
 				// set direction to up
-				fal.setDirectionToMove(Falcon.Direction.UP);
+				bomberman.setDirectionToMove(Bomberman.Direction.UP);
 
-				fal.thrustOn();
+				bomberman.thrustOn();
 				if (!CommandCenter.getInstance().isPaused())
 					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 				break;
 
 				case DOWN:
 					// set direction to up
-					fal.setDirectionToMove(Falcon.Direction.DOWN);
+					bomberman.setDirectionToMove(Bomberman.Direction.DOWN);
 
-					fal.thrustOn();
+					bomberman.thrustOn();
 					if (!CommandCenter.getInstance().isPaused())
 						clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 					break;
 
 			case LEFT:
 				// set the direction to left
-				fal.setDirectionToMove(Falcon.Direction.LEFT);
+				bomberman.setDirectionToMove(Bomberman.Direction.LEFT);
 				// thrust so that it moves
-				fal.thrustOn();
+				bomberman.thrustOn();
 				if (!CommandCenter.getInstance().isPaused())
 					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 
@@ -474,9 +474,9 @@ public class Game implements Runnable, KeyListener {
 				break;
 			case RIGHT:
 				// set the direction to left
-				fal.setDirectionToMove(Falcon.Direction.RIGHT);
+				bomberman.setDirectionToMove(Bomberman.Direction.RIGHT);
 				// thrust so that it moves
-				fal.thrustOn();
+				bomberman.thrustOn();
 				if (!CommandCenter.getInstance().isPaused())
 					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 
@@ -496,17 +496,17 @@ public class Game implements Runnable, KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		Falcon fal = CommandCenter.getInstance().getFalcon();
+		Bomberman bomberman = CommandCenter.getInstance().getBomberman();
 		int nKey = e.getKeyCode();
 		 System.out.println(nKey);
 
-		if (fal != null) {
+		if (bomberman != null) {
 			switch (nKey) {
 			case FIRE:
 
 
-				if (CommandCenter.getInstance().getFalcon().hasBombToUse() && !CommandCenter.getInstance().getFalcon().getCurrentSquare().containsBomb()) {
-					CommandCenter.getInstance().getOpsList().enqueue(new Bomb(fal), CollisionOp.Operation.ADD);
+				if (CommandCenter.getInstance().getBomberman().hasBombToUse() && !CommandCenter.getInstance().getBomberman().getCurrentSquare().containsBomb()) {
+					CommandCenter.getInstance().getOpsList().enqueue(new Bomb(bomberman), CollisionOp.Operation.ADD);
 				}
 
 				Sound.playSound("laser.wav");
@@ -514,32 +514,32 @@ public class Game implements Runnable, KeyListener {
 				
 			//special is a special weapon, current it just fires the cruise missile. 
 			case SPECIAL:
-				CommandCenter.getInstance().getOpsList().enqueue(new Cruise(fal), CollisionOp.Operation.ADD);
+				CommandCenter.getInstance().getOpsList().enqueue(new Cruise(bomberman), CollisionOp.Operation.ADD);
 				//Sound.playSound("laser.wav");
 				break;
 				
 			case LEFT:
-				fal.thrustOff();
+				bomberman.thrustOff();
 				clpThrust.stop();
-				fal.finishMove();
+				bomberman.finishMove();
 				//fal.stopRotating();
 				break;
 			case RIGHT:
-				fal.thrustOff();
+				bomberman.thrustOff();
 				clpThrust.stop();
-				fal.finishMove();
+				bomberman.finishMove();
 				//fal.stopRotating();
 				break;
 			case UP:
-				fal.thrustOff();
+				bomberman.thrustOff();
 				clpThrust.stop();
-				fal.finishMove();
+				bomberman.finishMove();
 				break;
 
 				case DOWN:
-					fal.thrustOff();
+					bomberman.thrustOff();
 					clpThrust.stop();
-					fal.finishMove();
+					bomberman.finishMove();
 					break;
 
 			case MUTE:
