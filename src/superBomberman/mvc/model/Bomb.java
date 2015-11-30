@@ -12,7 +12,7 @@ public class Bomb extends Sprite {
 
 	private final int RADIUS = Square.SQUARE_LENGTH / 2;
 
-	private final int EXPIRE = 80; // life of object before expiry
+	private final int EXPIRE = 20; // life of object before expiry
 	private boolean mIsSmall;
 	private boolean mIsRedWick;
 	private boolean mIsDetached;
@@ -73,17 +73,22 @@ public Bomb(Bomberman fal){
 		if (getExpire() == 0) {
 
 			// create blast at center, and in each direction
-			int iAdjust = Square.SQUARE_LENGTH;
-			Point pUp = new Point(getCenter().x, getCenter().y - iAdjust);
-			Point pDown = new Point(getCenter().x, getCenter().y + iAdjust);
-			Point pLeft = new Point(getCenter().x - iAdjust, getCenter().y);
-			Point pRight = new Point(getCenter().x + iAdjust, getCenter().y);
+			int iRow = getCurrentSquare().getRow();
+			int iCol = getCurrentSquare().getColumn();
 
-			CommandCenter.getInstance().getOpsList().enqueue(new Blast(getCenter()), CollisionOp.Operation.ADD);
-			CommandCenter.getInstance().getOpsList().enqueue(new Blast(pUp), CollisionOp.Operation.ADD);
-			CommandCenter.getInstance().getOpsList().enqueue(new Blast(pDown), CollisionOp.Operation.ADD);
-			CommandCenter.getInstance().getOpsList().enqueue(new Blast(pLeft), CollisionOp.Operation.ADD);
-			CommandCenter.getInstance().getOpsList().enqueue(new Blast(pRight), CollisionOp.Operation.ADD);
+			Square squareCenter = getCurrentSquare();
+			Square squareLeft = CommandCenter.getInstance().getGameBoard().getSquare(iRow, iCol - 1);
+			Square squareRight = CommandCenter.getInstance().getGameBoard().getSquare(iRow, iCol + 1);
+			Square squareUp = CommandCenter.getInstance().getGameBoard().getSquare(iRow + 1, iCol);
+			Square squareDown = CommandCenter.getInstance().getGameBoard().getSquare(iRow - 1, iCol);
+
+			Square[] blastSquares = {squareCenter, squareLeft, squareRight, squareUp, squareDown};
+
+			for (Square square : blastSquares) {
+				if (!square.isSolidWall())
+					CommandCenter.getInstance().getOpsList().enqueue(new Blast(square), CollisionOp.Operation.ADD);
+
+			}
 
 			// remove from queue
 			CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);

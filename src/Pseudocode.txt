@@ -1,6 +1,7 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
+check if blast square == wall square, if YES -> no blast
 update visuals: blasts, walls. background
 add power-ups (larger blast, more bombs, new weapons)
 add more weapons (kick, punch, detonate)
@@ -13,7 +14,8 @@ correct movement of Bomberman & Monster - don't allow overlap of walls
 improve AI of monsters
 add bomb-related music (Bombtrack, Super Bon Bon)
 
-
+REFACTOR
+blast to accept square instead of point
 
 
 create grid of 143 (13 wide x 11 tall) squares -> add 1 each side for outer wall (14 x 12)

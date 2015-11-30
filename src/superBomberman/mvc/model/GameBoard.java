@@ -36,8 +36,6 @@ public class GameBoard {
         for (int iRow = 0; iRow < ROW_COUNT; iRow++) {
             for (int iCol = 0; iCol < COL_COUNT; iCol++) {
                 mSquares[iSquareCount] = new Square(iRow, iCol);
-
-                System.out.println("array spot: " + iSquareCount + ", " + mSquares[iSquareCount] + ", center: " + mSquares[iSquareCount].getCenter());
                 iSquareCount++;
             }
         }
@@ -51,6 +49,7 @@ public class GameBoard {
                     || iCol == LEFT_OUTER_WALL_COL || iCol == RIGHT_OUTER_WALL_COL) {
                 Wall wall = new Wall(square, Wall.Type.SOLID);
                 square.addWall();
+                square.setInside(wall);
                 CommandCenter.getInstance().getOpsList().enqueue(wall, CollisionOp.Operation.ADD);
             }
         }
@@ -90,8 +89,10 @@ public class GameBoard {
                     || (iRow == 10 && (iCol == 2 || iCol == 4 || iCol == 6 || iCol == 8 || iCol == 10 || iCol == 12))) {
 
                 // create wall, add to square, add to OpsList
+                Wall wall = new Wall(square, Wall.Type.SOLID);
                 square.addWall();
-                CommandCenter.getInstance().getOpsList().enqueue(new Wall(square, Wall.Type.SOLID), CollisionOp.Operation.ADD);
+                square.setInside(wall);
+                CommandCenter.getInstance().getOpsList().enqueue(wall, CollisionOp.Operation.ADD);
             }
 
             // inner breakable walls
@@ -110,6 +111,7 @@ public class GameBoard {
                 // create wall, add to square, add to OpsList
                 Wall wall = new Wall(square, Wall.Type.BREAKABLE);
                 square.addWall();
+                square.setInside(wall);
                 CommandCenter.getInstance().getOpsList().enqueue(wall, CollisionOp.Operation.ADD);
             }
 

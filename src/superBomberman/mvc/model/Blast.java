@@ -9,12 +9,12 @@ import java.util.ArrayList;
 public class Blast extends Sprite {
 
 
-    private static final int RADIUS = Square.SQUARE_LENGTH / 4;
-    private static final int EXPIRE = 10;
+    private static final int RADIUS = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
+    private static final int EXPIRE = 20;
     private boolean mIsRed;
 
 
-    public Blast(Point point) {
+    public Blast(Square square) {
 
         // call super constructor and set team
         super();
@@ -23,10 +23,93 @@ public class Blast extends Sprite {
         //define the points on cartesian grid
         ArrayList<Point> pntCs = new ArrayList<>();
 
-        pntCs.add(new Point(0,1)); //top point
-        pntCs.add(new Point(1,0));
-        pntCs.add(new Point(0,-1));
-        pntCs.add(new Point(-1,0));
+        pntCs.add(new Point(-10,10));
+        pntCs.add(new Point(-9,7));
+        pntCs.add(new Point(-8,8));
+        pntCs.add(new Point(-7,7));
+        pntCs.add(new Point(-6,10));
+        pntCs.add(new Point(-5,7));
+        pntCs.add(new Point(-4,8));
+        pntCs.add(new Point(-3,7));
+        pntCs.add(new Point(-2,10));
+        pntCs.add(new Point(-1,7));
+        pntCs.add(new Point(0,8));
+        pntCs.add(new Point(1,7));
+        pntCs.add(new Point(2,10));
+        pntCs.add(new Point(3,7));
+        pntCs.add(new Point(4,8));
+        pntCs.add(new Point(5,7));
+        pntCs.add(new Point(6,10));
+        pntCs.add(new Point(7,7));
+        pntCs.add(new Point(8,8));
+        pntCs.add(new Point(9,7));
+        pntCs.add(new Point(10,10));
+
+        pntCs.add(new Point(10,10));
+        pntCs.add(new Point(9,9));
+        pntCs.add(new Point(10,8));
+        pntCs.add(new Point(9,7));
+        pntCs.add(new Point(10,6));
+        pntCs.add(new Point(9,5));
+        pntCs.add(new Point(10,4));
+        pntCs.add(new Point(9,3));
+        pntCs.add(new Point(10,2));
+        pntCs.add(new Point(9,1));
+        pntCs.add(new Point(10,0));
+        pntCs.add(new Point(9,-1));
+        pntCs.add(new Point(10,-2));
+        pntCs.add(new Point(9,-3));
+        pntCs.add(new Point(10,-4));
+        pntCs.add(new Point(9,-5));
+        pntCs.add(new Point(10,-6));
+        pntCs.add(new Point(9,-7));
+        pntCs.add(new Point(10,-8));
+        pntCs.add(new Point(9,-9));
+        pntCs.add(new Point(10,-10));
+
+        pntCs.add(new Point(10,-10));
+        pntCs.add(new Point(9,-9));
+        pntCs.add(new Point(8,-10));
+        pntCs.add(new Point(7,-9));
+        pntCs.add(new Point(6,-10));
+        pntCs.add(new Point(5,-9));
+        pntCs.add(new Point(4,-10));
+        pntCs.add(new Point(3,-9));
+        pntCs.add(new Point(2,-10));
+        pntCs.add(new Point(1,-9));
+        pntCs.add(new Point(0,-10));
+        pntCs.add(new Point(-1,-9));
+        pntCs.add(new Point(-2,-10));
+        pntCs.add(new Point(-3,-9));
+        pntCs.add(new Point(-4,-10));
+        pntCs.add(new Point(-5,-9));
+        pntCs.add(new Point(-6,-10));
+        pntCs.add(new Point(-7,-9));
+        pntCs.add(new Point(-8,-10));
+        pntCs.add(new Point(-9,-9));
+        pntCs.add(new Point(-10,-10));
+
+        pntCs.add(new Point(-10,-10));
+        pntCs.add(new Point(-9,-9));
+        pntCs.add(new Point(-10,-8));
+        pntCs.add(new Point(-9,-7));
+        pntCs.add(new Point(-10,-6));
+        pntCs.add(new Point(-9,-5));
+        pntCs.add(new Point(-10,-4));
+        pntCs.add(new Point(-9,-3));
+        pntCs.add(new Point(-10,-2));
+        pntCs.add(new Point(-9,-1));
+        pntCs.add(new Point(-10,0));
+        pntCs.add(new Point(-9,1));
+        pntCs.add(new Point(-10,2));
+        pntCs.add(new Point(-9,3));
+        pntCs.add(new Point(-10,4));
+        pntCs.add(new Point(-9,5));
+        pntCs.add(new Point(-10,6));
+        pntCs.add(new Point(-9,7));
+        pntCs.add(new Point(-10,8));
+        pntCs.add(new Point(-9,9));
+        pntCs.add(new Point(-10,10));
 
         // assign polar points from cartesian points
         assignPolarPoints(pntCs);
@@ -36,7 +119,7 @@ public class Blast extends Sprite {
         setRadius(RADIUS);
 
         // set center of object based on location of bomb
-        setCenter(point);
+        setCenter(square.getCenter());
 
         CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.ADD);
 
@@ -53,6 +136,8 @@ public class Blast extends Sprite {
         if (getExpire() == 0)
             CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);
         else {
+
+
 			if (getExpire() > EXPIRE / 2 && getRadius() < Square.SQUARE_LENGTH / 2) {
 				setRadius(getRadius() + 1);
 			} else {
@@ -65,6 +150,9 @@ public class Blast extends Sprite {
 
     @Override
     public void draw(Graphics g) {
+        //super.draw(g);
+
+
         // set color to be random size & fill oval with random color
         Color cFill = (mIsRed) ? Color.RED : Color.ORANGE;
 
@@ -72,12 +160,15 @@ public class Blast extends Sprite {
         int iDrawY = (int) getCenter().getY() - RADIUS;
 
         g.setColor(cFill);
-        g.fillOval(iDrawX, iDrawY, getRadius() * 2, getRadius() * 2);
+//        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+        g.fillOval(iDrawX, iDrawY, RADIUS, RADIUS);
 
-        if (mIsRed)
-            flashOrange();
-        else
-            flashRed();
+        if (getExpire() % 4 == 0) {
+            if (mIsRed)
+                flashOrange();
+            else
+                flashRed();
+        }
 
     }
 

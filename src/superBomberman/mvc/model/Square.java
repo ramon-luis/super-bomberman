@@ -52,6 +52,13 @@ public class Square extends Sprite {
         return mIsWall;
     }
 
+    public boolean isSolidWall() {
+        if (isWall()) {
+            Wall wall = (Wall) getInside();
+            return !wall.isBreakable();
+        }
+        return false;
+    }
     public void removeWall() {
         mIsWall = false;
     }
