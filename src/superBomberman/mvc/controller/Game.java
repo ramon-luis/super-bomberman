@@ -64,7 +64,6 @@ public class Game implements Runnable, KeyListener {
 
 		gmpPanel = new GamePanel(DIM);
 		gmpPanel.addKeyListener(this);
-		clpThrust = Sound.clipForLoopFactory("whitenoise.wav");
 		clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
 	
 
@@ -119,10 +118,11 @@ public class Game implements Runnable, KeyListener {
 
 			//this might be a good place to check for collisions
 			checkCollisions();
+			checkNewLevel();
 			//this might be a god place to check if the level is clear (no more foes)
 			//if the level is clear then spawn some big asteroids -- the number of asteroids 
 			//should increase with the level. 
-			checkNewLevel();
+			checkRevealExit();
 
 			try {
 				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update) 
@@ -157,7 +157,17 @@ public class Game implements Runnable, KeyListener {
 
 				// collision if blast and foe same square
 				if (blastSquare.equals(foeSquare)) {
+					// increase score
 					CommandCenter.getInstance().setScore(CommandCenter.getInstance().getScore() + 100);
+
+					// check for power up
+					if (((Monster) movFoe).containsPowerUp()) {
+						PowerUp powerUp = ((Monster) movFoe).getPowerUpInside();
+						powerUp.setSquare(foeSquare);
+						CommandCenter.getInstance().getMovPowerUps().add(powerUp);
+					}
+
+					// remove for from OpsList
 					CommandCenter.getInstance().getOpsList().enqueue(movFoe, CollisionOp.Operation.REMOVE);
 				}
 			}
@@ -169,17 +179,20 @@ public class Game implements Runnable, KeyListener {
 
 				// cast from movable to wall in order to check if breakable
 				Wall wall = (Wall) movWall;
+
 				// collision if blast and wall same square AND wall is breakable
 				if (blastSquare.equals(wallSquare) && wall.isBreakable()) {
+					// check for power up
+					if (wall.containsPowerUp()) {
+						PowerUp powerUp = wall.getPowerUpInside();
+						powerUp.setSquare(wallSquare);
+						CommandCenter.getInstance().getMovPowerUps().add(powerUp);
+					}
 					CommandCenter.getInstance().getOpsList().enqueue(movWall, CollisionOp.Operation.REMOVE);
 
-					// check to reveal exit
-					if (wallSquare.isExit()) {
-						CommandCenter.getInstance().getOpsList().enqueue(new Exit(wallSquare), CollisionOp.Operation.ADD);
-					}
 				}
-			}
 
+			}
 
 			// check blast against bomberman
 			if (CommandCenter.getInstance().getBomberman() != null) {
@@ -191,9 +204,22 @@ public class Game implements Runnable, KeyListener {
 					if (!CommandCenter.getInstance().getBomberman().getProtected()) {
 						CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getBomberman(), CollisionOp.Operation.REMOVE);
 						CommandCenter.getInstance().spawnBomberman(false);
+						Sound.playSound("bombermanDie.wav");
 					}
 				}
 			}
+
+			// check blast against bombs
+			for (Movable movBomb : CommandCenter.getInstance().getMovBombs()) {
+				// get square for foe
+				Square bombSquare = movBomb.getCurrentSquare();
+
+				// collision if blast and foe same square
+				if (blastSquare.equals(bombSquare)) {
+					((Bomb) movBomb).explode();
+				}
+			}
+
 		}
 
 		// check Foes
@@ -211,6 +237,7 @@ public class Game implements Runnable, KeyListener {
 					if (!CommandCenter.getInstance().getBomberman().getProtected()) {
 						CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getBomberman(), CollisionOp.Operation.REMOVE);
 						CommandCenter.getInstance().spawnBomberman(false);
+						Sound.playSound("bombermanDie.wav");
 					}
 				}
 			}
@@ -233,8 +260,24 @@ public class Game implements Runnable, KeyListener {
 			}
 		}
 
-		//check for collisions between bomberman and floaters
-		// CODE HERE
+		//check for collisions between bomberman and power ups
+		for (Movable movPowerUp : CommandCenter.getInstance().getMovPowerUps()) {
+			// get square for foe
+			Square powerUpSquare = movPowerUp.getCurrentSquare();
+
+			// check exit against bomberman
+			if (CommandCenter.getInstance().getBomberman() != null) {
+				// get square for bomberman
+				Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
+
+				// collision if exit and bomberman same square
+				if (powerUpSquare.equals(bombermanSquare)) {
+					// process the power up (cast from Movable to PowerUp), then remove it
+					((PowerUp) movPowerUp).process();
+					CommandCenter.getInstance().getOpsList().enqueue(movPowerUp, CollisionOp.Operation.REMOVE);
+				}
+			}
+		}
 
 
 
@@ -250,6 +293,8 @@ public class Game implements Runnable, KeyListener {
 						CommandCenter.getInstance().getMovFoes().add(mov);
 					} else {
 						CommandCenter.getInstance().getMovFoes().remove(mov);
+						Sound.playSound("enemyDie.wav");
+
 					}
 
 					break;
@@ -261,11 +306,11 @@ public class Game implements Runnable, KeyListener {
 					}
 					break;
 
-				case FLOATER:
+				case POWERUP:
 					if (operation == CollisionOp.Operation.ADD){
-						CommandCenter.getInstance().getMovFloaters().add(mov);
+						CommandCenter.getInstance().getMovPowerUps().add(mov);
 					} else {
-						CommandCenter.getInstance().getMovFloaters().remove(mov);
+						CommandCenter.getInstance().getMovPowerUps().remove(mov);
 					}
 					break;
 
@@ -274,8 +319,8 @@ public class Game implements Runnable, KeyListener {
 						CommandCenter.getInstance().getMovBombs().add(mov);
 					} else {
 						CommandCenter.getInstance().getMovBombs().remove(mov);
-						mov.getCurrentSquare().removeBomb();
-						CommandCenter.getInstance().getBomberman().addBombToUse();
+
+
 					}
 					break;
 				case BLAST:
@@ -353,8 +398,8 @@ public class Game implements Runnable, KeyListener {
 		//make the appearance of power-up dependent upon ticks and levels
 		//the higher the level the more frequent the appearance
 		if (nTick % (SPAWN_NEW_SHIP_FLOATER - nLevel * 7) == 0) {
-			//Cc.getInstance().getMovFloaters().enqueue(new NewShipFloater());
-			CommandCenter.getInstance().getOpsList().enqueue(new NewShipFloater(), CollisionOp.Operation.ADD);
+			//Cc.getInstance().getMovPowerUps().enqueue(new NewShipFloater());
+			//CommandCenter.getInstance().getOpsList().enqueue(new NewShipFloater(), CollisionOp.Operation.ADD);
 		}
 	}
 
@@ -365,8 +410,9 @@ public class Game implements Runnable, KeyListener {
 		CommandCenter.getInstance().setLevel(1);
 		CommandCenter.getInstance().setPlaying(true);
 		CommandCenter.getInstance().setPaused(false);
-		//if (!bMuted)
-		   // clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
+		if (!bMuted)
+			clpMusicBackground.start();
+		    clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 	}
 
 	//this method spawns new asteroids
@@ -383,20 +429,25 @@ public class Game implements Runnable, KeyListener {
 	}
 
 	private boolean isLevelClear(){
-		//if there are no more Asteroids on the screen
-		boolean bAsteroidFree = true;
-		for (Movable movFoe : CommandCenter.getInstance().getMovFoes()) {
-			if (movFoe instanceof Asteroid){
-				bAsteroidFree = false;
-				break;
+		boolean bFoeFree = true;
+		if (CommandCenter.getInstance().getMovFoes().size() > 0)
+			bFoeFree = false;
+		return bFoeFree;
+	}
+
+	private void checkRevealExit() {
+		if (CommandCenter.getInstance().getBomberman() != null && CommandCenter.getInstance().getMovExits().size() == 0) {
+			if (isLevelClear()) {
+				for (Square square : CommandCenter.getInstance().getGameBoard().getSquares()) {
+					if (square.isExit() && !square.isWall()) {
+						CommandCenter.getInstance().getOpsList().enqueue(new Exit(square), CollisionOp.Operation.ADD);
+						Sound.playSound("clearLevel.wav");
+					}
+				}
 			}
 		}
-		
-		return bAsteroidFree;
-
-		
 	}
-	
+
 	private void checkNewLevel(){
 		
 		if (bExitLevel){
@@ -437,10 +488,11 @@ public class Game implements Runnable, KeyListener {
 			case PAUSE:
 				CommandCenter.getInstance().setPaused(!CommandCenter.getInstance().isPaused());
 				if (CommandCenter.getInstance().isPaused())
-					stopLoopingSounds(clpMusicBackground, clpThrust);
-				else
+					stopLoopingSounds(clpMusicBackground);
+				else {
+					clpMusicBackground.start();
 					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
-				break;
+				}break;
 			case QUIT:
 				System.exit(0);
 				break;
@@ -449,8 +501,6 @@ public class Game implements Runnable, KeyListener {
 				bomberman.setDirectionToMove(Bomberman.Direction.UP);
 
 				bomberman.thrustOn();
-				if (!CommandCenter.getInstance().isPaused())
-					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 				break;
 
 				case DOWN:
@@ -458,8 +508,6 @@ public class Game implements Runnable, KeyListener {
 					bomberman.setDirectionToMove(Bomberman.Direction.DOWN);
 
 					bomberman.thrustOn();
-					if (!CommandCenter.getInstance().isPaused())
-						clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 					break;
 
 			case LEFT:
@@ -467,8 +515,6 @@ public class Game implements Runnable, KeyListener {
 				bomberman.setDirectionToMove(Bomberman.Direction.LEFT);
 				// thrust so that it moves
 				bomberman.thrustOn();
-				if (!CommandCenter.getInstance().isPaused())
-					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 
 				//fal.rotateLeft();
 				break;
@@ -477,8 +523,6 @@ public class Game implements Runnable, KeyListener {
 				bomberman.setDirectionToMove(Bomberman.Direction.RIGHT);
 				// thrust so that it moves
 				bomberman.thrustOn();
-				if (!CommandCenter.getInstance().isPaused())
-					clpThrust.loop(Clip.LOOP_CONTINUOUSLY);
 
 				//fal.rotateRight();
 				break;
@@ -506,39 +550,34 @@ public class Game implements Runnable, KeyListener {
 
 
 				if (CommandCenter.getInstance().getBomberman().hasBombToUse() && !CommandCenter.getInstance().getBomberman().getCurrentSquare().containsBomb()) {
-					CommandCenter.getInstance().getOpsList().enqueue(new Bomb(bomberman), CollisionOp.Operation.ADD);
+					CommandCenter.getInstance().getOpsList().enqueue(new Bomb(CommandCenter.getInstance().getBomberman().getCurrentSquare()), CollisionOp.Operation.ADD);
+					Sound.playSound("bloop.wav");
 				}
-
-				Sound.playSound("laser.wav");
 				break;
 				
 			//special is a special weapon, current it just fires the cruise missile. 
 			case SPECIAL:
-				CommandCenter.getInstance().getOpsList().enqueue(new Cruise(bomberman), CollisionOp.Operation.ADD);
+				//CommandCenter.getInstance().getOpsList().enqueue(new Cruise(bomberman), CollisionOp.Operation.ADD);
 				//Sound.playSound("laser.wav");
 				break;
 				
 			case LEFT:
 				bomberman.thrustOff();
-				clpThrust.stop();
 				bomberman.finishMove();
 				//fal.stopRotating();
 				break;
 			case RIGHT:
 				bomberman.thrustOff();
-				clpThrust.stop();
 				bomberman.finishMove();
 				//fal.stopRotating();
 				break;
 			case UP:
 				bomberman.thrustOff();
-				clpThrust.stop();
 				bomberman.finishMove();
 				break;
 
 				case DOWN:
 					bomberman.thrustOff();
-					clpThrust.stop();
 					bomberman.finishMove();
 					break;
 
@@ -548,6 +587,7 @@ public class Game implements Runnable, KeyListener {
 					bMuted = !bMuted;
 				} 
 				else {
+					clpMusicBackground.start();
 					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 					bMuted = !bMuted;
 				}

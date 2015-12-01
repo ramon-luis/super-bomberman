@@ -10,20 +10,23 @@ public class Bomberman extends Sprite {
 	// FIELDS 
 	// ==============================================================
 
-	public enum Direction {UP, DOWN, LEFT, RIGHT};
 	private Direction mDirectionToMove;
 	private int mRow;
 	private int mColumn;
 	private Square mCurrentSquare;
 
 	private int mBombCount;
+	private Color mColor;
+	private int mProtectedCounter;
 
-	private final int THRUST = 10;
+	private final int SPEED = 10;
 	private final int RADIUS = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
-	private final int MOVES_PER_SQUARE = Square.SQUARE_LENGTH / THRUST;
+	private final int MOVES_PER_SQUARE = Square.SQUARE_LENGTH / SPEED;
 
 	final int DEGREE_STEP = 7;
-	
+
+	private int mBlastPower;
+
 	private boolean bShield = false;
 	private boolean bFlame = false;
 	private boolean bProtected; //for fade in and out
@@ -50,7 +53,9 @@ public class Bomberman extends Sprite {
 	public Bomberman() {
 		super();
 		setTeam(Team.FRIEND);
-		mBombCount = 1;
+		mBombCount = 2;
+		mBlastPower = 1;
+		mDirectionToMove = Direction.UP;
 
 		ArrayList<Point> pntCs = new ArrayList<Point>();
 		
@@ -124,17 +129,9 @@ public class Bomberman extends Sprite {
 		mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
 		setCenter(mCurrentSquare.getCenter());
 
-		//put falcon in the middle.
-		//setCenter(new Point(Game.DIM.width / 2, Game.DIM.height / 2));
-		
-		//with random orientation
-		//setOrientation(Game.R.nextInt(360));
-
-		// set orientation to straight up
-		//setOrientation(270);
 
 		//this is the size of the falcon
-		setRadius(RADIUS);
+		setSize(RADIUS);
 
 		//these are falcon specific
 		setProtected(true);
@@ -149,7 +146,6 @@ public class Bomberman extends Sprite {
 	public void move() {
 
 		if (bThrusting) {
-			bFlame = true;
 
 			int iAdjustRow = 0;
 			int iAdjustColumn = 0;
@@ -158,16 +154,16 @@ public class Bomberman extends Sprite {
 
 			if (mDirectionToMove == Direction.DOWN) {
 				iAdjustRow = 1;
-				dAdjustY = THRUST;
+				dAdjustY = SPEED;
 			} else if (mDirectionToMove == Direction.UP) {
 				iAdjustRow = -1;
-				dAdjustY = -THRUST;
+				dAdjustY = -SPEED;
 			} else if (mDirectionToMove == Direction.LEFT) {
 				iAdjustColumn = -1;
-				dAdjustX = -THRUST;
+				dAdjustX = -SPEED;
 			} else if (mDirectionToMove == Direction.RIGHT) {
 				iAdjustColumn = 1;
-				dAdjustX = THRUST;
+				dAdjustX = SPEED;
 
 			}
 
@@ -176,36 +172,42 @@ public class Bomberman extends Sprite {
 
 			Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
 
-			System.out.println("Current square: " + getCurrentSquare());
-
-			System.out.println("Target square: " + targetSquare);
-
 			if (!targetSquare.isBlocked() || !isPastSquareMidPoint()) {
 				setDeltaX(dAdjustX);
 				setDeltaY(dAdjustY);
 				super.move();
 
 			}
-//			else {
-//				setCenter(getCurrentSquare().getCenter());
-//			}
+
 		}
 
 
 		//implementing the fadeInOut functionality - added by Dmitriy
-		if (getProtected()) {
-			setFadeValue(getFadeValue() + 3);
-		}
-		if (getFadeValue() == 255) {
+		if (getProtectedCounter() == 0) {
 			setProtected(false);
 		}
+		if (getProtected()) {
+			if (mColor == Color.WHITE)
+				mColor = Color.YELLOW;
+			else
+				mColor = Color.WHITE;
+			setProtectedCounter(getProtectedCounter() - 1);
+		} else
+			mColor = Color.WHITE;
 
 	} //end move
 
+	public void setProtectedCounter(int number) {
+		mProtectedCounter = number;
+	}
+
+	public int getProtectedCounter() {
+		return mProtectedCounter;
+	}
 
 	public void finishMove() {
 
-		//setCenter(getCurrentSquare().getCenter());
+//		//setCenter(getCurrentSquare().getCenter());
 //
 //		int iAdjustRow = 0;
 //		int iAdjustColumn = 0;
@@ -223,13 +225,16 @@ public class Bomberman extends Sprite {
 //
 //		int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
 //		int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
-//		Square finalSquare = CommandCenter.gameBoardSquares[iNextRow][iNextCol];
+//		Square finalSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
 //		if (!finalSquare.isBlocked()) {
 //			setCenter(finalSquare.getCenter());
 //		}
 
 	}
 
+	public int getBombCount() {
+		return mBombCount;
+	}
 
 	public void useBomb() {
 		mBombCount--;
@@ -257,8 +262,16 @@ public class Bomberman extends Sprite {
 	}
 
 	public void setDirectionToMove(Direction direction) {
-		mDirectionToMove = direction;
+			mDirectionToMove = direction;
+
+
+
+
+
 	}
+
+
+
 
 	public void thrustOn() {
 		bThrusting = true;
@@ -279,14 +292,6 @@ public class Bomberman extends Sprite {
 
 	public void draw(Graphics g) {
 
-		//does the fading at the beginning or after hyperspace
-		Color colShip;
-		if (getFadeValue() == 255) {
-			colShip = Color.white;
-		} else {
-			colShip = new Color(adjustColor(getFadeValue(), 200), adjustColor(
-					getFadeValue(), 175), getFadeValue());
-		}
 
 //		//shield on
 //		if (bShield && nShield > 0) {
@@ -300,74 +305,30 @@ public class Bomberman extends Sprite {
 //
 //		} //end if shield
 
-		//thrusting
-		if (bFlame) {
-			g.setColor(colShip);
-			//the flame
-			for (int nC = 0; nC < FLAME.length; nC++) {
-				if (nC % 2 != 0) //odd
-				{
-					pntFlames[nC] = new Point((int) (getCenter().x + 2
-							* getRadius()
-							* Math.sin(Math.toRadians(getOrientation())
-									+ FLAME[nC])), (int) (getCenter().y - 2
-							* getRadius()
-							* Math.cos(Math.toRadians(getOrientation())
-									+ FLAME[nC])));
 
-				} else //even
-				{
-					pntFlames[nC] = new Point((int) (getCenter().x + getRadius()
-							* 1.1
-							* Math.sin(Math.toRadians(getOrientation())
-									+ FLAME[nC])),
-							(int) (getCenter().y - getRadius()
-									* 1.1
-									* Math.cos(Math.toRadians(getOrientation())
-											+ FLAME[nC])));
-
-				} //end even/odd else
-
-			} //end for loop
-
-			for (int nC = 0; nC < FLAME.length; nC++) {
-				nXFlames[nC] = pntFlames[nC].x;
-				nYFlames[nC] = pntFlames[nC].y;
-
-			} //end assign flame points
-
-			//g.setColor( Color.white );
-			g.fillPolygon(nXFlames, nYFlames, FLAME.length);
-
-		} //end if flame
-
-		drawShipWithColor(g, colShip);
+		super.draw(g);
+		g.setColor(mColor);
+		g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
 
 	} //end draw()
 
-	public void drawShipWithColor(Graphics g, Color col) {
-		super.draw(g);
-		g.setColor(col);
-		g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
-		//g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
+
+
+	public int getBlastPower() {
+		return mBlastPower;
 	}
 
+	public void increaseBlastPower() {
+		mBlastPower++;
+	}
 
 	public void setProtected(boolean bParam) {
 		if (bParam) {
-			setFadeValue(0);
+			setProtectedCounter(100);
 		}
 		bProtected = bParam;
 	}
 
-	public void setProtected(boolean bParam, int n) {
-		if (bParam && n % 3 == 0) {
-			setFadeValue(n);
-		} else if (bParam) {
-			setFadeValue(0);
-		}
-		bProtected = bParam;
-	}	
 
 	public boolean getProtected() {return bProtected;}
 	public void setShield(int n) {nShield = n;}

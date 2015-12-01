@@ -6,6 +6,10 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class Sprite implements Movable {
+
+
+	public enum Direction {UP, DOWN, LEFT, RIGHT};
+
 	//the center-point of this sprite
 	private Point pntCenter;
 	//this causes movement; change in x and change in y
@@ -170,7 +174,7 @@ public abstract class Sprite implements Movable {
 		return nRadius;
 	}
 
-	public void setRadius(int n) {
+	public void setSize(int n) {
 		nRadius = n;
 
 	}

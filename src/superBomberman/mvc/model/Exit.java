@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Exit extends Sprite {
 
     public static final int RADIUS = Square.SQUARE_LENGTH / 2;
-
+    private Color mExitColor;
 
     public Exit (Square square) {
 
@@ -26,16 +26,26 @@ public class Exit extends Sprite {
         assignPolarPoints(pntCs);
 
         // set color, radius, and center
-        Color wallColor = Color.YELLOW;
-        setColor(wallColor);
+        setColor(Color.WHITE);
         setCenter(square.getCenter());
-        setRadius(RADIUS);
+        setSize(RADIUS);
 
     }
 
     public void draw(Graphics g) {
+        // alternate colors
+        if (mExitColor == Color.BLACK) {
+            mExitColor = Color.WHITE;
+        } else {
+            mExitColor = Color.BLACK;
+        }
         super.draw(g);
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+
+        g.setColor(mExitColor);
+        int iDrawX = (int) getCenter().getX() - RADIUS / 2;
+        int iDrawY = (int) getCenter().getY() - RADIUS / 2;
+        g.fillRect(iDrawX, iDrawY, RADIUS, RADIUS);
     }
 
 }

@@ -4,24 +4,34 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by RAM0N on 11/27/15.
+ * Wall object
+ * Wall covers single square on gameboard
+ * Wall can be solid or breakable -> blasts can destroy breakable walls
+ * Wall blocks movement of Bomberman, Monster, and blast
+ * Wall can contain a PowerUp if breakable -> spawns PowerUp when destroyed
  */
+
 public class Wall extends Sprite {
-//    fills entire box
-//    public static final int WALL_RADIUS = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH));
 
-    public enum Type {SOLID, BREAKABLE}
+    // enum for type of wall
+    public enum WallType {SOLID, BREAKABLE}
 
-    public static final int WALL_RADIUS = Square.SQUARE_LENGTH / 2;
-    private Type mType;
+    // constant for size
+    public static final int SIZE = Square.SQUARE_LENGTH / 2 + 5;
 
-    public Wall (Square square, Type type) {
+    // private instance members
+    private WallType mWallType;
+    private PowerUp mPowerUpInside;
 
-        // call to super necessary?
-        //super();
+    // constructor
+    public Wall (Square square, WallType wallType) {
+
+        // call super constructor & set team
+        super();
         setTeam(Team.WALL);
 
-        mType = type;
+        // assign wall type
+        mWallType = wallType;
 
         // create list points for shape
         ArrayList<Point> pntCs = new ArrayList<>();
@@ -33,21 +43,43 @@ public class Wall extends Sprite {
         // assign Polar Points
         assignPolarPoints(pntCs);
 
-        // set color, radius, and center
-        Color wallColor = (type == Type.BREAKABLE ? Color.CYAN : Color.BLUE);
-        setColor(wallColor);
+        // set color, center, and size
+        setColor((mWallType == WallType.BREAKABLE) ? new Color(0, 125, 255) : new Color(55, 55, 55));
         setCenter(square.getCenter());
-        setRadius(WALL_RADIUS);
-
+        setSize(SIZE);
     }
 
-    public boolean isBreakable() {
-        return mType == Type.BREAKABLE;
-    }
-
+    @Override
     public void draw(Graphics g) {
+        // draw Wall shape
         super.draw(g);
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+
+        // set color and draw inner square
+        g.setColor((mWallType == WallType.BREAKABLE) ? Color.CYAN : new Color(105, 105, 105));
+        int iDrawX = (int) getCenter().getX() - SIZE / 2;
+        int iDrawY = (int) getCenter().getY() - SIZE / 2;
+        g.fillRect(iDrawX, iDrawY, SIZE, SIZE);
+    }
+
+    // get power up inside the object
+    public PowerUp getPowerUpInside() {
+        return mPowerUpInside;
+    }
+
+    // add a power up to the object
+    public void setPowerUpInside(PowerUp powerUpInside) {
+        mPowerUpInside = powerUpInside;
+    }
+
+    // check if object contains a power up
+    public boolean containsPowerUp() {
+        return mPowerUpInside != null;
+    }
+
+    // check if wall is breakable
+    public boolean isBreakable() {
+        return mWallType == WallType.BREAKABLE;
     }
 
 }

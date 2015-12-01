@@ -3,7 +3,11 @@ package superBomberman.mvc.view;
 import superBomberman.mvc.controller.Game;
 import superBomberman.mvc.model.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -26,6 +30,7 @@ public class GamePanel extends Panel {
 	private int nFontHeight;
 	private String strDisplay = "";
 
+	private BufferedImage backgroundImage;
 	
 
 	// ==============================================================
@@ -37,12 +42,12 @@ public class GamePanel extends Panel {
 		gmf.getContentPane().add(this);
 		gmf.pack();
 		initView();
-		
 		gmf.setSize(dim);
 		gmf.setTitle("Super Bomberman");
 		gmf.setResizable(false);
 		gmf.setVisible(true);
 		this.setFocusable(true);
+
 	}
 	
 	
@@ -54,11 +59,16 @@ public class GamePanel extends Panel {
 	private void drawScore(Graphics g) {
 		g.setColor(Color.white);
 		g.setFont(fnt);
-		//if (CommandCenter.getInstance().getScore() != 0) {
-			g.drawString("SCORE :  " + CommandCenter.getInstance().getScore(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, nFontHeight * 2);
-		//} else {
-		//	g.drawString("NO SCORE", GameBoard.COL_COUNT * 50 + Square.SQUARE_LENGTH / 2 + nFontWidth, nFontHeight);
-	//	}
+		g.drawString("SCORE :  " + CommandCenter.getInstance().getScore(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, nFontHeight * 2);
+	}
+
+	public void drawBackground(Graphics g) {
+			try {
+				backgroundImage = ImageIO.read(new File("/Users/RAM0N/mpcs51036/proFinal/src/superBomberman/images/spaceBackground.png"));
+				g.drawImage(backgroundImage, 0, 0, Game.DIM.width, Game.DIM.height, this);
+			} catch (IOException e) {
+				System.out.println("Error getting image: \n" + e);
+			}
 	}
 
 	private void drawLevel(Graphics g) {
@@ -76,9 +86,12 @@ public class GamePanel extends Panel {
 			imgOff = createImage(Game.DIM.width, Game.DIM.height);
 			grpOff = imgOff.getGraphics();
 		}
-		// Fill in background with black.
-		grpOff.setColor(Color.black);
-		grpOff.fillRect(0, 0, Game.DIM.width, Game.DIM.height);
+
+		// Fill in background with black
+		//drawBackground(grpOff);
+		grpOff.setColor(Color.BLACK);
+
+		grpOff.fillRect(0,0,Game.DIM.width, Game.DIM.height);
 
 		drawScore(grpOff);
 		
@@ -98,7 +111,7 @@ public class GamePanel extends Panel {
 			iterateMovables(grpOff,
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovFriends(),
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovFoes(),
-					(ArrayList<Movable>)  CommandCenter.getInstance().getMovFloaters(),
+					(ArrayList<Movable>)  CommandCenter.getInstance().getMovPowerUps(),
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovBombs(),
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovWalls(),
 					(ArrayList<Movable>)  CommandCenter.getInstance().getMovBlasts(),
@@ -106,6 +119,7 @@ public class GamePanel extends Panel {
 
 
 			drawNumberShipsLeft(grpOff);
+			drawNumberBombs(grpOff);
 			drawLevel(grpOff);
 			if (CommandCenter.getInstance().isGameOver()) {
 				CommandCenter.getInstance().setPlaying(false);
@@ -131,35 +145,44 @@ public class GamePanel extends Panel {
 		}
 		
 	}
-	
+
+	// Draw the number of bombs available
+	private void drawNumberBombs(Graphics g) {
+		g.setColor(Color.white);
+		g.setFont(fnt);
+		g.drawString("BOMBS:  " + CommandCenter.getInstance().getBomberman().getBombCount(),
+				GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, 75);
+	}
+
+
 
 	// Draw the number of falcons left on the bottom-right of the screen. 
 	private void drawNumberShipsLeft(Graphics g) {
-		Bomberman fal = CommandCenter.getInstance().getBomberman();
-		double[] dLens = fal.getLengths();
-		int nLen = fal.getDegrees().length;
+		Bomberman bomberman = CommandCenter.getInstance().getBomberman();
+		double[] dLens = bomberman.getLengths();
+		int nLen = bomberman.getDegrees().length;
 		Point[] pntMs = new Point[nLen];
 		int[] nXs = new int[nLen];
 		int[] nYs = new int[nLen];
 	
 		//convert to cartesean points
 		for (int nC = 0; nC < nLen; nC++) {
-			pntMs[nC] = new Point((int) (10 * dLens[nC] * Math.sin(Math
-					.toRadians(90) + fal.getDegrees()[nC])),
-					(int) (10 * dLens[nC] * Math.cos(Math.toRadians(90)
-							+ fal.getDegrees()[nC])));
+			pntMs[nC] = new Point((int) (15 * dLens[nC] * Math.sin(Math
+					.toRadians(180) + bomberman.getDegrees()[nC])),
+					(int) (15 * dLens[nC] * Math.cos(Math.toRadians(180)
+							+ bomberman.getDegrees()[nC])));
 		}
-		
+
 		//set the color to white
 		g.setColor(Color.white);
 		//for each falcon left (not including the one that is playing)
 		for (int nD = 1; nD < CommandCenter.getInstance().getNumBombermans(); nD++) {
 			//create x and y values for the objects to the bottom right using cartesean points again
-			for (int nC = 0; nC < fal.getDegrees().length; nC++) {
-				nXs[nC] = pntMs[nC].x + GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + (nD - 1) * nFontWidth + 8;
-				nYs[nC] = pntMs[nC].y + nFontHeight * 6;
+			for (int nC = 0; nC < bomberman.getDegrees().length; nC++) {
+				nXs[nC] = pntMs[nC].x + GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + (nD - 1) * nFontWidth + 6 + nD * 5;
+				nYs[nC] = pntMs[nC].y + nFontHeight * 6 + 10;
 			}
-			g.drawPolygon(nXs, nYs, nLen);
+			g.fillPolygon(nXs, nYs, nLen);
 		} 
 	}
 	

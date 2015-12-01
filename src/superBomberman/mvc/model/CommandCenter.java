@@ -23,7 +23,7 @@ public class CommandCenter {
     private List<Movable> movWalls = new ArrayList<Movable>(300);
     private List<Movable> movFriends = new ArrayList<Movable>(100);
     private List<Movable> movFoes = new ArrayList<Movable>(200);
-    private List<Movable> movFloaters = new ArrayList<Movable>(50);
+    private List<Movable> movPowerUps = new ArrayList<Movable>(50);
     private List<Movable> movExits = new ArrayList<>();
 
     private GameOpsList opsList = new GameOpsList();
@@ -54,12 +54,10 @@ public class CommandCenter {
 
     public void startNextLevel() {
         clearAll();
-        System.out.println("clear all");
         setLevel(1); // NEED TO INCREMENT?
         setScore(0);
         setNumBombermans(3);
         setGameBoard();
-        System.out.println("set gameboard");
         spawnBomberman(true);
 
     }
@@ -104,7 +102,7 @@ public class CommandCenter {
         movWalls.clear();
         movFriends.clear();
         movFoes.clear();
-        movFloaters.clear();
+        movPowerUps.clear();
         movExits.clear();
     }
 
@@ -179,14 +177,12 @@ public class CommandCenter {
         return movFriends;
     }
 
-
     public List<Movable> getMovFoes() {
         return movFoes;
     }
 
-
-    public List<Movable> getMovFloaters() {
-        return movFloaters;
+    public List<Movable> getMovPowerUps() {
+        return movPowerUps;
     }
 
     public List<Movable> getMovExits() {return movExits;}

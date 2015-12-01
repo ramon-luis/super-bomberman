@@ -1,145 +1,205 @@
 package superBomberman.mvc.model;
 
+import superBomberman.sounds.Sound;
+
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * creates Bomb object
+ * Bomb exists in single square (one per square) -> shared square with Bomberman at first
+ * Bomb blocks movement of Monster and Bomberman (once moves away from square)
+ * Bomb has limited life -> creates blasts at expiration
  */
 
 
 public class Bomb extends Sprite {
 
-	private final int RADIUS = Square.SQUARE_LENGTH / 2;
+    // constants for radius & life (expiration)
+    private final int RADIUS = Square.SQUARE_LENGTH / 2;
+    private final int EXPIRE = 30; // life of object before expiry
 
-	private final int EXPIRE = 20; // life of object before expiry
-	private boolean mIsSmall;
-	private boolean mIsRedWick;
-	private boolean mIsDetached;
+    // private instance members -> used to alternate sizes and colors
+    private boolean mIsSmall;
+    private boolean mIsRedWick;
+    private boolean mIsExploded;
 
-public Bomb(Bomberman fal){
+    // constructor
+    public Bomb(Square square) {
+        // call super constructor and set team
+        super();
+        setTeam(Team.BOMB);
 
-		// call super constructor and set team
-		super();
-	    setTeam(Team.BOMB);
-		
-		//define the points on a cartesian grid
-		ArrayList<Point> pntCs = new ArrayList<>();
+        //define the points on a cartesian grid
+        ArrayList<Point> pntCs = new ArrayList<>();
+        pntCs.add(new Point(10, 0));
+        pntCs.add(new Point(11, -1));
+        pntCs.add(new Point(12, -2));
+        pntCs.add(new Point(12, -3));
+        pntCs.add(new Point(12, -4));
+        pntCs.add(new Point(13, -5));
+        pntCs.add(new Point(14, -6));
+        pntCs.add(new Point(14, -7));
+        pntCs.add(new Point(14, -8));
+        pntCs.add(new Point(15, -9));
+        pntCs.add(new Point(15, -10));
+        pntCs.add(new Point(14, -10));
+        pntCs.add(new Point(14, -9));
+        pntCs.add(new Point(13, -8));
+        pntCs.add(new Point(13, -7));
+        pntCs.add(new Point(13, -6));
+        pntCs.add(new Point(12, -5));
+        pntCs.add(new Point(11, -4));
+        pntCs.add(new Point(11, -3));
+        pntCs.add(new Point(11, -2));
+        pntCs.add(new Point(10, -1));
+        pntCs.add(new Point(9, 0));
 
-	pntCs.add(new Point(10,0));
-	pntCs.add(new Point(11,-1));
-	pntCs.add(new Point(12,-2));
-	pntCs.add(new Point(12,-3));
-	pntCs.add(new Point(12,-4));
-	pntCs.add(new Point(13,-5));
-	pntCs.add(new Point(14,-6));
-	pntCs.add(new Point(14,-7));
-	pntCs.add(new Point(14,-8));
-	pntCs.add(new Point(15,-9));
-	pntCs.add(new Point(15,-10));
-	pntCs.add(new Point(14,-10));
-	pntCs.add(new Point(14,-9));
-	pntCs.add(new Point(13,-8));
-	pntCs.add(new Point(13,-7));
-	pntCs.add(new Point(13,-6));
-	pntCs.add(new Point(12,-5));
-	pntCs.add(new Point(11,-4));
-	pntCs.add(new Point(11,-3));
-	pntCs.add(new Point(11,-2));
-	pntCs.add(new Point(10,-1));
-	pntCs.add(new Point(9,0));
+        // assign polar points from cartesian points
+        assignPolarPoints(pntCs);
 
-		// assign polar points from cartesian points
-		assignPolarPoints(pntCs);
+        // set expiration and starting radius
+        setExpire(EXPIRE);
+        setSize(RADIUS);
 
-		// set expiration and starting radius
-	    setExpire(EXPIRE);
-	    setRadius(RADIUS);
-	    
-		// set center of object based on location of falcon
-	    setCenter(fal.getCurrentSquare().getCenter());
-		getCurrentSquare().addBomb();
-		CommandCenter.getInstance().getBomberman().useBomb();
+        // set center of object based on location of falcon
+        setCenter(square.getCenter());
+        getCurrentSquare().addBomb();
+        CommandCenter.getInstance().getBomberman().useBomb();
+    }
 
-	}
+    @Override
+    public void move() {
+        super.move();
 
-	public void move(){
-		// call super method move
-		super.move();
+        // if expired, then explode
+        if (getExpire() == 0) {
+            explode();  // create blast in each direction & remove from queue
+        } else {
+            setExpire(getExpire() - 1);  // tick closer to expiration
+        }
+    }
 
-		// if expired, then remove
-		// if first half of life -> grow radius
-		// if second half of life -> shrink radius
-		if (getExpire() == 0) {
+    @Override
+    public void draw(Graphics g) {
+        // call super, update bomb size, update wick color
+        super.draw(g);
+        updateBombSize();
+        updateWickColor();
 
-			// create blast at center, and in each direction
-			int iRow = getCurrentSquare().getRow();
-			int iCol = getCurrentSquare().getColumn();
+        // set size of circle -> alternates between smaller and larger
+        int iSize = (mIsSmall) ? RADIUS - 2 : RADIUS;
 
-			Square squareCenter = getCurrentSquare();
-			Square squareLeft = CommandCenter.getInstance().getGameBoard().getSquare(iRow, iCol - 1);
-			Square squareRight = CommandCenter.getInstance().getGameBoard().getSquare(iRow, iCol + 1);
-			Square squareUp = CommandCenter.getInstance().getGameBoard().getSquare(iRow + 1, iCol);
-			Square squareDown = CommandCenter.getInstance().getGameBoard().getSquare(iRow - 1, iCol);
+        // set colors for bomb and wick
+        Color cBombFill = Color.DARK_GRAY;
+        Color cWickFill = (mIsRedWick) ? Color.RED : Color.WHITE;
 
-			Square[] blastSquares = {squareCenter, squareLeft, squareRight, squareUp, squareDown};
+        // set coordinates to draw the circle of bomb
+        int iDrawX = (int) getCenter().getX() - iSize + 10;
+        int iDrawY = (int) getCenter().getY() - iSize + 10;
 
-			for (Square square : blastSquares) {
-				if (!square.isSolidWall())
-					CommandCenter.getInstance().getOpsList().enqueue(new Blast(square), CollisionOp.Operation.ADD);
+        // set color & draw circle for bomb
+        g.setColor(cBombFill);
+        g.fillOval(iDrawX, iDrawY, iSize * 2 - 15, iSize * 2 - 15);
 
-			}
+        // set color & draw wick
+        g.setColor(cWickFill);
+        g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
+    }
 
-			// remove from queue
-			CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);
+    // create blasts and remove bomb
+    public void explode() {
+        // check if bomb has already been exploded
+        if (!mIsExploded) {
+            // get map of squares that should contain blasts and their direction from current square
+            Map<Square, Direction> blastSquares = getBlastSquares();
 
-		} else {
-//			if (getExpire() > EXPIRE / 2) {
-//				setRadius(getRadius() + 3);
-//			} else {
-//				setRadius(getRadius() - 3);
-//			}
-			// move towards expiry
-			setExpire(getExpire() - 1);
-		}
-	}
+            // add a blast (with direction) for each square in map to the OpsList
+            for (Square blastSquare : blastSquares.keySet()) {
+                CommandCenter.getInstance().getOpsList().enqueue(
+                        new Blast(blastSquare, blastSquares.get(blastSquare)), CollisionOp.Operation.ADD);
+            }
 
-	@Override
-	public void draw(Graphics g) {
-		// set color to be random size & fill oval with random color
-		super.draw(g);
+            // remove from queue
+            getCurrentSquare().removeBomb();
+            Sound.playSound("blast.wav");
+            CommandCenter.getInstance().getBomberman().addBombToUse();
+            CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);
 
-		int iSize = (mIsSmall) ? RADIUS - 2 : RADIUS;
+            // OpsList does not process fast enough -> need to set Bomb to be exploded to prevent multiple collisions
+            mIsExploded = !mIsExploded;
+        }
+    }
 
+    // ****************
+    //  HELPER METHODS
+    // ****************
 
-		Color cBombFill = Color.WHITE;
-		Color cWickFill = (mIsRedWick) ? Color.RED : Color.WHITE;
+    // alternate the size of the bomb
+    private void updateBombSize() {
+        if (getExpire() % 5 == 0)
+            mIsSmall = !mIsSmall;
+    }
 
-		int iDrawX = (int) getCenter().getX() - iSize + 10;
-		int iDrawY = (int) getCenter().getY() - iSize + 10;
+    // alternate the color of the bomb wick
+    private void updateWickColor() {
+        if (getExpire() % 5 == 0)
+                mIsRedWick = !mIsRedWick;
+    }
 
-		g.setColor(cBombFill);
-		g.fillOval(iDrawX, iDrawY, iSize * 2 - 15, iSize * 2 - 15);
+    // returns a map of squares and directions used to create new blasts from the bomb
+    private Map<Square, Direction> getBlastSquares() {
+        // set power for blasts -> based on Bomberman attribute
+        int iBlastPower = CommandCenter.getInstance().getBomberman().getBlastPower();
 
-		g.setColor(cWickFill);
+        // create map to return & add current square
+        Map blastSquares = new HashMap<>();
+        blastSquares.put(getCurrentSquare(), null);
 
-		g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+        // loop through each direction
+        for (Direction direction : Direction.values()) {
+            // within each direction: loop until blast size matches blast power
+            for (int iSquareOffset = 1; iSquareOffset <= iBlastPower; iSquareOffset++) {
+                // get a blast square
+                Square blastSquare = getBlastSquare(iSquareOffset, direction);
+                // if blast square is not a solid wall, then add to map & continue
+                if (!blastSquare.isSolidWall()) {
+                    blastSquares.put(blastSquare, direction);
+                } else {
+                    break;  // else move onto different direction (blast stopped by solid wall)
+                }
+            }
+        }
 
-		if (getExpire() % 10 == 0) {
-			if (mIsSmall)
-				mIsSmall = false;
-			else
-				mIsSmall = true;
-		}
-		if (mIsRedWick)
-			mIsRedWick = false;
-		else
-			mIsRedWick = true;
+        // return the map of squares and directions
+        return blastSquares;
+    }
 
+    // returns a single square -> used to place a Blast
+    private Square getBlastSquare(int offSet, Direction direction) {
+        // get the row and col for current square (i.e. bomb location)
+        int iRow = getCurrentSquare().getRow();
+        int iCol = getCurrentSquare().getColumn();
 
-	}
+        // variables to define what square will have the blast
+        int iColAdjust = 0;
+        int iRowAdjust = 0;
 
+        // adjust the row & col based on the direction
+        if (direction == Direction.LEFT) {
+            iColAdjust = -offSet;
+        } else if (direction == Direction.RIGHT) {
+            iColAdjust = offSet;
+        } else if (direction == Direction.DOWN) {
+            iRowAdjust = -offSet;
+        } else if (direction == Direction.UP) {
+            iRowAdjust = offSet;
+        }
 
-
+        // return the square
+        return CommandCenter.getInstance().getGameBoard().getSquare(iRow + iRowAdjust, iCol + iColAdjust);
+    }
 
 }

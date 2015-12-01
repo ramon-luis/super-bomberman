@@ -47,9 +47,9 @@ public class Asteroid extends Sprite {
 		//an nSize of zero is a big asteroid
 		//a nSize of 1 or 2 is med or small asteroid respectively
 		if (nSize == 0)
-			setRadius(RAD);
+			setSize(RAD);
 		else
-			setRadius(RAD/(nSize * 2));
+			setSize(RAD / (nSize * 2));
 		
 
 	}
@@ -89,7 +89,7 @@ public class Asteroid extends Sprite {
 		//an nSize of zero is a big asteroid
 		//a nSize of 1 or 2 is med or small asteroid respectively
 
-		setRadius(RAD/(nSizeNew * 2));
+		setSize(RAD / (nSizeNew * 2));
 		setCenter(astExploded.getCenter());
 		
 		
