@@ -18,8 +18,8 @@ public class Blast extends Sprite {
 
     // private members
     private Direction mDirection;
-    private boolean mIsRed;
-    boolean bFlexSmaller;
+    private boolean bFlexSmaller;
+    private ArrayList<Monster> mBlastedMonsters;
 
     // constructor
     public Blast(Square square, Direction direction) {
@@ -39,8 +39,19 @@ public class Blast extends Sprite {
         // assign polar points from cartesian points
         assignPolarPoints(getPoints());
 
+        // create empty list for blasted monsters
+        mBlastedMonsters = new ArrayList<>();
+
         // add to opsList
         CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.ADD);
+    }
+
+    public void addToBlastedMonsters(Monster blastedMonster) {
+        mBlastedMonsters.add(blastedMonster);
+    }
+
+    public boolean alreadyBlastedThisMonster(Monster monster) {
+        return mBlastedMonsters.contains(monster);
     }
 
     @Override

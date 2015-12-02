@@ -13,83 +13,35 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Monster extends Sprite {
 
+    public enum MonsterType {SOLDIER, ALIEN}
+
+
     // constants for speed & size
-    private final int SPEED = 4;
     private final int SIZE = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
 
     // private instance members
+    private MonsterType mMonsterType;
+    private ArrayList<Point> mShape;
+    private int mHitsToDestroy;
+    private int mSpeed;
     private Direction mDirectionToMove;
     private PowerUp mPowerUpInside;
 
     // constructor
-    public Monster(Square startingSquare) {
+    public Monster(Square startingSquare, MonsterType monsterType) {
 
         // call super constructor & set team
         super();
         setTeam(Team.FOE);
-
-        //define the points on a cartesian grid
-        ArrayList<Point> pntCs = new ArrayList<>();
-        pntCs.add(new Point(0, 5));
-        pntCs.add(new Point(1, 6));
-        pntCs.add(new Point(2, 6));
-        pntCs.add(new Point(2, 5));
-        pntCs.add(new Point(4, 5));
-        pntCs.add(new Point(4, 6));
-        pntCs.add(new Point(5, 5));
-        pntCs.add(new Point(6, 2));
-        pntCs.add(new Point(6, -2));
-        pntCs.add(new Point(5, -5));
-        pntCs.add(new Point(4, -6));
-        pntCs.add(new Point(4, -5));
-        pntCs.add(new Point(2, -5));
-        pntCs.add(new Point(2, -6));
-        pntCs.add(new Point(1, -6));
-        pntCs.add(new Point(-1, -5));
-        pntCs.add(new Point(-2, -6));
-        pntCs.add(new Point(-6, -6));
-        pntCs.add(new Point(-4, -5));
-        pntCs.add(new Point(-3, -5));
-        pntCs.add(new Point(-1, 0));
-        pntCs.add(new Point(-3, -3));
-        pntCs.add(new Point(-5, -4));
-        pntCs.add(new Point(-5, -5));
-        pntCs.add(new Point(-6, -5));
-        pntCs.add(new Point(-5, -2));
-        pntCs.add(new Point(-4, -3));
-        pntCs.add(new Point(-4, 3));
-        pntCs.add(new Point(-5, 2));
-        pntCs.add(new Point(-6, 5));
-        pntCs.add(new Point(-5, 5));
-        pntCs.add(new Point(-5, 4));
-        pntCs.add(new Point(-3, 3));
-        pntCs.add(new Point(-1, 0));
-        pntCs.add(new Point(-3, 5));
-        pntCs.add(new Point(-4, 5));
-        pntCs.add(new Point(-6, 6));
-        pntCs.add(new Point(-2, 6));
-        pntCs.add(new Point(-1, 5));
-        pntCs.add(new Point(1, 6));
-        pntCs.add(new Point(2, 6));
-        pntCs.add(new Point(2, 5));
-        pntCs.add(new Point(4, 5));
-        pntCs.add(new Point(4, 3));
-        pntCs.add(new Point(3, 2));
-        pntCs.add(new Point(3, -2));
-        pntCs.add(new Point(4, -3));
-        pntCs.add(new Point(4, -5));
-        pntCs.add(new Point(2, -5));
-        pntCs.add(new Point(2, -3));
-        pntCs.add(new Point(2, 3));
-        pntCs.add(new Point(2, 5));
-
-        // assign polar points from cartesian points
-        assignPolarPoints(pntCs);
+        mMonsterType = monsterType;
 
         // set center, size, color, and random direction to move
+        setShape();
         setCenter(startingSquare.getCenter());
         setSize(SIZE);
-        setColor(Color.RED);
+        setMonsterColor();
+        setHitsToDestroy();
+        setSpeed();
         setRandomDirection();
 
     }
@@ -97,32 +49,37 @@ public class Monster extends Sprite {
     @Override
     public void move() {
 
+        // define variables for where to move (square rol/col and sprite x/y)
         int iAdjustRow = 0;
         int iAdjustColumn = 0;
         double dAdjustX = 0;
         double dAdjustY = 0;
 
 
+        // set the target location (square and spite)
         if (mDirectionToMove == Direction.DOWN) {
             iAdjustRow = 1;
-            dAdjustY = SPEED;
+            dAdjustY = mSpeed;
         } else if (mDirectionToMove == Direction.UP) {
             iAdjustRow = -1;
-            dAdjustY = -SPEED;
+            dAdjustY = -mSpeed;
         } else if (mDirectionToMove == Direction.LEFT) {
             iAdjustColumn = -1;
-            dAdjustX = -SPEED;
+            dAdjustX = -mSpeed;
         } else if (mDirectionToMove == Direction.RIGHT) {
             iAdjustColumn = 1;
-            dAdjustX = SPEED;
+            dAdjustX = mSpeed;
         }
 
+        // find the square that object is targeting to move into
         int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
         int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
-
         Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
 
-        if (!targetSquare.isBlocked() || !isPastSquareMidPoint()) {
+        // if the square is not blocked and does not have a foe, then move
+        // otherwise set a new random direction
+        // checking for past halfway allows object to move closer to progress in current square until it is in the middle
+        if ((!targetSquare.isBlocked() && !targetSquare.hasFoe()) || !isPastSquareMidPoint() ) {
             setDeltaX(dAdjustX);
             setDeltaY(dAdjustY);
             super.move();
@@ -194,6 +151,178 @@ public class Monster extends Sprite {
             return getCenter().getX() >= getCurrentSquare().getCenter().getX();
         }
         throw new IllegalArgumentException("could not determine direction");
+    }
+
+    private void setSpeed() {
+        if (mMonsterType == MonsterType.SOLDIER) {
+            mSpeed = 3;
+        } else if (mMonsterType == MonsterType.ALIEN) {
+            mSpeed = 6;
+        }
+    }
+
+    private void setShape() {
+        if (mMonsterType == MonsterType.SOLDIER) {
+            mShape = getSoldierShape();
+        } else if (mMonsterType == MonsterType.ALIEN) {
+            mShape = getAlienShape();
+        }
+
+        assignPolarPoints(mShape);
+    }
+
+    private void setMonsterColor() {
+        if (mMonsterType == MonsterType.SOLDIER) {
+            setColor(Color.RED);
+        } else if (mMonsterType == MonsterType.ALIEN) {
+            setColor(Color.GREEN);
+        }
+    }
+
+
+    private void setHitsToDestroy() {
+        if (mMonsterType == MonsterType.SOLDIER) {
+            mHitsToDestroy = 1;
+        } else if (mMonsterType == MonsterType.ALIEN) {
+            mHitsToDestroy = 3;
+        }
+    }
+
+    public int getHitsToDestroy() {
+        return mHitsToDestroy;
+    }
+    public boolean isDead() {
+        return mHitsToDestroy == 0;
+    }
+
+    public void hitByBlast() {
+        mHitsToDestroy--;
+    }
+
+    private ArrayList<Point> getSoldierShape() {
+
+        // define list to store points
+        ArrayList<Point> pntCs = new ArrayList<>();
+
+        // add each point to outline shape
+        pntCs.add(new Point(0, 5));
+        pntCs.add(new Point(1, 6));
+        pntCs.add(new Point(2, 6));
+        pntCs.add(new Point(2, 5));
+        pntCs.add(new Point(4, 5));
+        pntCs.add(new Point(4, 6));
+        pntCs.add(new Point(5, 5));
+        pntCs.add(new Point(6, 2));
+        pntCs.add(new Point(6, -2));
+        pntCs.add(new Point(5, -5));
+        pntCs.add(new Point(4, -6));
+        pntCs.add(new Point(4, -5));
+        pntCs.add(new Point(2, -5));
+        pntCs.add(new Point(2, -6));
+        pntCs.add(new Point(1, -6));
+        pntCs.add(new Point(-1, -5));
+        pntCs.add(new Point(-2, -6));
+        pntCs.add(new Point(-6, -6));
+        pntCs.add(new Point(-4, -5));
+        pntCs.add(new Point(-3, -5));
+        pntCs.add(new Point(-1, 0));
+        pntCs.add(new Point(-3, -3));
+        pntCs.add(new Point(-5, -4));
+        pntCs.add(new Point(-5, -5));
+        pntCs.add(new Point(-6, -5));
+        pntCs.add(new Point(-5, -2));
+        pntCs.add(new Point(-4, -3));
+        pntCs.add(new Point(-4, 3));
+        pntCs.add(new Point(-5, 2));
+        pntCs.add(new Point(-6, 5));
+        pntCs.add(new Point(-5, 5));
+        pntCs.add(new Point(-5, 4));
+        pntCs.add(new Point(-3, 3));
+        pntCs.add(new Point(-1, 0));
+        pntCs.add(new Point(-3, 5));
+        pntCs.add(new Point(-4, 5));
+        pntCs.add(new Point(-6, 6));
+        pntCs.add(new Point(-2, 6));
+        pntCs.add(new Point(-1, 5));
+        pntCs.add(new Point(1, 6));
+        pntCs.add(new Point(2, 6));
+        pntCs.add(new Point(2, 5));
+        pntCs.add(new Point(4, 5));
+        pntCs.add(new Point(4, 3));
+        pntCs.add(new Point(3, 2));
+        pntCs.add(new Point(3, -2));
+        pntCs.add(new Point(4, -3));
+        pntCs.add(new Point(4, -5));
+        pntCs.add(new Point(2, -5));
+        pntCs.add(new Point(2, -3));
+        pntCs.add(new Point(2, 3));
+        pntCs.add(new Point(2, 5));
+
+        // return the list
+        return pntCs;
+    }
+
+    private ArrayList<Point> getAlienShape() {
+
+        // define list to store points
+        ArrayList<Point> pntCs = new ArrayList<>();
+
+        // add each point to outline shape
+        pntCs.add(new Point(5,15));
+        pntCs.add(new Point(6,14));
+        pntCs.add(new Point(7,13));
+        pntCs.add(new Point(7,9));
+        pntCs.add(new Point(8,8));
+        pntCs.add(new Point(10,8));
+        pntCs.add(new Point(11,15));
+        pntCs.add(new Point(13,15));
+        pntCs.add(new Point(14,13));
+        pntCs.add(new Point(15,8));
+        pntCs.add(new Point(15,-8));
+        pntCs.add(new Point(14,-13));
+        pntCs.add(new Point(13,-15));
+        pntCs.add(new Point(11,-15));
+        pntCs.add(new Point(10,-8));
+        pntCs.add(new Point(8,-8));
+        pntCs.add(new Point(7,-9));
+        pntCs.add(new Point(7,-13));
+        pntCs.add(new Point(6,-14));
+        pntCs.add(new Point(5,-15));
+        pntCs.add(new Point(-15,-15));
+        pntCs.add(new Point(1,-14));
+        pntCs.add(new Point(-6,-13));
+        pntCs.add(new Point(1,-12));
+        pntCs.add(new Point(-15,-11));
+        pntCs.add(new Point(1,-10));
+        pntCs.add(new Point(-6,-9));
+        pntCs.add(new Point(1,-8));
+        pntCs.add(new Point(-15,-7));
+        pntCs.add(new Point(1,-6));
+        pntCs.add(new Point(-6,-5));
+        pntCs.add(new Point(1,-4));
+        pntCs.add(new Point(-15,-3));
+        pntCs.add(new Point(1,-2));
+        pntCs.add(new Point(-6,-1));
+        pntCs.add(new Point(-2,0));
+        pntCs.add(new Point(-6,1));
+        pntCs.add(new Point(1,2));
+        pntCs.add(new Point(-15,3));
+        pntCs.add(new Point(1,4));
+        pntCs.add(new Point(-6,5));
+        pntCs.add(new Point(1,6));
+        pntCs.add(new Point(-15,7));
+        pntCs.add(new Point(1,8));
+        pntCs.add(new Point(-6,9));
+        pntCs.add(new Point(1,10));
+        pntCs.add(new Point(-15,11));
+        pntCs.add(new Point(1,12));
+        pntCs.add(new Point(-6,13));
+        pntCs.add(new Point(1,14));
+        pntCs.add(new Point(-15,15));
+        pntCs.add(new Point(5,15));
+
+        // return the list
+        return pntCs;
     }
 
 }

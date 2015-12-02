@@ -66,6 +66,7 @@ public class Square extends Sprite {
     public void addWall() {
         mIsWall = true;
     }
+
     public boolean containsBomb() {
         return mContainsBomb;
     }
@@ -81,6 +82,14 @@ public class Square extends Sprite {
     // valid move if square is not a wall, block, or breakable
     public boolean isBlocked() {
         return isWall()|| containsBomb();
+    }
+
+    public boolean hasFoe() {
+        for (Movable movFoe : CommandCenter.getInstance().getMovFoes()) {
+            if (movFoe.getCurrentSquare().equals(this))
+                return true;
+        }
+        return false;
     }
 
     @Override

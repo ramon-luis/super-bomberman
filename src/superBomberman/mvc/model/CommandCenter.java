@@ -54,7 +54,7 @@ public class CommandCenter {
 
     public void startNextLevel() {
         clearAll();
-        setLevel(1); // NEED TO INCREMENT?
+        setLevel(getLevel() + 1); // need to end game after last level
         setScore(0);
         setNumBombermans(3);
         setGameBoard();
@@ -66,10 +66,9 @@ public class CommandCenter {
         return mGameBoard;
     }
 
-
     // draw the game board
     public void setGameBoard() {
-		mGameBoard = new GameBoard(1);
+		mGameBoard = new GameBoard(getLevel());
     }
 
 

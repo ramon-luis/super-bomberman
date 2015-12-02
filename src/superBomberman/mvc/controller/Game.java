@@ -31,7 +31,7 @@ public class Game implements Runnable, KeyListener {
 	private boolean bMuted = true;
 
 	private boolean bExitLevel = false;
-	
+
 
 	private final int PAUSE = 80, // p key
 			QUIT = 81, // q key
@@ -65,7 +65,7 @@ public class Game implements Runnable, KeyListener {
 		gmpPanel = new GamePanel(DIM);
 		gmpPanel.addKeyListener(this);
 		clpMusicBackground = Sound.clipForLoopFactory("music-background.wav");
-	
+
 
 	}
 
@@ -109,9 +109,9 @@ public class Game implements Runnable, KeyListener {
 			tick();
 			//spawnNewShipFloater();
 
-			gmpPanel.update(gmpPanel.getGraphics()); // update takes the graphics context we must 
+			gmpPanel.update(gmpPanel.getGraphics()); // update takes the graphics context we must
 														// surround the sleep() in a try/catch block
-														// this simply controls delay time between 
+														// this simply controls delay time between
 														// the frames of the animation
 
 
@@ -120,13 +120,13 @@ public class Game implements Runnable, KeyListener {
 			checkCollisions();
 			checkNewLevel();
 			//this might be a god place to check if the level is clear (no more foes)
-			//if the level is clear then spawn some big asteroids -- the number of asteroids 
-			//should increase with the level. 
+			//if the level is clear then spawn some big asteroids -- the number of asteroids
+			//should increase with the level.
 			checkRevealExit();
 
 			try {
-				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update) 
-				// between frames takes longer than ANI_DELAY, then the difference between lStartTime - 
+				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update)
+				// between frames takes longer than ANI_DELAY, then the difference between lStartTime -
 				// System.currentTimeMillis() will be negative, then zero will be the sleep time
 				lStartTime += ANI_DELAY;
 				Thread.sleep(Math.max(0,
@@ -157,18 +157,32 @@ public class Game implements Runnable, KeyListener {
 
 				// collision if blast and foe same square
 				if (blastSquare.equals(foeSquare)) {
-					// increase score
-					CommandCenter.getInstance().setScore(CommandCenter.getInstance().getScore() + 100);
+					Blast blast = (Blast) movBlast;
+                    Monster monster = (Monster) movFoe;
+                    System.out.println("blast and foe square collide");
 
-					// check for power up
-					if (((Monster) movFoe).containsPowerUp()) {
-						PowerUp powerUp = ((Monster) movFoe).getPowerUpInside();
-						powerUp.setSquare(foeSquare);
-						CommandCenter.getInstance().getMovPowerUps().add(powerUp);
-					}
+                    // check if this is first time this blast and monster have collided
+                    if (!blast.alreadyBlastedThisMonster(monster)) {
+                        // connect the blast and monster -> prevents multiple hits from single blast
+                        blast.addToBlastedMonsters(monster);
+                        // add hit to foe
+                        monster.hitByBlast();
+                        // increase score
+                        CommandCenter.getInstance().setScore(CommandCenter.getInstance().getScore() + 100);
 
-					// remove for from OpsList
-					CommandCenter.getInstance().getOpsList().enqueue(movFoe, CollisionOp.Operation.REMOVE);
+                        // check if monster dead
+                        if (monster.isDead()) {
+                            // check for power up
+                            if (monster.containsPowerUp()) {
+                                PowerUp powerUp = monster.getPowerUpInside();
+                                powerUp.setSquare(foeSquare);
+                                CommandCenter.getInstance().getMovPowerUps().add(powerUp);
+                            }
+
+                            // remove for from OpsList
+                            CommandCenter.getInstance().getOpsList().enqueue(movFoe, CollisionOp.Operation.REMOVE);
+                        }
+                    }
 				}
 			}
 
@@ -349,22 +363,22 @@ public class Game implements Runnable, KeyListener {
 		}
 		//a request to the JVM is made every frame to garbage collect, however, the JVM will choose when and how to do this
 		System.gc();
-		
+
 	}//end meth
 
 	private void killFoe(Movable movFoe) {
-		
+
 		if (movFoe instanceof Asteroid){
 
 			//we know this is an Asteroid, so we can cast without threat of ClassCastException
 			Asteroid astExploded = (Asteroid)movFoe;
-			//big asteroid 
+			//big asteroid
 			if(astExploded.getSize() == 0){
 				//spawn two medium Asteroids
 				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
 				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
 
-			} 
+			}
 			//medium size aseroid exploded
 			else if(astExploded.getSize() == 1){
 				//spawn three small Asteroids
@@ -374,7 +388,7 @@ public class Game implements Runnable, KeyListener {
 
 			}
 
-		} 
+		}
 
 		//remove the original Foe
 		CommandCenter.getInstance().getOpsList().enqueue(movFoe, CollisionOp.Operation.REMOVE);
@@ -382,7 +396,7 @@ public class Game implements Runnable, KeyListener {
 	}
 
 	//some methods for timing events in the game,
-	//such as the appearance of UFOs, floaters (power-ups), etc. 
+	//such as the appearance of UFOs, floaters (power-ups), etc.
 	public void tick() {
 		if (nTick == Integer.MAX_VALUE)
 			nTick = 0;
@@ -423,7 +437,7 @@ public class Game implements Runnable, KeyListener {
 
 		}
 	}
-	
+
 	private void exitLevel() {
 		bExitLevel = true;
 	}
@@ -449,7 +463,7 @@ public class Game implements Runnable, KeyListener {
 	}
 
 	private void checkNewLevel(){
-		
+
 		if (bExitLevel){
 			if (CommandCenter.getInstance().getBomberman() !=null)
 				CommandCenter.getInstance().getBomberman().setProtected(true);
@@ -458,9 +472,9 @@ public class Game implements Runnable, KeyListener {
 
 		}
 	}
-	
-	
-	
+
+
+
 
 	// Varargs for stopping looping-music-clips
 	private static void stopLoopingSounds(Clip... clpClips) {
@@ -554,13 +568,13 @@ public class Game implements Runnable, KeyListener {
 					Sound.playSound("bloop.wav");
 				}
 				break;
-				
-			//special is a special weapon, current it just fires the cruise missile. 
+
+			//special is a special weapon, current it just fires the cruise missile.
 			case SPECIAL:
 				//CommandCenter.getInstance().getOpsList().enqueue(new Cruise(bomberman), CollisionOp.Operation.ADD);
 				//Sound.playSound("laser.wav");
 				break;
-				
+
 			case LEFT:
 				bomberman.thrustOff();
 				bomberman.finishMove();
@@ -585,15 +599,15 @@ public class Game implements Runnable, KeyListener {
 				if (!bMuted){
 					stopLoopingSounds(clpMusicBackground);
 					bMuted = !bMuted;
-				} 
+				}
 				else {
 					clpMusicBackground.start();
 					clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 					bMuted = !bMuted;
 				}
 				break;
-				
-				
+
+
 			default:
 				break;
 			}
