@@ -1,21 +1,73 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
-check if blast square == wall square, if YES -> no blast
-update visuals: blasts, walls. background
-add power-ups (larger blast, more bombs, new weapons)
-add more weapons (kick, punch, detonate)
-update sounds
-correct orientation of mini-bomberman for lives
-no blast collision if invincible
-add more levels -> randomize elements of given level?
-correct movement of Bomberman & Monster - don't allow overlap of walls
-2-player mode
-improve AI of monsters
-add bomb-related music (Bombtrack, Super Bon Bon)
+ENEMIES:
+make alien change colors when hit
+refactor Monsters - abstract class that inherits
+make 3rd monster
+
+GAMEBOARD FIXES:
+update code to add monsters to gameboard for more monster types - PENDING
+add more levels - PENDING
+
+POLISH FOR "FINAL"
+fix Bomberman shape
+check all sounds
+    new level sound
+    change exit reveal
+    change background music?
+update win game:
+    first: call win game screen
+
+GAMEPLAY ADDITIONS:
+add extra life
+add kick as weapon
+add invincible power up
+add bad power up -> bomb count == 0 temporary, play bad music
+add shield -> only usable when holding down shield button
+
+
+VISUAL UPDATES:
+squares made up of different shaded triangles to add texture?
+create models that do not Collide for scenery -> stars, floorboards, etc?
+update welcome screen
+    // add each character to front
+    // replace O with bomb in title
+    // add flashing bomb to pause screen
+change lives display to be icon + #
+draw bomberman moving in different directions
+add squares around key info: score, lives, bombs, power ups
 
 REFACTOR
-blast to accept square instead of point
+Clean up all code
+
+
+
+EXTRAS IF TIME
+2-player mode or add boss
+correct movement of Bomberman & Monster - don't allow overlap of walls
+improve AI of monsters? -> use pacMan logic?
+add bomb-related music (Bombtrack, Super Bon Bon)
+bombs destroy power ups?
+    have to check if blast that creates power up will also remove power up
+
+
+
+DONE
+monsters block each other
+randomly assign exit
+randomly assign power ups
+add icon for bombs remaining
+update invincible to start: remove fade & add flashing
+correct orientation of mini-bomberman for lives
+blast should explode bomb on collide
+create larger blast power up
+Exit only revealed when ALL ENEMIES GONE
+update visuals: blasts, walls. background
+check if blast square == wall square, if YES -> no blast
+
+
+
 
 
 create grid of 143 (13 wide x 11 tall) squares -> add 1 each side for outer wall (14 x 12)

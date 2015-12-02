@@ -49,7 +49,97 @@ public class Bomberman extends Sprite {
 	// ==============================================================
 	// CONSTRUCTOR 
 	// ==============================================================
-	
+
+
+	public Bomberman (Boolean isForGamePlay) {
+		super();
+
+		if (isForGamePlay) {
+			throw new IllegalArgumentException("used for image only");
+		}
+//		setTeam(Team.FRIEND);
+//		mBombCount = 2;
+//		mBlastPower = 1;
+//		mDirectionToMove = Direction.UP;
+
+		ArrayList<Point> pntCs = new ArrayList<Point>();
+
+		// draw the bomberman
+		pntCs.add(new Point(0,5));
+		pntCs.add(new Point(1,6));
+		pntCs.add(new Point(2,6));
+		pntCs.add(new Point(2,5));
+		pntCs.add(new Point(4,5));
+		pntCs.add(new Point(4,6));
+		pntCs.add(new Point(5,5));
+		pntCs.add(new Point(6,4));
+		pntCs.add(new Point(6,-4));
+		pntCs.add(new Point(5,-5));
+		pntCs.add(new Point(4,-6));
+		pntCs.add(new Point(4,-5));
+		pntCs.add(new Point(2,-5));
+		pntCs.add(new Point(2,-6));
+		pntCs.add(new Point(1,-6));
+		pntCs.add(new Point(0,-2));
+
+		pntCs.add(new Point(-1,-5));
+		pntCs.add(new Point(-2,-6));
+		pntCs.add(new Point(-4,-6));
+		pntCs.add(new Point(-4,-5));
+		pntCs.add(new Point(-3,-5));
+
+		pntCs.add(new Point(-3,-4));
+		pntCs.add(new Point(-4,-3));
+		pntCs.add(new Point(-5,-4));
+		pntCs.add(new Point(-5,-5));
+		pntCs.add(new Point(-6,-5));
+		pntCs.add(new Point(-6,-2));
+		pntCs.add(new Point(-5,-2));
+		pntCs.add(new Point(-5,2));
+
+		pntCs.add(new Point(-6,2));
+		pntCs.add(new Point(-6,5));
+		pntCs.add(new Point(-5,5));
+		pntCs.add(new Point(-5,4));
+		pntCs.add(new Point(-4,3));
+		pntCs.add(new Point(-3,4));
+		pntCs.add(new Point(-3,5));
+		pntCs.add(new Point(-4,5));
+		pntCs.add(new Point(-4,6));
+		pntCs.add(new Point(-2,6));
+		pntCs.add(new Point(-1,5));
+		pntCs.add(new Point(0,2));
+		pntCs.add(new Point(1,6));
+
+
+		pntCs.add(new Point(2,6));
+		pntCs.add(new Point(2,5));
+		pntCs.add(new Point(4,5));
+		pntCs.add(new Point(4,-5));
+		pntCs.add(new Point(2,-5));
+		pntCs.add(new Point(2,-3));
+		pntCs.add(new Point(3,-2));
+		pntCs.add(new Point(3,2));
+		pntCs.add(new Point(2,3));
+		pntCs.add(new Point(2,5));
+
+		// assign to polar points
+		assignPolarPoints(pntCs);
+//
+//		setColor(Color.white);
+
+//		// place in bottom upper left corner
+//		mRow = 1;
+//		mColumn = 1;
+//		mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
+//		setCenter(mCurrentSquare.getCenter());
+
+
+		//this is the size of the falcon
+		//setSize(RADIUS);
+
+	}
+
 	public Bomberman() {
 		super();
 		setTeam(Team.FRIEND);

@@ -19,7 +19,8 @@ public class Game implements Runnable, KeyListener {
 	// FIELDS
 	// ===============================================
 
-	public static final Dimension DIM = new Dimension(GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + 150, GameBoard.ROW_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH/2); //the dimension of the game.
+	public static final Dimension DIM = new Dimension(GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + 150,
+            GameBoard.ROW_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH/2); //the dimension of the game.
 	private GamePanel gmpPanel;
 	public static Random R = new Random();
 	public final static int ANI_DELAY = 45; // milliseconds between screen
@@ -159,7 +160,6 @@ public class Game implements Runnable, KeyListener {
 				if (blastSquare.equals(foeSquare)) {
 					Blast blast = (Blast) movBlast;
                     Monster monster = (Monster) movFoe;
-                    System.out.println("blast and foe square collide");
 
                     // check if this is first time this blast and monster have collided
                     if (!blast.alreadyBlastedThisMonster(monster)) {
@@ -364,36 +364,8 @@ public class Game implements Runnable, KeyListener {
 		//a request to the JVM is made every frame to garbage collect, however, the JVM will choose when and how to do this
 		System.gc();
 
-	}//end meth
-
-	private void killFoe(Movable movFoe) {
-
-		if (movFoe instanceof Asteroid){
-
-			//we know this is an Asteroid, so we can cast without threat of ClassCastException
-			Asteroid astExploded = (Asteroid)movFoe;
-			//big asteroid
-			if(astExploded.getSize() == 0){
-				//spawn two medium Asteroids
-				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
-				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
-
-			}
-			//medium size aseroid exploded
-			else if(astExploded.getSize() == 1){
-				//spawn three small Asteroids
-				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
-				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
-				CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(astExploded), CollisionOp.Operation.ADD);
-
-			}
-
-		}
-
-		//remove the original Foe
-		CommandCenter.getInstance().getOpsList().enqueue(movFoe, CollisionOp.Operation.REMOVE);
-
 	}
+
 
 	//some methods for timing events in the game,
 	//such as the appearance of UFOs, floaters (power-ups), etc.
@@ -404,18 +376,6 @@ public class Game implements Runnable, KeyListener {
 			nTick++;
 	}
 
-	public int getTick() {
-		return nTick;
-	}
-
-	private void spawnNewShipFloater() {
-		//make the appearance of power-up dependent upon ticks and levels
-		//the higher the level the more frequent the appearance
-		if (nTick % (SPAWN_NEW_SHIP_FLOATER - nLevel * 7) == 0) {
-			//Cc.getInstance().getMovPowerUps().enqueue(new NewShipFloater());
-			//CommandCenter.getInstance().getOpsList().enqueue(new NewShipFloater(), CollisionOp.Operation.ADD);
-		}
-	}
 
 	// Called when user presses 's'
 	private void startGame() {
@@ -429,14 +389,6 @@ public class Game implements Runnable, KeyListener {
 		    clpMusicBackground.loop(Clip.LOOP_CONTINUOUSLY);
 	}
 
-	//this method spawns new asteroids
-	private void spawnAsteroids(int nNum) {
-		for (int nC = 0; nC < nNum; nC++) {
-			//Asteroids with size of zero are big
-			CommandCenter.getInstance().getOpsList().enqueue(new Asteroid(0), CollisionOp.Operation.ADD);
-
-		}
-	}
 
 	private void exitLevel() {
 		bExitLevel = true;
@@ -472,8 +424,6 @@ public class Game implements Runnable, KeyListener {
 
 		}
 	}
-
-
 
 
 	// Varargs for stopping looping-music-clips
@@ -527,7 +477,6 @@ public class Game implements Runnable, KeyListener {
 			case LEFT:
 				// set the direction to left
 				bomberman.setDirectionToMove(Bomberman.Direction.LEFT);
-				// thrust so that it moves
 				bomberman.thrustOn();
 
 				//fal.rotateLeft();
