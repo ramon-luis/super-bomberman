@@ -12,46 +12,36 @@ import java.util.ArrayList;
 public class Blast extends Sprite {
 
     // constants for default radius and expiration
-    private static final int EXPIRE = 20;
-    private static final int RADIUS = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2 - EXPIRE / 2;
+    private static final int EXPIRE = 16;
+    private static final int SIZE = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2 - EXPIRE / 2;
 
 
     // private members
     private Direction mDirection;
-    private boolean bFlexSmaller;
-    private ArrayList<Monster> mBlastedMonsters;
+    private ArrayList<Enemy> mBlastedEnemies;
 
     // constructor
-    public Blast(Square square, Direction direction) {
+    public Blast(Direction direction) {
         // call super constructor
         super();
 
-        // assign direction -> used to determine shape of blast
-        mDirection = direction;
-        bFlexSmaller = true;
+        // set instance members
+        mDirection = direction;  // assign direction -> used to determine shape of blast
+        mBlastedEnemies = new ArrayList<>();  // create empty list for blasted monsters
 
-        // set team expiration, radius, and center
+        // set team, shape, size, radius, and expiry
         setTeam(Team.BLAST);
+        setShape(getShapeAsCartesianPoints());
+        setSize(SIZE);
         setExpire(EXPIRE);
-        setSize(RADIUS);
-        setCenter(square.getCenter());
-
-        // assign polar points from cartesian points
-        assignPolarPoints(getPoints());
-
-        // create empty list for blasted monsters
-        mBlastedMonsters = new ArrayList<>();
-
-        // add to opsList
-        CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.ADD);
     }
 
-    public void addToBlastedMonsters(Monster blastedMonster) {
-        mBlastedMonsters.add(blastedMonster);
+    public void addToBlastedMonsters(Enemy blastedEnemy) {
+        mBlastedEnemies.add(blastedEnemy);
     }
 
-    public boolean alreadyBlastedThisMonster(Monster monster) {
-        return mBlastedMonsters.contains(monster);
+    public boolean alreadyBlastedThisEnemy(Enemy enemy) {
+        return mBlastedEnemies.contains(enemy);
     }
 
     @Override
@@ -60,10 +50,10 @@ public class Blast extends Sprite {
         super.move();
 
         // remove if expired
-        if (getExpire() == 0)
+        if (getExpire() == 0) {
             CommandCenter.getInstance().getOpsList().enqueue(this, CollisionOp.Operation.REMOVE);
-        else {
-            updateRadius();  // update radius so that it grows & shrinks
+        } else {
+            updateSize();  // update radius so that it grows & shrinks
             setExpire(getExpire() - 1);  // move towards expiry
         }
     }
@@ -84,11 +74,11 @@ public class Blast extends Sprite {
     // ****************
 
     // grow size for 1st half of life, then shrink
-    private void updateRadius() {
+    private void updateSize() {
         if (getExpire() > EXPIRE / 2) {
-            setSize(getRadius() + 1);
+            setSize(getSize() + 1);
         } else  {
-            setSize(getRadius() - 1);
+            setSize(getSize() - 1);
         }
     }
 
@@ -111,7 +101,7 @@ public class Blast extends Sprite {
     }
 
     // returns array of points used to draw the blast shape -> dependent on direction of blast
-    private ArrayList<Point> getPoints() {
+    private ArrayList<Point> getShapeAsCartesianPoints() {
         //define the points on cartesian grid
         ArrayList<Point> pntCs = new ArrayList<>();
 

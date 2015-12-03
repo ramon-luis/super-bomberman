@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class Bomb extends Sprite {
 
-    // constants for radius & life (expiration)
-    private final int RADIUS = Square.SQUARE_LENGTH / 2;
+    // constants for size & life (expiration)
+    private final int SIZE = Square.SQUARE_LENGTH / 2;
     private final int EXPIRE = 30; // life of object before expiry
 
     // private instance members -> used to alternate sizes and colors
@@ -27,47 +27,14 @@ public class Bomb extends Sprite {
     private boolean mIsExploded;
 
     // constructor
-    public Bomb(Square square) {
-        // call super constructor and set team
+    public Bomb() {
+        // call super constructor
         super();
+
+        // set team, shape, expiration, and size
         setTeam(Team.BOMB);
-
-        //define the points on a cartesian grid
-        ArrayList<Point> pntCs = new ArrayList<>();
-        pntCs.add(new Point(10, 0));
-        pntCs.add(new Point(11, -1));
-        pntCs.add(new Point(12, -2));
-        pntCs.add(new Point(12, -3));
-        pntCs.add(new Point(12, -4));
-        pntCs.add(new Point(13, -5));
-        pntCs.add(new Point(14, -6));
-        pntCs.add(new Point(14, -7));
-        pntCs.add(new Point(14, -8));
-        pntCs.add(new Point(15, -9));
-        pntCs.add(new Point(15, -10));
-        pntCs.add(new Point(14, -10));
-        pntCs.add(new Point(14, -9));
-        pntCs.add(new Point(13, -8));
-        pntCs.add(new Point(13, -7));
-        pntCs.add(new Point(13, -6));
-        pntCs.add(new Point(12, -5));
-        pntCs.add(new Point(11, -4));
-        pntCs.add(new Point(11, -3));
-        pntCs.add(new Point(11, -2));
-        pntCs.add(new Point(10, -1));
-        pntCs.add(new Point(9, 0));
-
-        // assign polar points from cartesian points
-        assignPolarPoints(pntCs);
-
-        // set expiration and starting radius
+        setShape(getShapeAsCartesianPoints());
         setExpire(EXPIRE);
-        setSize(RADIUS);
-
-        // set center of object based on location of falcon
-        setCenter(square.getCenter());
-        getCurrentSquare().addBomb();
-        CommandCenter.getInstance().getBomberman().useBomb();
     }
 
     @Override
@@ -90,7 +57,7 @@ public class Bomb extends Sprite {
         updateWickColor();
 
         // set size of circle -> alternates between smaller and larger
-        int iSize = (mIsSmall) ? RADIUS - 2 : RADIUS;
+        int iSize = (mIsSmall) ? SIZE - 2 : SIZE;
 
         // set colors for bomb and wick
         Color cBombFill = Color.DARK_GRAY;
@@ -118,8 +85,9 @@ public class Bomb extends Sprite {
 
             // add a blast (with direction) for each square in map to the OpsList
             for (Square blastSquare : blastSquares.keySet()) {
-                CommandCenter.getInstance().getOpsList().enqueue(
-                        new Blast(blastSquare, blastSquares.get(blastSquare)), CollisionOp.Operation.ADD);
+                Blast blast = new Blast(blastSquares.get(blastSquare));
+                blast.setCenter(blastSquare.getCenter());
+                CommandCenter.getInstance().getOpsList().enqueue(blast, CollisionOp.Operation.ADD);
             }
 
             // remove from queue
@@ -200,6 +168,40 @@ public class Bomb extends Sprite {
 
         // return the square
         return CommandCenter.getInstance().getGameBoard().getSquare(iRow + iRowAdjust, iCol + iColAdjust);
+    }
+
+    // get the shape of the object
+    private ArrayList<Point> getShapeAsCartesianPoints() {
+
+        // define list to store points
+        ArrayList<Point> pntCs = new ArrayList<>();
+
+        // add each point to outline shape
+        pntCs.add(new Point(10, 0));
+        pntCs.add(new Point(11, -1));
+        pntCs.add(new Point(12, -2));
+        pntCs.add(new Point(12, -3));
+        pntCs.add(new Point(12, -4));
+        pntCs.add(new Point(13, -5));
+        pntCs.add(new Point(14, -6));
+        pntCs.add(new Point(14, -7));
+        pntCs.add(new Point(14, -8));
+        pntCs.add(new Point(15, -9));
+        pntCs.add(new Point(15, -10));
+        pntCs.add(new Point(14, -10));
+        pntCs.add(new Point(14, -9));
+        pntCs.add(new Point(13, -8));
+        pntCs.add(new Point(13, -7));
+        pntCs.add(new Point(13, -6));
+        pntCs.add(new Point(12, -5));
+        pntCs.add(new Point(11, -4));
+        pntCs.add(new Point(11, -3));
+        pntCs.add(new Point(11, -2));
+        pntCs.add(new Point(10, -1));
+        pntCs.add(new Point(9, 0));
+
+        // return the list
+        return pntCs;
     }
 
 }

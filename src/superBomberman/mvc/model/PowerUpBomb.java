@@ -10,10 +10,7 @@ import java.util.ArrayList;
 
 
 public class PowerUpBomb extends PowerUp {
-
-    // constant for radius
-    private final int RADIUS = Square.SQUARE_LENGTH / 2 - 5;
-
+    
     // private instance members
     private Color mSquareColor;  // used to flash color of square that surrounds power up
 
@@ -21,13 +18,47 @@ public class PowerUpBomb extends PowerUp {
     public PowerUpBomb() {
         // call super constructor, team, and type of power up
         super();
+
+        // set team, type, shape, and size
         setTeam(Team.POWERUP);
         setPowerUpType(PowerUpType.BOMB);
+        setShape(getShapeAsCartesianPoints());
+    }
 
-        //define the points on a cartesian grid
+    @Override
+    public void draw(Graphics g) {
+        // alternate the color the square so that it flashes
+        if (mSquareColor == Color.YELLOW) {
+            mSquareColor = Color.WHITE;
+        } else {
+            mSquareColor = Color.YELLOW;
+        }
+
+        // draw a square
+        g.setColor(mSquareColor);
+        int iRecX = (int) getCenter().getX() - SIZE;
+        int iRecY = (int) getCenter().getY() - SIZE;
+        g.fillRect(iRecX, iRecY, SIZE * 2, SIZE * 2);
+
+        // draw the polygon over the square - bomb wick
+        setColor(Color.BLACK);
+        super.draw(g);
+        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+
+        // draw a circle over the square -> main bomb shape
+        int iOvalX = (int) getCenter().getX() - SIZE / 2;
+        int iOvalY = (int) getCenter().getY() - SIZE / 2;
+        g.setColor(Color.BLACK);
+        g.fillOval(iOvalX, iOvalY, SIZE * 2 - 15, SIZE * 2 - 15);
+    }
+
+    // get the shape of the object
+    private ArrayList<Point> getShapeAsCartesianPoints() {
+
+        // define list to store points
         ArrayList<Point> pntCs = new ArrayList<>();
 
-        // points to draw the wick of the bomb
+        // add each point to outline shape
         pntCs.add(new Point(10, 0));
         pntCs.add(new Point(11, -1));
         pntCs.add(new Point(12, -2));
@@ -51,38 +82,9 @@ public class PowerUpBomb extends PowerUp {
         pntCs.add(new Point(10, -1));
         pntCs.add(new Point(9, 0));
 
-        // assign polar points from cartesian points
-        assignPolarPoints(pntCs);
-
-        // set radius, center
-        setSize(RADIUS);
+        // return the list
+        return pntCs;
     }
 
-    @Override
-    public void draw(Graphics g) {
-        // alternate the color the square so that it flashes
-        if (mSquareColor == Color.YELLOW) {
-            mSquareColor = Color.WHITE;
-        } else {
-            mSquareColor = Color.YELLOW;
-        }
-
-        // draw a square
-        g.setColor(mSquareColor);
-        int iRecX = (int) getCenter().getX() - RADIUS;
-        int iRecY = (int) getCenter().getY() - RADIUS;
-        g.fillRect(iRecX, iRecY, RADIUS * 2, RADIUS * 2);
-
-        // draw the polygon over the square - bomb wick
-        setColor(Color.BLACK);
-        super.draw(g);
-        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
-
-        // draw a circle over the square -> main bomb shape
-        int iOvalX = (int) getCenter().getX() - RADIUS / 2;
-        int iOvalY = (int) getCenter().getY() - RADIUS / 2;
-        g.setColor(Color.BLACK);
-        g.fillOval(iOvalX, iOvalY, RADIUS * 2 - 15, RADIUS * 2 - 15);
-    }
 
 }

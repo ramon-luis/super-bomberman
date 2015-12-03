@@ -216,8 +216,8 @@ public class Bomberman extends Sprite {
 		// place in bottom upper left corner
 		mRow = 1;
 		mColumn = 1;
-		mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
-		setCenter(mCurrentSquare.getCenter());
+		//mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
+		//setCenter(mCurrentSquare.getCenter());
 
 
 		//this is the size of the falcon
@@ -389,9 +389,9 @@ public class Bomberman extends Sprite {
 //			setShield(getShield() - 1);
 //
 //			g.setColor(Color.cyan);
-//			g.drawOval(getCenter().x - getRadius(),
-//					getCenter().y - getRadius(), getRadius() * 2,
-//					getRadius() * 2);
+//			g.drawOval(getCenter().x - getSize(),
+//					getCenter().y - getSize(), getSize() * 2,
+//					getSize() * 2);
 //
 //		} //end if shield
 

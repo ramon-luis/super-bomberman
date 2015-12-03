@@ -21,7 +21,7 @@ public abstract class Sprite implements Movable {
 	private Team mTeam;
 
 	//the radius of circumscibing circle
-	private int nRadius;
+	private int nSize;
 
 	private int nOrientation;
 	private int nExpiry; //natural mortality (short-living objects)
@@ -81,9 +81,6 @@ public abstract class Sprite implements Movable {
 
 	}
 
-
-
-
 	public Sprite() {
 
 	//you can override this and many more in the subclasses
@@ -91,8 +88,6 @@ public abstract class Sprite implements Movable {
 		setColor(Color.white);
 		setCenter(new Point(Game.R.nextInt(Game.DIM.width),
 				Game.R.nextInt(Game.DIM.height)));
-
-
 	}
 
 	public void setExpire(int n) {
@@ -170,13 +165,18 @@ public abstract class Sprite implements Movable {
 		return dDeltaX;
 	}
 
-	public int getRadius() {
-		return nRadius;
+	public int getSize() {
+		return nSize;
 	}
 
 	public void setSize(int n) {
-		nRadius = n;
+		nSize = n;
 
+	}
+
+	// get the shape of the sprite -> assign polar points from cartesian ones
+	public void setShape(ArrayList<Point> shapeAsCartesianPoints) {
+		assignPolarPoints(shapeAsCartesianPoints);
 	}
 
 	public Dimension getDim() {
@@ -297,10 +297,10 @@ public abstract class Sprite implements Movable {
         
 
         for (int nC = 0; nC < dDegrees.length; nC++) {
-            nXCoords[nC] =    (int) (getCenter().x + getRadius() 
+            nXCoords[nC] =    (int) (getCenter().x + getSize()
                             * dLengths[nC] 
                             * Math.sin(Math.toRadians(getOrientation()) + dDegrees[nC]));
-            nYCoords[nC] =    (int) (getCenter().y - getRadius()
+            nYCoords[nC] =    (int) (getCenter().y - getSize()
                             * dLengths[nC]
                             * Math.cos(Math.toRadians(getOrientation()) + dDegrees[nC]));
             

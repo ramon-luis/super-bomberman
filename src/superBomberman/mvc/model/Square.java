@@ -84,11 +84,18 @@ public class Square extends Sprite {
         return isWall()|| containsBomb();
     }
 
-    public boolean hasFoe() {
-        for (Movable movFoe : CommandCenter.getInstance().getMovFoes()) {
-            if (movFoe.getCurrentSquare().equals(this))
+    public boolean hasEnemy() {
+        for (Movable movEnemy : CommandCenter.getInstance().getMovEnemies()) {
+            if (movEnemy.getCurrentSquare().equals(this))
                 return true;
         }
+        return false;
+    }
+
+    public boolean hasBlast() {
+        for (Movable movBlast : CommandCenter.getInstance().getMovBlasts())
+            if (movBlast.getCurrentSquare().equals(this))
+                return true;
         return false;
     }
 

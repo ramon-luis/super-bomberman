@@ -8,6 +8,9 @@ import java.util.List;
 
 public class CommandCenter {
 
+    public static final int MAX_LEVEL = 7;
+    private boolean mAllLevelsComplete;
+
     private GameBoard mGameBoard;
 
     private int nNumBombermans;
@@ -22,7 +25,7 @@ public class CommandCenter {
     private List<Movable> movBlasts = new ArrayList<>(300);
     private List<Movable> movWalls = new ArrayList<Movable>(300);
     private List<Movable> movFriends = new ArrayList<Movable>(100);
-    private List<Movable> movFoes = new ArrayList<Movable>(200);
+    private List<Movable> movEnemies = new ArrayList<Movable>(200);
     private List<Movable> movPowerUps = new ArrayList<Movable>(50);
     private List<Movable> movExits = new ArrayList<>();
 
@@ -45,12 +48,18 @@ public class CommandCenter {
 
 
     public void initGame() {
-        setLevel(1);
+        clearAll();
+        setLevel(3);
         setScore(0);
         setNumBombermans(3);
         setGameBoard();
         spawnBomberman(true);
+        setPlaying(true);
+        setPaused(false);
+        setAllLevelsComplete(false);
     }
+
+
 
     public void startNextLevel() {
         clearAll();
@@ -77,6 +86,7 @@ public class CommandCenter {
     public void spawnBomberman(boolean bFirst) {
         if (getNumBombermans() != 0) {
             mBomberman = new Bomberman();
+            mBomberman.setCenter(getGameBoard().getSquare(1,1).getCenter());
             //movFriends.enqueue(mBomberman);
             opsList.enqueue(mBomberman, CollisionOp.Operation.ADD);
             if (!bFirst)
@@ -100,9 +110,21 @@ public class CommandCenter {
         movBlasts.clear();
         movWalls.clear();
         movFriends.clear();
-        movFoes.clear();
+        movEnemies.clear();
         movPowerUps.clear();
         movExits.clear();
+    }
+
+    public boolean currentLevelIsMaxLevel() {
+        return getLevel() == MAX_LEVEL;
+    }
+
+    public void setAllLevelsComplete(boolean bParam) {
+        mAllLevelsComplete = bParam;
+    }
+
+    public boolean allLevelsComplete() {
+        return mAllLevelsComplete;
     }
 
     public boolean isPlaying() {
@@ -176,8 +198,8 @@ public class CommandCenter {
         return movFriends;
     }
 
-    public List<Movable> getMovFoes() {
-        return movFoes;
+    public List<Movable> getMovEnemies() {
+        return movEnemies;
     }
 
     public List<Movable> getMovPowerUps() {

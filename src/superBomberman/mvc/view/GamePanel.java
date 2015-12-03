@@ -97,12 +97,22 @@ public class GamePanel extends Panel {
 
         drawScore(grpOff);
 
-        if (!CommandCenter.getInstance().isPlaying()) {
+        if (!CommandCenter.getInstance().isPlaying() && !CommandCenter.getInstance().allLevelsComplete()) {
             displayTextOnScreen();
         } else if (CommandCenter.getInstance().isPaused()) {
             strDisplay = "Game Paused";
             grpOff.drawString(strDisplay,
                     (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
+        } else if (CommandCenter.getInstance().allLevelsComplete()) {
+            strDisplay = "All enemies defeated!  All levels completed!";
+            grpOff.drawString(strDisplay,
+                    (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
+
+            strDisplay = "'S' to Start Game Over";
+            grpOff.drawString(strDisplay,
+                    (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
+                            + nFontHeight * 20);
+
         }
 
         //playing and not paused!
@@ -112,7 +122,7 @@ public class GamePanel extends Panel {
             //friends will be on top layer and debris on the bottom
             iterateMovables(grpOff,
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovFriends(),
-                    (ArrayList<Movable>) CommandCenter.getInstance().getMovFoes(),
+                    (ArrayList<Movable>) CommandCenter.getInstance().getMovEnemies(),
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovPowerUps(),
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovBombs(),
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovWalls(),

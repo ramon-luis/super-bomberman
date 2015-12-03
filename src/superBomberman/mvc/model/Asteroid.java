@@ -22,7 +22,7 @@ public class Asteroid extends Sprite {
 		//call Sprite constructor
 		super();
 
-		setTeam(Team.FOE);
+		setTeam(Team.ENEMY);
 		
 		//the spin will be either plus or minus 0-9
 		int nSpin = Game.R.nextInt(10);
@@ -62,7 +62,7 @@ public class Asteroid extends Sprite {
 
 		//call Sprite constructor
 		super();
-		setTeam(Team.FOE);
+		setTeam(Team.ENEMY);
 		int  nSizeNew =	astExploded.getSize() + 1;
 		
 		
@@ -101,7 +101,7 @@ public class Asteroid extends Sprite {
 		
 		int nReturn = 0;
 		
-		switch (getRadius()) {
+		switch (getSize()) {
 			case 100:
 				nReturn= 0;
 				break;

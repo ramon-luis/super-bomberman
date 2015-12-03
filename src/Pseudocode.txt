@@ -2,13 +2,12 @@
 
 TODO LIST:
 ENEMIES:
-make alien change colors when hit
-refactor Monsters - abstract class that inherits
-make 3rd monster
+make 3rd soldier - drone: randomly creates short blast
+add fading -> fades quickly between different colors
 
-GAMEBOARD FIXES:
-update code to add monsters to gameboard for more monster types - PENDING
-add more levels - PENDING
+factor monsters & bomberman to extend shared abstract class to define common movement patterns
+
+random move -> check if new direction is available.  if so, new random direction or 70%/30% choose new direction?
 
 POLISH FOR "FINAL"
 fix Bomberman shape
@@ -16,8 +15,6 @@ check all sounds
     new level sound
     change exit reveal
     change background music?
-update win game:
-    first: call win game screen
 
 GAMEPLAY ADDITIONS:
 add extra life
@@ -30,16 +27,30 @@ add shield -> only usable when holding down shield button
 VISUAL UPDATES:
 squares made up of different shaded triangles to add texture?
 create models that do not Collide for scenery -> stars, floorboards, etc?
+update bomb wick -> white shape with flashing end?
 update welcome screen
     // add each character to front
     // replace O with bomb in title
     // add flashing bomb to pause screen
+
+update win game:
+    call win game screen
+        create Bomb
+        assign random center point
+        add to list of Bombs
+        for each bomb in list
+            assign random color
+            draw bomb -> needed?
+        draw text: Victory!  All enemies defeated!  All levels completed!  You are the superbomber!
+
 change lives display to be icon + #
 draw bomberman moving in different directions
 add squares around key info: score, lives, bombs, power ups
 
 REFACTOR
 Clean up all code
+Create LevelData as Objects? -> assign instance variables to get?
+setCenter should use square
 
 
 
@@ -54,6 +65,8 @@ bombs destroy power ups?
 
 
 DONE
+make alien change colors when hit
+refactor Monsters - abstract class that inherits
 monsters block each other
 randomly assign exit
 randomly assign power ups
@@ -82,7 +95,7 @@ bomberman
         no orientation -> just move
     weapon key lays bomb
     has bomb power -> determines how far explosion travels
-    can become "invincible" -> not hurt by explosion or monster
+    can become "invincible" -> not hurt by explosion or soldier
 
 
 bomb

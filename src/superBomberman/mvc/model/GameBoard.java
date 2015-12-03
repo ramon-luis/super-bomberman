@@ -16,13 +16,13 @@ public class GameBoard {
     // private instance members
     private List<Square> mSquares;
     private List<PowerUp> mPowerUps;
-    private List<Monster> mMonsters;
+    private List<Enemy> mEnemies;
     private List<Wall> mBreakableWalls;
 
     private int mLevel;
     private int mPowerUpBombCount;  // # of powerUp bombs
     private int mPowerUpBlastCount;  // # of powerUp  blasts
-    private int mMonsterSourceCount;  // # of monsters used as source for power up
+    private int mEnemyPowerUpSourceCount;  // # of enemies used as source for power up
 
 
     // constructor
@@ -33,7 +33,7 @@ public class GameBoard {
         // initialize lists
         mSquares = new ArrayList<>(ROW_COUNT * COL_COUNT);
         mPowerUps = new ArrayList<>();
-        mMonsters = new ArrayList<>();
+        mEnemies = new ArrayList<>();
         mBreakableWalls = new ArrayList<>(ROW_COUNT * COL_COUNT);
 
         // create the game board
@@ -69,8 +69,16 @@ public class GameBoard {
         // update the square data based on level
         if (mLevel == 2)
             squareDataMaps = getSquareDataMapsLevel2();
-//        else if (mLevel == 3)
-//            squareDataMaps = getSquareDataMapsLevel3();
+        else if (mLevel == 3)
+            squareDataMaps = getSquareDataMapsLevel3();
+        else if (mLevel == 4)
+            squareDataMaps = getSquareDataMapsLevel3();
+        else if (mLevel == 5)
+            squareDataMaps = getSquareDataMapsLevel3();
+        else if (mLevel == 6)
+            squareDataMaps = getSquareDataMapsLevel3();
+        else if (mLevel == 7)
+            squareDataMaps = getSquareDataMapsLevel3();
 
         // for through each row
         for (int i = 0; i < ROW_COUNT; i++) {
@@ -91,11 +99,22 @@ public class GameBoard {
                         mBreakableWalls.add(wall);  // list is used for adding power ups
                     CommandCenter.getInstance().getOpsList().enqueue(wall, CollisionOp.Operation.ADD);
                 } else if (entry.getValue() == 3) {
-                    // create monster, add to OpsList
-                    Monster monster = new Monster(square, Monster.MonsterType.ALIEN);
-                    mMonsters.add(monster);  // list is used for adding power ups
-                    CommandCenter.getInstance().getOpsList().enqueue(monster, CollisionOp.Operation.ADD);
+                    // create soldier, add to OpsList
+                    Soldier soldier = new Soldier();
+                    soldier.setCenterFromSquare(square);
+                    mEnemies.add(soldier);  // list is used for adding power ups
+                    CommandCenter.getInstance().getOpsList().enqueue(soldier, CollisionOp.Operation.ADD);
+                } else if (entry.getValue() == 4) {
+                    // create alien, add to OpsList
+                    Alien alien = new Alien();
+                    alien.setCenterFromSquare(square);
+                    mEnemies.add(alien);  // list is used for adding power ups
+                    CommandCenter.getInstance().getOpsList().enqueue(alien, CollisionOp.Operation.ADD);
                 }
+
+
+
+
             }
         }
     }
@@ -106,7 +125,7 @@ public class GameBoard {
         setPowerUpCount();
 
         // make sure that there are enough sources for power ups
-        if ((mPowerUpBombCount + mPowerUpBlastCount - mMonsterSourceCount) > mBreakableWalls.size() || mMonsterSourceCount > mMonsters.size())
+        if ((mPowerUpBombCount + mPowerUpBlastCount - mEnemyPowerUpSourceCount) > mBreakableWalls.size() || mEnemyPowerUpSourceCount > mEnemies.size())
             throw new IllegalArgumentException("power up sources exceed available monsters & walls");
 
         // create power up bombs
@@ -121,12 +140,12 @@ public class GameBoard {
 
         // shuffle power ups, monsters, and breakable walls so that power ups are randomly assigned
         Collections.shuffle(mPowerUps);
-        Collections.shuffle(mMonsters);
+        Collections.shuffle(mEnemies);
         Collections.shuffle(mBreakableWalls);
 
         // add power ups to monsters
-        for (int i = 0; i < mMonsterSourceCount; i++) {
-            mMonsters.get(i).setPowerUpInside(mPowerUps.get(0));
+        for (int i = 0; i < mEnemyPowerUpSourceCount; i++) {
+            mEnemies.get(i).setPowerUpInside(mPowerUps.get(0));
             mPowerUps.remove(0);
         }
 
@@ -143,19 +162,35 @@ public class GameBoard {
     private void setPowerUpCount() {
         // set count of Power Ups and how many monsters will be sources
         // breakable walls are source for remaining power ups
-        mPowerUpBombCount = 4;
+        mPowerUpBombCount = 3;
         mPowerUpBlastCount = 4;
-        mMonsterSourceCount = 2;  // this should be less than total power ups
+        mEnemyPowerUpSourceCount = 2;  // this should be less than total power ups
 
         // update power up counts based on level
         if (mLevel == 2){
             mPowerUpBombCount = 4;
             mPowerUpBlastCount = 5;
-            mMonsterSourceCount = 3;
+            mEnemyPowerUpSourceCount = 3;
         } else if (mLevel == 3) {
-            mPowerUpBombCount = 4;
-            mPowerUpBlastCount = 4;
-            mMonsterSourceCount = 2;
+            mPowerUpBombCount = 5;
+            mPowerUpBlastCount = 5;
+            mEnemyPowerUpSourceCount = 3;
+        } else if (mLevel == 4) {
+            mPowerUpBombCount = 6;
+            mPowerUpBlastCount = 6;
+            mEnemyPowerUpSourceCount = 4;
+        } else if (mLevel == 5) {
+            mPowerUpBombCount = 6;
+            mPowerUpBlastCount = 8;
+            mEnemyPowerUpSourceCount = 5;
+        } else if (mLevel == 6) {
+            mPowerUpBombCount = 7;
+            mPowerUpBlastCount = 10;
+            mEnemyPowerUpSourceCount = 5;
+        } else if (mLevel == 7) {
+            mPowerUpBombCount = 10;
+            mPowerUpBlastCount = 15;
+            mEnemyPowerUpSourceCount = 7;
         }
     }
 
@@ -181,9 +216,6 @@ public class GameBoard {
     private List<Map<Integer, Integer>> getSquareDataMapsLevel1() {
         // each map represents a row
         // each entry contains col# and integer used to assign interior (wall, monster, etc)
-
-        // potential powerup squares 31
-        // potential powerup monsters 5
 
         // create col map for row 0
         Map<Integer, Integer> colIndices0 = new HashMap<>();
@@ -332,19 +364,19 @@ public class GameBoard {
         // create col map for row 8
         Map<Integer, Integer> colIndices8 = new HashMap<>();
         colIndices8.put(0, 1);
-        colIndices8.put(1, 0);
+        colIndices8.put(1, 2);
         colIndices8.put(2, 1);
         colIndices8.put(3, 0);
-        colIndices8.put(4, 0);
+        colIndices8.put(4, 2);
         colIndices8.put(5, 2);
-        colIndices8.put(6, 2);
+        colIndices8.put(6, 0);
         colIndices8.put(7, 2);
-        colIndices8.put(8, 2);
+        colIndices8.put(8, 0);
         colIndices8.put(9, 2);
-        colIndices8.put(10, 0);
+        colIndices8.put(10, 2);
         colIndices8.put(11, 0);
         colIndices8.put(12, 1);
-        colIndices8.put(13, 0);
+        colIndices8.put(13, 2);
         colIndices8.put(14, 1);
 
         // create col map for row 9
@@ -369,7 +401,7 @@ public class GameBoard {
         Map<Integer, Integer> colIndices10 = new HashMap<>();
         colIndices10.put(0, 1);
         colIndices10.put(1, 3);
-        colIndices10.put(2, 0);
+        colIndices10.put(2, 1);
         colIndices10.put(3, 0);
         colIndices10.put(4, 1);
         colIndices10.put(5, 1);
@@ -379,7 +411,7 @@ public class GameBoard {
         colIndices10.put(9, 1);
         colIndices10.put(10, 1);
         colIndices10.put(11, 0);
-        colIndices10.put(12, 0);
+        colIndices10.put(12, 1);
         colIndices10.put(13, 3);
         colIndices10.put(14, 1);
 
@@ -387,8 +419,8 @@ public class GameBoard {
         Map<Integer, Integer> colIndices11 = new HashMap<>();
         colIndices11.put(0, 1);
         colIndices11.put(1, 0);
-        colIndices11.put(2, 1);
-        colIndices11.put(3, 2);
+        colIndices11.put(2, 0);
+        colIndices11.put(3, 0);
         colIndices11.put(4, 2);
         colIndices11.put(5, 0);
         colIndices11.put(6, 0);
@@ -396,8 +428,8 @@ public class GameBoard {
         colIndices11.put(8, 0);
         colIndices11.put(9, 0);
         colIndices11.put(10, 2);
-        colIndices11.put(11, 2);
-        colIndices11.put(12, 1);
+        colIndices11.put(11, 0);
+        colIndices11.put(12, 0);
         colIndices11.put(13, 0);
         colIndices11.put(14, 1);
 
@@ -419,6 +451,9 @@ public class GameBoard {
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
 
+        // potential powerup squares 31
+        // potential powerup monsters 5
+
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
         colIndexMaps.add(colIndices0);
@@ -438,14 +473,12 @@ public class GameBoard {
         return colIndexMaps;
     }
 
+
+
     // Level 2: get list of maps with data for each square
     private List<Map<Integer, Integer>> getSquareDataMapsLevel2() {
         // each map represents a row
         // each entry contains col# and integer used to assign interior (wall, monster, etc)
-
-
-        // potential powerup squares 31
-        // potential powerup monsters 6
 
         // create col map for row 0
         Map<Integer, Integer> colIndices0 = new HashMap<>();
@@ -471,13 +504,13 @@ public class GameBoard {
         colIndices1.put(1, 0);
         colIndices1.put(2, 0);
         colIndices1.put(3, 0);
-        colIndices1.put(4, 0);
+        colIndices1.put(4, 2);
         colIndices1.put(5, 2);
         colIndices1.put(6, 2);
-        colIndices1.put(7, 2);
+        colIndices1.put(7, 0);
         colIndices1.put(8, 2);
         colIndices1.put(9, 2);
-        colIndices1.put(10, 0);
+        colIndices1.put(10, 2);
         colIndices1.put(11, 0);
         colIndices1.put(12, 0);
         colIndices1.put(13, 3);
@@ -562,11 +595,11 @@ public class GameBoard {
         colIndices6.put(2, 0);
         colIndices6.put(3, 0);
         colIndices6.put(4, 0);
-        colIndices6.put(5, 2);
-        colIndices6.put(6, 2);
+        colIndices6.put(5, 0);
+        colIndices6.put(6, 0);
         colIndices6.put(7, 2);
-        colIndices6.put(8, 2);
-        colIndices6.put(9, 2);
+        colIndices6.put(8, 0);
+        colIndices6.put(9, 0);
         colIndices6.put(10, 0);
         colIndices6.put(11, 0);
         colIndices6.put(12, 0);
@@ -598,11 +631,11 @@ public class GameBoard {
         colIndices8.put(2, 0);
         colIndices8.put(3, 3);
         colIndices8.put(4, 0);
-        colIndices8.put(5, 0);
+        colIndices8.put(5, 2);
         colIndices8.put(6, 1);
         colIndices8.put(7, 0);
         colIndices8.put(8, 1);
-        colIndices8.put(9, 0);
+        colIndices8.put(9, 2);
         colIndices8.put(10, 0);
         colIndices8.put(11, 3);
         colIndices8.put(12, 0);
@@ -681,6 +714,9 @@ public class GameBoard {
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
 
+        // potential powerup squares 30
+        // potential powerup monsters 6
+
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
         colIndexMaps.add(colIndices0);
@@ -699,5 +735,1320 @@ public class GameBoard {
 
         return colIndexMaps;
     }
+
+
+    // Level 3: get list of maps with data for each square
+    private List<Map<Integer, Integer>> getSquareDataMapsLevel3() {
+        // each map represents a row
+        // each entry contains col# and integer used to assign interior (wall, monster, etc)
+
+
+        // create col map for row 0
+        Map<Integer, Integer> colIndices0 = new HashMap<>();
+        colIndices0.put(0, 1);
+        colIndices0.put(1, 1);
+        colIndices0.put(2, 1);
+        colIndices0.put(3, 1);
+        colIndices0.put(4, 1);
+        colIndices0.put(5, 1);
+        colIndices0.put(6, 1);
+        colIndices0.put(7, 1);
+        colIndices0.put(8, 1);
+        colIndices0.put(9, 1);
+        colIndices0.put(10, 1);
+        colIndices0.put(11, 1);
+        colIndices0.put(12, 1);
+        colIndices0.put(13, 1);
+        colIndices0.put(14, 1);
+
+        // create col map for row 1
+        Map<Integer, Integer> colIndices1 = new HashMap<>();
+        colIndices1.put(0, 1);
+        colIndices1.put(1, 0);
+        colIndices1.put(2, 0);
+        colIndices1.put(3, 2);
+        colIndices1.put(4, 2);
+        colIndices1.put(5, 0);
+        colIndices1.put(6, 0);
+        colIndices1.put(7, 2);
+        colIndices1.put(8, 0);
+        colIndices1.put(9, 0);
+        colIndices1.put(10, 2);
+        colIndices1.put(11, 0);
+        colIndices1.put(12, 0);
+        colIndices1.put(13, 3);
+        colIndices1.put(14, 1);
+
+        // create col map for row 2
+        Map<Integer, Integer> colIndices2 = new HashMap<>();
+        colIndices2.put(0, 1);
+        colIndices2.put(1, 0);
+        colIndices2.put(2, 1);
+        colIndices2.put(3, 1);
+        colIndices2.put(4, 2);
+        colIndices2.put(5, 1);
+        colIndices2.put(6, 0);
+        colIndices2.put(7, 1);
+        colIndices2.put(8, 0);
+        colIndices2.put(9, 1);
+        colIndices2.put(10, 2);
+        colIndices2.put(11, 1);
+        colIndices2.put(12, 1);
+        colIndices2.put(13, 0);
+        colIndices2.put(14, 1);
+
+        // create col map for row 3
+        Map<Integer, Integer> colIndices3 = new HashMap<>();
+        colIndices3.put(0, 1);
+        colIndices3.put(1, 0);
+        colIndices3.put(2, 0);
+        colIndices3.put(3, 2);
+        colIndices3.put(4, 1);
+        colIndices3.put(5, 1);
+        colIndices3.put(6, 0);
+        colIndices3.put(7, 2);
+        colIndices3.put(8, 0);
+        colIndices3.put(9, 1);
+        colIndices3.put(10, 1);
+        colIndices3.put(11, 2);
+        colIndices3.put(12, 0);
+        colIndices3.put(13, 0);
+        colIndices3.put(14, 1);
+
+        // create col map for row 4
+        Map<Integer, Integer> colIndices4 = new HashMap<>();
+        colIndices4.put(0, 1);
+        colIndices4.put(1, 1);
+        colIndices4.put(2, 1);
+        colIndices4.put(3, 2);
+        colIndices4.put(4, 2);
+        colIndices4.put(5, 2);
+        colIndices4.put(6, 0);
+        colIndices4.put(7, 1);
+        colIndices4.put(8, 0);
+        colIndices4.put(9, 2);
+        colIndices4.put(10, 2);
+        colIndices4.put(11, 2);
+        colIndices4.put(12, 1);
+        colIndices4.put(13, 1);
+        colIndices4.put(14, 1);
+
+        // create col map for row 5
+        Map<Integer, Integer> colIndices5 = new HashMap<>();
+        colIndices5.put(0, 1);
+        colIndices5.put(1, 0);
+        colIndices5.put(2, 1);
+        colIndices5.put(3, 1);
+        colIndices5.put(4, 1);
+        colIndices5.put(5, 1);
+        colIndices5.put(6, 0);
+        colIndices5.put(7, 4);
+        colIndices5.put(8, 0);
+        colIndices5.put(9, 1);
+        colIndices5.put(10, 1);
+        colIndices5.put(11, 1);
+        colIndices5.put(12, 1);
+        colIndices5.put(13, 0);
+        colIndices5.put(14, 1);
+
+        // create col map for row 6
+        Map<Integer, Integer> colIndices6 = new HashMap<>();
+        colIndices6.put(0, 1);
+        colIndices6.put(1, 0);
+        colIndices6.put(2, 3);
+        colIndices6.put(3, 0);
+        colIndices6.put(4, 1);
+        colIndices6.put(5, 1);
+        colIndices6.put(6, 2);
+        colIndices6.put(7, 1);
+        colIndices6.put(8, 2);
+        colIndices6.put(9, 1);
+        colIndices6.put(10, 1);
+        colIndices6.put(11, 0);
+        colIndices6.put(12, 3);
+        colIndices6.put(13, 0);
+        colIndices6.put(14, 1);
+
+        // create col map for row 7
+        Map<Integer, Integer> colIndices7 = new HashMap<>();
+        colIndices7.put(0, 1);
+        colIndices7.put(1, 0);
+        colIndices7.put(2, 1);
+        colIndices7.put(3, 0);
+        colIndices7.put(4, 0);
+        colIndices7.put(5, 2);
+        colIndices7.put(6, 0);
+        colIndices7.put(7, 3);
+        colIndices7.put(8, 0);
+        colIndices7.put(9, 2);
+        colIndices7.put(10, 0);
+        colIndices7.put(11, 0);
+        colIndices7.put(12, 1);
+        colIndices7.put(13, 0);
+        colIndices7.put(14, 1);
+
+        // create col map for row 8
+        Map<Integer, Integer> colIndices8 = new HashMap<>();
+        colIndices8.put(0, 1);
+        colIndices8.put(1, 2);
+        colIndices8.put(2, 2);
+        colIndices8.put(3, 1);
+        colIndices8.put(4, 1);
+        colIndices8.put(5, 1);
+        colIndices8.put(6, 0);
+        colIndices8.put(7, 1);
+        colIndices8.put(8, 0);
+        colIndices8.put(9, 1);
+        colIndices8.put(10, 1);
+        colIndices8.put(11, 1);
+        colIndices8.put(12, 2);
+        colIndices8.put(13, 2);
+        colIndices8.put(14, 1);
+
+        // create col map for row 9
+        Map<Integer, Integer> colIndices9 = new HashMap<>();
+        colIndices9.put(0, 1);
+        colIndices9.put(1, 1);
+        colIndices9.put(2, 0);
+        colIndices9.put(3, 0);
+        colIndices9.put(4, 2);
+        colIndices9.put(5, 2);
+        colIndices9.put(6, 0);
+        colIndices9.put(7, 0);
+        colIndices9.put(8, 0);
+        colIndices9.put(9, 2);
+        colIndices9.put(10, 2);
+        colIndices9.put(11, 0);
+        colIndices9.put(12, 0);
+        colIndices9.put(13, 1);
+        colIndices9.put(14, 1);
+
+        // create col map for row 10
+        Map<Integer, Integer> colIndices10 = new HashMap<>();
+        colIndices10.put(0, 1);
+        colIndices10.put(1, 1);
+        colIndices10.put(2, 0);
+        colIndices10.put(3, 1);
+        colIndices10.put(4, 2);
+        colIndices10.put(5, 1);
+        colIndices10.put(6, 1);
+        colIndices10.put(7, 2);
+        colIndices10.put(8, 1);
+        colIndices10.put(9, 1);
+        colIndices10.put(10, 1);
+        colIndices10.put(11, 2);
+        colIndices10.put(12, 1);
+        colIndices10.put(13, 1);
+        colIndices10.put(14, 1);
+
+        // create col map for row 11
+        Map<Integer, Integer> colIndices11 = new HashMap<>();
+        colIndices11.put(0, 1);
+        colIndices11.put(1, 3);
+        colIndices11.put(2, 0);
+        colIndices11.put(3, 0);
+        colIndices11.put(4, 0);
+        colIndices11.put(5, 0);
+        colIndices11.put(6, 2);
+        colIndices11.put(7, 2);
+        colIndices11.put(8, 2);
+        colIndices11.put(9, 0);
+        colIndices11.put(10, 0);
+        colIndices11.put(11, 0);
+        colIndices11.put(12, 0);
+        colIndices11.put(13, 3);
+        colIndices11.put(14, 1);
+
+        // create col map for row 12
+        Map<Integer, Integer> colIndices12 = new HashMap<>();
+        colIndices12.put(0, 1);
+        colIndices12.put(1, 1);
+        colIndices12.put(2, 1);
+        colIndices12.put(3, 1);
+        colIndices12.put(4, 1);
+        colIndices12.put(5, 1);
+        colIndices12.put(6, 1);
+        colIndices12.put(7, 1);
+        colIndices12.put(8, 1);
+        colIndices12.put(9, 1);
+        colIndices12.put(10, 1);
+        colIndices12.put(11, 1);
+        colIndices12.put(12, 1);
+        colIndices12.put(13, 1);
+        colIndices12.put(14, 1);
+
+        // potential powerup squares 31
+        // potential powerup monsters 7
+
+        // place all column maps into a list
+        List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
+        colIndexMaps.add(colIndices0);
+        colIndexMaps.add(colIndices1);
+        colIndexMaps.add(colIndices2);
+        colIndexMaps.add(colIndices3);
+        colIndexMaps.add(colIndices4);
+        colIndexMaps.add(colIndices5);
+        colIndexMaps.add(colIndices6);
+        colIndexMaps.add(colIndices7);
+        colIndexMaps.add(colIndices8);
+        colIndexMaps.add(colIndices9);
+        colIndexMaps.add(colIndices10);
+        colIndexMaps.add(colIndices11);
+        colIndexMaps.add(colIndices12);
+
+        return colIndexMaps;
+    }
+
+
+    // Level 4: get list of maps with data for each square
+    private List<Map<Integer, Integer>> getSquareDataMapsLevel4() {
+        // each map represents a row
+        // each entry contains col# and integer used to assign interior (wall, monster, etc)
+
+
+        // create col map for row 0
+        Map<Integer, Integer> colIndices0 = new HashMap<>();
+        colIndices0.put(0, 1);
+        colIndices0.put(1, 1);
+        colIndices0.put(2, 1);
+        colIndices0.put(3, 1);
+        colIndices0.put(4, 1);
+        colIndices0.put(5, 1);
+        colIndices0.put(6, 1);
+        colIndices0.put(7, 1);
+        colIndices0.put(8, 1);
+        colIndices0.put(9, 1);
+        colIndices0.put(10, 1);
+        colIndices0.put(11, 1);
+        colIndices0.put(12, 1);
+        colIndices0.put(13, 1);
+        colIndices0.put(14, 1);
+
+        // create col map for row 1
+        Map<Integer, Integer> colIndices1 = new HashMap<>();
+        colIndices1.put(0, 1);
+        colIndices1.put(1, 0);
+        colIndices1.put(2, 0);
+        colIndices1.put(3, 0);
+        colIndices1.put(4, 2);
+        colIndices1.put(5, 2);
+        colIndices1.put(6, 0);
+        colIndices1.put(7, 2);
+        colIndices1.put(8, 0);
+        colIndices1.put(9, 2);
+        colIndices1.put(10, 2);
+        colIndices1.put(11, 0);
+        colIndices1.put(12, 0);
+        colIndices1.put(13, 0);
+        colIndices1.put(14, 1);
+
+        // create col map for row 2
+        Map<Integer, Integer> colIndices2 = new HashMap<>();
+        colIndices2.put(0, 1);
+        colIndices2.put(1, 1);
+        colIndices2.put(2, 1);
+        colIndices2.put(3, 1);
+        colIndices2.put(4, 2);
+        colIndices2.put(5, 1);
+        colIndices2.put(6, 0);
+        colIndices2.put(7, 1);
+        colIndices2.put(8, 0);
+        colIndices2.put(9, 1);
+        colIndices2.put(10, 2);
+        colIndices2.put(11, 1);
+        colIndices2.put(12, 1);
+        colIndices2.put(13, 0);
+        colIndices2.put(14, 1);
+
+        // create col map for row 3
+        Map<Integer, Integer> colIndices3 = new HashMap<>();
+        colIndices3.put(0, 1);
+        colIndices3.put(1, 0);
+        colIndices3.put(2, 2);
+        colIndices3.put(3, 3);
+        colIndices3.put(4, 0);
+        colIndices3.put(5, 0);
+        colIndices3.put(6, 0);
+        colIndices3.put(7, 2);
+        colIndices3.put(8, 0);
+        colIndices3.put(9, 0);
+        colIndices3.put(10, 0);
+        colIndices3.put(11, 4);
+        colIndices3.put(12, 2);
+        colIndices3.put(13, 0);
+        colIndices3.put(14, 1);
+
+        // create col map for row 4
+        Map<Integer, Integer> colIndices4 = new HashMap<>();
+        colIndices4.put(0, 1);
+        colIndices4.put(1, 0);
+        colIndices4.put(2, 1);
+        colIndices4.put(3, 1);
+        colIndices4.put(4, 1);
+        colIndices4.put(5, 2);
+        colIndices4.put(6, 1);
+        colIndices4.put(7, 0);
+        colIndices4.put(8, 1);
+        colIndices4.put(9, 2);
+        colIndices4.put(10, 1);
+        colIndices4.put(11, 1);
+        colIndices4.put(12, 1);
+        colIndices4.put(13, 0);
+        colIndices4.put(14, 1);
+
+        // create col map for row 5
+        Map<Integer, Integer> colIndices5 = new HashMap<>();
+        colIndices5.put(0, 1);
+        colIndices5.put(1, 3);
+        colIndices5.put(2, 0);
+        colIndices5.put(3, 2);
+        colIndices5.put(4, 0);
+        colIndices5.put(5, 2);
+        colIndices5.put(6, 2);
+        colIndices5.put(7, 0);
+        colIndices5.put(8, 2);
+        colIndices5.put(9, 2);
+        colIndices5.put(10, 0);
+        colIndices5.put(11, 2);
+        colIndices5.put(12, 0);
+        colIndices5.put(13, 3);
+        colIndices5.put(14, 1);
+
+        // create col map for row 6
+        Map<Integer, Integer> colIndices6 = new HashMap<>();
+        colIndices6.put(0, 1);
+        colIndices6.put(1, 1);
+        colIndices6.put(2, 1);
+        colIndices6.put(3, 1);
+        colIndices6.put(4, 0);
+        colIndices6.put(5, 2);
+        colIndices6.put(6, 1);
+        colIndices6.put(7, 2);
+        colIndices6.put(8, 1);
+        colIndices6.put(9, 2);
+        colIndices6.put(10, 0);
+        colIndices6.put(11, 1);
+        colIndices6.put(12, 1);
+        colIndices6.put(13, 1);
+        colIndices6.put(14, 1);
+
+        // create col map for row 7
+        Map<Integer, Integer> colIndices7 = new HashMap<>();
+        colIndices7.put(0, 1);
+        colIndices7.put(1, 3);
+        colIndices7.put(2, 0);
+        colIndices7.put(3, 0);
+        colIndices7.put(4, 0);
+        colIndices7.put(5, 1);
+        colIndices7.put(6, 1);
+        colIndices7.put(7, 0);
+        colIndices7.put(8, 1);
+        colIndices7.put(9, 1);
+        colIndices7.put(10, 0);
+        colIndices7.put(11, 0);
+        colIndices7.put(12, 0);
+        colIndices7.put(13, 3);
+        colIndices7.put(14, 1);
+
+        // create col map for row 8
+        Map<Integer, Integer> colIndices8 = new HashMap<>();
+        colIndices8.put(0, 1);
+        colIndices8.put(1, 0);
+        colIndices8.put(2, 1);
+        colIndices8.put(3, 0);
+        colIndices8.put(4, 0);
+        colIndices8.put(5, 2);
+        colIndices8.put(6, 2);
+        colIndices8.put(7, 0);
+        colIndices8.put(8, 2);
+        colIndices8.put(9, 2);
+        colIndices8.put(10, 0);
+        colIndices8.put(11, 0);
+        colIndices8.put(12, 1);
+        colIndices8.put(13, 0);
+        colIndices8.put(14, 1);
+
+        // create col map for row 9
+        Map<Integer, Integer> colIndices9 = new HashMap<>();
+        colIndices9.put(0, 1);
+        colIndices9.put(1, 2);
+        colIndices9.put(2, 0);
+        colIndices9.put(3, 0);
+        colIndices9.put(4, 1);
+        colIndices9.put(5, 2);
+        colIndices9.put(6, 1);
+        colIndices9.put(7, 0);
+        colIndices9.put(8, 1);
+        colIndices9.put(9, 2);
+        colIndices9.put(10, 1);
+        colIndices9.put(11, 0);
+        colIndices9.put(12, 0);
+        colIndices9.put(13, 2);
+        colIndices9.put(14, 1);
+
+        // create col map for row 10
+        Map<Integer, Integer> colIndices10 = new HashMap<>();
+        colIndices10.put(0, 1);
+        colIndices10.put(1, 0);
+        colIndices10.put(2, 1);
+        colIndices10.put(3, 1);
+        colIndices10.put(4, 1);
+        colIndices10.put(5, 0);
+        colIndices10.put(6, 0);
+        colIndices10.put(7, 2);
+        colIndices10.put(8, 0);
+        colIndices10.put(9, 0);
+        colIndices10.put(10, 1);
+        colIndices10.put(11, 1);
+        colIndices10.put(12, 1);
+        colIndices10.put(13, 0);
+        colIndices10.put(14, 1);
+
+        // create col map for row 11
+        Map<Integer, Integer> colIndices11 = new HashMap<>();
+        colIndices11.put(0, 1);
+        colIndices11.put(1, 4);
+        colIndices11.put(2, 0);
+        colIndices11.put(3, 0);
+        colIndices11.put(4, 2);
+        colIndices11.put(5, 0);
+        colIndices11.put(6, 1);
+        colIndices11.put(7, 2);
+        colIndices11.put(8, 1);
+        colIndices11.put(9, 0);
+        colIndices11.put(10, 2);
+        colIndices11.put(11, 0);
+        colIndices11.put(12, 0);
+        colIndices11.put(13, 3);
+        colIndices11.put(14, 1);
+
+        // create col map for row 12
+        Map<Integer, Integer> colIndices12 = new HashMap<>();
+        colIndices12.put(0, 1);
+        colIndices12.put(1, 1);
+        colIndices12.put(2, 1);
+        colIndices12.put(3, 1);
+        colIndices12.put(4, 1);
+        colIndices12.put(5, 1);
+        colIndices12.put(6, 1);
+        colIndices12.put(7, 1);
+        colIndices12.put(8, 1);
+        colIndices12.put(9, 1);
+        colIndices12.put(10, 1);
+        colIndices12.put(11, 1);
+        colIndices12.put(12, 1);
+        colIndices12.put(13, 1);
+        colIndices12.put(14, 1);
+
+        // potential powerup squares 31
+        // potential powerup monsters 8
+
+        // place all column maps into a list
+        List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
+        colIndexMaps.add(colIndices0);
+        colIndexMaps.add(colIndices1);
+        colIndexMaps.add(colIndices2);
+        colIndexMaps.add(colIndices3);
+        colIndexMaps.add(colIndices4);
+        colIndexMaps.add(colIndices5);
+        colIndexMaps.add(colIndices6);
+        colIndexMaps.add(colIndices7);
+        colIndexMaps.add(colIndices8);
+        colIndexMaps.add(colIndices9);
+        colIndexMaps.add(colIndices10);
+        colIndexMaps.add(colIndices11);
+        colIndexMaps.add(colIndices12);
+
+        return colIndexMaps;
+    }
+
+    // Level 5: get list of maps with data for each square
+    private List<Map<Integer, Integer>> getSquareDataMapsLevel5() {
+        // each map represents a row
+        // each entry contains col# and integer used to assign interior (wall, monster, etc)
+
+
+        // create col map for row 0
+        Map<Integer, Integer> colIndices0 = new HashMap<>();
+        colIndices0.put(0, 1);
+        colIndices0.put(1, 1);
+        colIndices0.put(2, 1);
+        colIndices0.put(3, 1);
+        colIndices0.put(4, 1);
+        colIndices0.put(5, 1);
+        colIndices0.put(6, 1);
+        colIndices0.put(7, 1);
+        colIndices0.put(8, 1);
+        colIndices0.put(9, 1);
+        colIndices0.put(10, 1);
+        colIndices0.put(11, 1);
+        colIndices0.put(12, 1);
+        colIndices0.put(13, 1);
+        colIndices0.put(14, 1);
+
+        // create col map for row 1
+        Map<Integer, Integer> colIndices1 = new HashMap<>();
+        colIndices1.put(0, 1);
+        colIndices1.put(1, 0);
+        colIndices1.put(2, 0);
+        colIndices1.put(3, 2);
+        colIndices1.put(4, 2);
+        colIndices1.put(5, 0);
+        colIndices1.put(6, 0);
+        colIndices1.put(7, 2);
+        colIndices1.put(8, 0);
+        colIndices1.put(9, 0);
+        colIndices1.put(10, 2);
+        colIndices1.put(11, 2);
+        colIndices1.put(12, 2);
+        colIndices1.put(13, 3);
+        colIndices1.put(14, 1);
+
+        // create col map for row 2
+        Map<Integer, Integer> colIndices2 = new HashMap<>();
+        colIndices2.put(0, 1);
+        colIndices2.put(1, 0);
+        colIndices2.put(2, 1);
+        colIndices2.put(3, 0);
+        colIndices2.put(4, 1);
+        colIndices2.put(5, 4);
+        colIndices2.put(6, 1);
+        colIndices2.put(7, 2);
+        colIndices2.put(8, 1);
+        colIndices2.put(9, 4);
+        colIndices2.put(10, 1);
+        colIndices2.put(11, 0);
+        colIndices2.put(12, 1);
+        colIndices2.put(13, 0);
+        colIndices2.put(14, 1);
+
+        // create col map for row 3
+        Map<Integer, Integer> colIndices3 = new HashMap<>();
+        colIndices3.put(0, 1);
+        colIndices3.put(1, 0);
+        colIndices3.put(2, 1);
+        colIndices3.put(3, 0);
+        colIndices3.put(4, 1);
+        colIndices3.put(5, 0);
+        colIndices3.put(6, 1);
+        colIndices3.put(7, 2);
+        colIndices3.put(8, 1);
+        colIndices3.put(9, 0);
+        colIndices3.put(10, 1);
+        colIndices3.put(11, 0);
+        colIndices3.put(12, 1);
+        colIndices3.put(13, 0);
+        colIndices3.put(14, 1);
+
+        // create col map for row 4
+        Map<Integer, Integer> colIndices4 = new HashMap<>();
+        colIndices4.put(0, 1);
+        colIndices4.put(1, 2);
+        colIndices4.put(2, 0);
+        colIndices4.put(3, 0);
+        colIndices4.put(4, 2);
+        colIndices4.put(5, 0);
+        colIndices4.put(6, 0);
+        colIndices4.put(7, 2);
+        colIndices4.put(8, 0);
+        colIndices4.put(9, 0);
+        colIndices4.put(10, 2);
+        colIndices4.put(11, 0);
+        colIndices4.put(12, 0);
+        colIndices4.put(13, 2);
+        colIndices4.put(14, 1);
+
+        // create col map for row 5
+        Map<Integer, Integer> colIndices5 = new HashMap<>();
+        colIndices5.put(0, 1);
+        colIndices5.put(1, 2);
+        colIndices5.put(2, 1);
+        colIndices5.put(3, 1);
+        colIndices5.put(4, 2);
+        colIndices5.put(5, 1);
+        colIndices5.put(6, 1);
+        colIndices5.put(7, 2);
+        colIndices5.put(8, 1);
+        colIndices5.put(9, 1);
+        colIndices5.put(10, 2);
+        colIndices5.put(11, 1);
+        colIndices5.put(12, 1);
+        colIndices5.put(13, 2);
+        colIndices5.put(14, 1);
+
+        // create col map for row 6
+        Map<Integer, Integer> colIndices6 = new HashMap<>();
+        colIndices6.put(0, 1);
+        colIndices6.put(1, 0);
+        colIndices6.put(2, 2);
+        colIndices6.put(3, 2);
+        colIndices6.put(4, 2);
+        colIndices6.put(5, 0);
+        colIndices6.put(6, 2);
+        colIndices6.put(7, 2);
+        colIndices6.put(8, 2);
+        colIndices6.put(9, 0);
+        colIndices6.put(10, 2);
+        colIndices6.put(11, 2);
+        colIndices6.put(12, 2);
+        colIndices6.put(13, 0);
+        colIndices6.put(14, 1);
+
+        // create col map for row 7
+        Map<Integer, Integer> colIndices7 = new HashMap<>();
+        colIndices7.put(0, 1);
+        colIndices7.put(1, 0);
+        colIndices7.put(2, 1);
+        colIndices7.put(3, 0);
+        colIndices7.put(4, 1);
+        colIndices7.put(5, 0);
+        colIndices7.put(6, 1);
+        colIndices7.put(7, 2);
+        colIndices7.put(8, 1);
+        colIndices7.put(9, 0);
+        colIndices7.put(10, 1);
+        colIndices7.put(11, 0);
+        colIndices7.put(12, 1);
+        colIndices7.put(13, 0);
+        colIndices7.put(14, 1);
+
+        // create col map for row 8
+        Map<Integer, Integer> colIndices8 = new HashMap<>();
+        colIndices8.put(0, 1);
+        colIndices8.put(1, 0);
+        colIndices8.put(2, 1);
+        colIndices8.put(3, 0);
+        colIndices8.put(4, 1);
+        colIndices8.put(5, 0);
+        colIndices8.put(6, 1);
+        colIndices8.put(7, 2);
+        colIndices8.put(8, 1);
+        colIndices8.put(9, 0);
+        colIndices8.put(10, 1);
+        colIndices8.put(11, 0);
+        colIndices8.put(12, 1);
+        colIndices8.put(13, 0);
+        colIndices8.put(14, 1);
+
+        // create col map for row 9
+        Map<Integer, Integer> colIndices9 = new HashMap<>();
+        colIndices9.put(0, 1);
+        colIndices9.put(1, 2);
+        colIndices9.put(2, 0);
+        colIndices9.put(3, 3);
+        colIndices9.put(4, 2);
+        colIndices9.put(5, 4);
+        colIndices9.put(6, 0);
+        colIndices9.put(7, 2);
+        colIndices9.put(8, 0);
+        colIndices9.put(9, 4);
+        colIndices9.put(10, 2);
+        colIndices9.put(11, 3);
+        colIndices9.put(12, 0);
+        colIndices9.put(13, 2);
+        colIndices9.put(14, 1);
+
+        // create col map for row 10
+        Map<Integer, Integer> colIndices10 = new HashMap<>();
+        colIndices10.put(0, 1);
+        colIndices10.put(1, 0);
+        colIndices10.put(2, 1);
+        colIndices10.put(3, 1);
+        colIndices10.put(4, 2);
+        colIndices10.put(5, 1);
+        colIndices10.put(6, 1);
+        colIndices10.put(7, 2);
+        colIndices10.put(8, 1);
+        colIndices10.put(9, 1);
+        colIndices10.put(10, 2);
+        colIndices10.put(11, 1);
+        colIndices10.put(12, 1);
+        colIndices10.put(13, 0);
+        colIndices10.put(14, 1);
+
+        // create col map for row 11
+        Map<Integer, Integer> colIndices11 = new HashMap<>();
+        colIndices11.put(0, 1);
+        colIndices11.put(1, 3);
+        colIndices11.put(2, 0);
+        colIndices11.put(3, 0);
+        colIndices11.put(4, 2);
+        colIndices11.put(5, 2);
+        colIndices11.put(6, 2);
+        colIndices11.put(7, 2);
+        colIndices11.put(8, 2);
+        colIndices11.put(9, 2);
+        colIndices11.put(10, 2);
+        colIndices11.put(11, 0);
+        colIndices11.put(12, 0);
+        colIndices11.put(13, 3);
+        colIndices11.put(14, 1);
+
+        // create col map for row 12
+        Map<Integer, Integer> colIndices12 = new HashMap<>();
+        colIndices12.put(0, 1);
+        colIndices12.put(1, 1);
+        colIndices12.put(2, 1);
+        colIndices12.put(3, 1);
+        colIndices12.put(4, 1);
+        colIndices12.put(5, 1);
+        colIndices12.put(6, 1);
+        colIndices12.put(7, 1);
+        colIndices12.put(8, 1);
+        colIndices12.put(9, 1);
+        colIndices12.put(10, 1);
+        colIndices12.put(11, 1);
+        colIndices12.put(12, 1);
+        colIndices12.put(13, 1);
+        colIndices12.put(14, 1);
+
+        // potential powerup squares 41
+        // potential powerup monsters 9
+
+        // place all column maps into a list
+        List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
+        colIndexMaps.add(colIndices0);
+        colIndexMaps.add(colIndices1);
+        colIndexMaps.add(colIndices2);
+        colIndexMaps.add(colIndices3);
+        colIndexMaps.add(colIndices4);
+        colIndexMaps.add(colIndices5);
+        colIndexMaps.add(colIndices6);
+        colIndexMaps.add(colIndices7);
+        colIndexMaps.add(colIndices8);
+        colIndexMaps.add(colIndices9);
+        colIndexMaps.add(colIndices10);
+        colIndexMaps.add(colIndices11);
+        colIndexMaps.add(colIndices12);
+
+        return colIndexMaps;
+    }
+
+    // Level 6: get list of maps with data for each square
+    private List<Map<Integer, Integer>> getSquareDataMapsLevel6() {
+        // each map represents a row
+        // each entry contains col# and integer used to assign interior (wall, monster, etc)
+
+
+        // create col map for row 0
+        Map<Integer, Integer> colIndices0 = new HashMap<>();
+        colIndices0.put(0, 1);
+        colIndices0.put(1, 1);
+        colIndices0.put(2, 1);
+        colIndices0.put(3, 1);
+        colIndices0.put(4, 1);
+        colIndices0.put(5, 1);
+        colIndices0.put(6, 1);
+        colIndices0.put(7, 1);
+        colIndices0.put(8, 1);
+        colIndices0.put(9, 1);
+        colIndices0.put(10, 1);
+        colIndices0.put(11, 1);
+        colIndices0.put(12, 1);
+        colIndices0.put(13, 1);
+        colIndices0.put(14, 1);
+
+        // create col map for row 1
+        Map<Integer, Integer> colIndices1 = new HashMap<>();
+        colIndices1.put(0, 1);
+        colIndices1.put(1, 0);
+        colIndices1.put(2, 0);
+        colIndices1.put(3, 2);
+        colIndices1.put(4, 0);
+        colIndices1.put(5, 0);
+        colIndices1.put(6, 0);
+        colIndices1.put(7, 2);
+        colIndices1.put(8, 0);
+        colIndices1.put(9, 0);
+        colIndices1.put(10, 0);
+        colIndices1.put(11, 2);
+        colIndices1.put(12, 0);
+        colIndices1.put(13, 0);
+        colIndices1.put(14, 1);
+
+        // create col map for row 2
+        Map<Integer, Integer> colIndices2 = new HashMap<>();
+        colIndices2.put(0, 1);
+        colIndices2.put(1, 2);
+        colIndices2.put(2, 1);
+        colIndices2.put(3, 2);
+        colIndices2.put(4, 1);
+        colIndices2.put(5, 2);
+        colIndices2.put(6, 1);
+        colIndices2.put(7, 2);
+        colIndices2.put(8, 1);
+        colIndices2.put(9, 2);
+        colIndices2.put(10, 1);
+        colIndices2.put(11, 2);
+        colIndices2.put(12, 1);
+        colIndices2.put(13, 2);
+        colIndices2.put(14, 1);
+
+        // create col map for row 3
+        Map<Integer, Integer> colIndices3 = new HashMap<>();
+        colIndices3.put(0, 1);
+        colIndices3.put(1, 3);
+        colIndices3.put(2, 0);
+        colIndices3.put(3, 2);
+        colIndices3.put(4, 1);
+        colIndices3.put(5, 2);
+        colIndices3.put(6, 1);
+        colIndices3.put(7, 0);
+        colIndices3.put(8, 1);
+        colIndices3.put(9, 2);
+        colIndices3.put(10, 1);
+        colIndices3.put(11, 2);
+        colIndices3.put(12, 0);
+        colIndices3.put(13, 3);
+        colIndices3.put(14, 1);
+
+        // create col map for row 4
+        Map<Integer, Integer> colIndices4 = new HashMap<>();
+        colIndices4.put(0, 1);
+        colIndices4.put(1, 1);
+        colIndices4.put(2, 1);
+        colIndices4.put(3, 1);
+        colIndices4.put(4, 1);
+        colIndices4.put(5, 2);
+        colIndices4.put(6, 1);
+        colIndices4.put(7, 2);
+        colIndices4.put(8, 1);
+        colIndices4.put(9, 2);
+        colIndices4.put(10, 1);
+        colIndices4.put(11, 1);
+        colIndices4.put(12, 1);
+        colIndices4.put(13, 1);
+        colIndices4.put(14, 1);
+
+        // create col map for row 5
+        Map<Integer, Integer> colIndices5 = new HashMap<>();
+        colIndices5.put(0, 1);
+        colIndices5.put(1, 0);
+        colIndices5.put(2, 0);
+        colIndices5.put(3, 0);
+        colIndices5.put(4, 2);
+        colIndices5.put(5, 0);
+        colIndices5.put(6, 4);
+        colIndices5.put(7, 2);
+        colIndices5.put(8, 4);
+        colIndices5.put(9, 0);
+        colIndices5.put(10, 2);
+        colIndices5.put(11, 0);
+        colIndices5.put(12, 0);
+        colIndices5.put(13, 0);
+        colIndices5.put(14, 1);
+
+        // create col map for row 6
+        Map<Integer, Integer> colIndices6 = new HashMap<>();
+        colIndices6.put(0, 1);
+        colIndices6.put(1, 3);
+        colIndices6.put(2, 1);
+        colIndices6.put(3, 1);
+        colIndices6.put(4, 1);
+        colIndices6.put(5, 1);
+        colIndices6.put(6, 1);
+        colIndices6.put(7, 2);
+        colIndices6.put(8, 1);
+        colIndices6.put(9, 1);
+        colIndices6.put(10, 1);
+        colIndices6.put(11, 1);
+        colIndices6.put(12, 1);
+        colIndices6.put(13, 3);
+        colIndices6.put(14, 1);
+
+        // create col map for row 7
+        Map<Integer, Integer> colIndices7 = new HashMap<>();
+        colIndices7.put(0, 1);
+        colIndices7.put(1, 0);
+        colIndices7.put(2, 0);
+        colIndices7.put(3, 0);
+        colIndices7.put(4, 2);
+        colIndices7.put(5, 3);
+        colIndices7.put(6, 0);
+        colIndices7.put(7, 2);
+        colIndices7.put(8, 0);
+        colIndices7.put(9, 3);
+        colIndices7.put(10, 2);
+        colIndices7.put(11, 0);
+        colIndices7.put(12, 0);
+        colIndices7.put(13, 0);
+        colIndices7.put(14, 1);
+
+        // create col map for row 8
+        Map<Integer, Integer> colIndices8 = new HashMap<>();
+        colIndices8.put(0, 1);
+        colIndices8.put(1, 1);
+        colIndices8.put(2, 1);
+        colIndices8.put(3, 1);
+        colIndices8.put(4, 1);
+        colIndices8.put(5, 2);
+        colIndices8.put(6, 1);
+        colIndices8.put(7, 2);
+        colIndices8.put(8, 1);
+        colIndices8.put(9, 2);
+        colIndices8.put(10, 1);
+        colIndices8.put(11, 1);
+        colIndices8.put(12, 1);
+        colIndices8.put(13, 1);
+        colIndices8.put(14, 1);
+
+        // create col map for row 9
+        Map<Integer, Integer> colIndices9 = new HashMap<>();
+        colIndices9.put(0, 1);
+        colIndices9.put(1, 2);
+        colIndices9.put(2, 0);
+        colIndices9.put(3, 2);
+        colIndices9.put(4, 1);
+        colIndices9.put(5, 2);
+        colIndices9.put(6, 1);
+        colIndices9.put(7, 0);
+        colIndices9.put(8, 1);
+        colIndices9.put(9, 2);
+        colIndices9.put(10, 1);
+        colIndices9.put(11, 2);
+        colIndices9.put(12, 0);
+        colIndices9.put(13, 2);
+        colIndices9.put(14, 1);
+
+        // create col map for row 10
+        Map<Integer, Integer> colIndices10 = new HashMap<>();
+        colIndices10.put(0, 1);
+        colIndices10.put(1, 2);
+        colIndices10.put(2, 1);
+        colIndices10.put(3, 2);
+        colIndices10.put(4, 1);
+        colIndices10.put(5, 2);
+        colIndices10.put(6, 1);
+        colIndices10.put(7, 2);
+        colIndices10.put(8, 1);
+        colIndices10.put(9, 2);
+        colIndices10.put(10, 1);
+        colIndices10.put(11, 2);
+        colIndices10.put(12, 1);
+        colIndices10.put(13, 2);
+        colIndices10.put(14, 1);
+
+        // create col map for row 11
+        Map<Integer, Integer> colIndices11 = new HashMap<>();
+        colIndices11.put(0, 1);
+        colIndices11.put(1, 3);
+        colIndices11.put(2, 0);
+        colIndices11.put(3, 2);
+        colIndices11.put(4, 0);
+        colIndices11.put(5, 4);
+        colIndices11.put(6, 0);
+        colIndices11.put(7, 2);
+        colIndices11.put(8, 0);
+        colIndices11.put(9, 4);
+        colIndices11.put(10, 0);
+        colIndices11.put(11, 2);
+        colIndices11.put(12, 0);
+        colIndices11.put(13, 3);
+        colIndices11.put(14, 1);
+
+        // create col map for row 12
+        Map<Integer, Integer> colIndices12 = new HashMap<>();
+        colIndices12.put(0, 1);
+        colIndices12.put(1, 1);
+        colIndices12.put(2, 1);
+        colIndices12.put(3, 1);
+        colIndices12.put(4, 1);
+        colIndices12.put(5, 1);
+        colIndices12.put(6, 1);
+        colIndices12.put(7, 1);
+        colIndices12.put(8, 1);
+        colIndices12.put(9, 1);
+        colIndices12.put(10, 1);
+        colIndices12.put(11, 1);
+        colIndices12.put(12, 1);
+        colIndices12.put(13, 1);
+        colIndices12.put(14, 1);
+
+        // potential powerup squares 41
+        // potential powerup monsters 12
+
+        // place all column maps into a list
+        List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
+        colIndexMaps.add(colIndices0);
+        colIndexMaps.add(colIndices1);
+        colIndexMaps.add(colIndices2);
+        colIndexMaps.add(colIndices3);
+        colIndexMaps.add(colIndices4);
+        colIndexMaps.add(colIndices5);
+        colIndexMaps.add(colIndices6);
+        colIndexMaps.add(colIndices7);
+        colIndexMaps.add(colIndices8);
+        colIndexMaps.add(colIndices9);
+        colIndexMaps.add(colIndices10);
+        colIndexMaps.add(colIndices11);
+        colIndexMaps.add(colIndices12);
+
+        return colIndexMaps;
+    }
+
+    // Level 7: get list of maps with data for each square
+    private List<Map<Integer, Integer>> getSquareDataMapsLevel7() {
+        // each map represents a row
+        // each entry contains col# and integer used to assign interior (wall, monster, etc)
+
+
+        // create col map for row 0
+        Map<Integer, Integer> colIndices0 = new HashMap<>();
+        colIndices0.put(0, 1);
+        colIndices0.put(1, 1);
+        colIndices0.put(2, 1);
+        colIndices0.put(3, 1);
+        colIndices0.put(4, 1);
+        colIndices0.put(5, 1);
+        colIndices0.put(6, 1);
+        colIndices0.put(7, 1);
+        colIndices0.put(8, 1);
+        colIndices0.put(9, 1);
+        colIndices0.put(10, 1);
+        colIndices0.put(11, 1);
+        colIndices0.put(12, 1);
+        colIndices0.put(13, 1);
+        colIndices0.put(14, 1);
+
+        // create col map for row 1
+        Map<Integer, Integer> colIndices1 = new HashMap<>();
+        colIndices1.put(0, 1);
+        colIndices1.put(1, 0);
+        colIndices1.put(2, 0);
+        colIndices1.put(3, 0);
+        colIndices1.put(4, 2);
+        colIndices1.put(5, 2);
+        colIndices1.put(6, 0);
+        colIndices1.put(7, 0);
+        colIndices1.put(8, 0);
+        colIndices1.put(9, 2);
+        colIndices1.put(10, 2);
+        colIndices1.put(11, 0);
+        colIndices1.put(12, 3);
+        colIndices1.put(13, 0);
+        colIndices1.put(14, 1);
+
+        // create col map for row 2
+        Map<Integer, Integer> colIndices2 = new HashMap<>();
+        colIndices2.put(0, 1);
+        colIndices2.put(1, 0);
+        colIndices2.put(2, 1);
+        colIndices2.put(3, 0);
+        colIndices2.put(4, 1);
+        colIndices2.put(5, 2);
+        colIndices2.put(6, 1);
+        colIndices2.put(7, 4);
+        colIndices2.put(8, 1);
+        colIndices2.put(9, 2);
+        colIndices2.put(10, 1);
+        colIndices2.put(11, 2);
+        colIndices2.put(12, 1);
+        colIndices2.put(13, 2);
+        colIndices2.put(14, 1);
+
+        // create col map for row 3
+        Map<Integer, Integer> colIndices3 = new HashMap<>();
+        colIndices3.put(0, 1);
+        colIndices3.put(1, 2);
+        colIndices3.put(2, 2);
+        colIndices3.put(3, 2);
+        colIndices3.put(4, 2);
+        colIndices3.put(5, 2);
+        colIndices3.put(6, 2);
+        colIndices3.put(7, 2);
+        colIndices3.put(8, 2);
+        colIndices3.put(9, 2);
+        colIndices3.put(10, 2);
+        colIndices3.put(11, 2);
+        colIndices3.put(12, 2);
+        colIndices3.put(13, 2);
+        colIndices3.put(14, 1);
+
+        // create col map for row 4
+        Map<Integer, Integer> colIndices4 = new HashMap<>();
+        colIndices4.put(0, 1);
+        colIndices4.put(1, 2);
+        colIndices4.put(2, 1);
+        colIndices4.put(3, 2);
+        colIndices4.put(4, 1);
+        colIndices4.put(5, 2);
+        colIndices4.put(6, 1);
+        colIndices4.put(7, 2);
+        colIndices4.put(8, 1);
+        colIndices4.put(9, 2);
+        colIndices4.put(10, 1);
+        colIndices4.put(11, 2);
+        colIndices4.put(12, 1);
+        colIndices4.put(13, 2);
+        colIndices4.put(14, 1);
+
+        // create col map for row 5
+        Map<Integer, Integer> colIndices5 = new HashMap<>();
+        colIndices5.put(0, 1);
+        colIndices5.put(1, 2);
+        colIndices5.put(2, 0);
+        colIndices5.put(3, 2);
+        colIndices5.put(4, 0);
+        colIndices5.put(5, 2);
+        colIndices5.put(6, 0);
+        colIndices5.put(7, 2);
+        colIndices5.put(8, 0);
+        colIndices5.put(9, 2);
+        colIndices5.put(10, 0);
+        colIndices5.put(11, 2);
+        colIndices5.put(12, 0);
+        colIndices5.put(13, 2);
+        colIndices5.put(14, 1);
+
+        // create col map for row 6
+        Map<Integer, Integer> colIndices6 = new HashMap<>();
+        colIndices6.put(0, 1);
+        colIndices6.put(1, 1);
+        colIndices6.put(2, 3);
+        colIndices6.put(3, 1);
+        colIndices6.put(4, 4);
+        colIndices6.put(5, 1);
+        colIndices6.put(6, 3);
+        colIndices6.put(7, 1);
+        colIndices6.put(8, 3);
+        colIndices6.put(9, 1);
+        colIndices6.put(10, 4);
+        colIndices6.put(11, 1);
+        colIndices6.put(12, 3);
+        colIndices6.put(13, 1);
+        colIndices6.put(14, 1);
+
+        // create col map for row 7
+        Map<Integer, Integer> colIndices7 = new HashMap<>();
+        colIndices7.put(0, 1);
+        colIndices7.put(1, 2);
+        colIndices7.put(2, 2);
+        colIndices7.put(3, 2);
+        colIndices7.put(4, 2);
+        colIndices7.put(5, 2);
+        colIndices7.put(6, 2);
+        colIndices7.put(7, 2);
+        colIndices7.put(8, 2);
+        colIndices7.put(9, 2);
+        colIndices7.put(10, 2);
+        colIndices7.put(11, 2);
+        colIndices7.put(12, 2);
+        colIndices7.put(13, 2);
+        colIndices7.put(14, 1);
+
+        // create col map for row 8
+        Map<Integer, Integer> colIndices8 = new HashMap<>();
+        colIndices8.put(0, 1);
+        colIndices8.put(1, 2);
+        colIndices8.put(2, 1);
+        colIndices8.put(3, 3);
+        colIndices8.put(4, 1);
+        colIndices8.put(5, 0);
+        colIndices8.put(6, 1);
+        colIndices8.put(7, 4);
+        colIndices8.put(8, 1);
+        colIndices8.put(9, 0);
+        colIndices8.put(10, 1);
+        colIndices8.put(11, 3);
+        colIndices8.put(12, 1);
+        colIndices8.put(13, 2);
+        colIndices8.put(14, 1);
+
+        // create col map for row 9
+        Map<Integer, Integer> colIndices9 = new HashMap<>();
+        colIndices9.put(0, 1);
+        colIndices9.put(1, 2);
+        colIndices9.put(2, 2);
+        colIndices9.put(3, 0);
+        colIndices9.put(4, 2);
+        colIndices9.put(5, 2);
+        colIndices9.put(6, 2);
+        colIndices9.put(7, 0);
+        colIndices9.put(8, 2);
+        colIndices9.put(9, 2);
+        colIndices9.put(10, 2);
+        colIndices9.put(11, 0);
+        colIndices9.put(12, 2);
+        colIndices9.put(13, 2);
+        colIndices9.put(14, 1);
+
+        // create col map for row 10
+        Map<Integer, Integer> colIndices10 = new HashMap<>();
+        colIndices10.put(0, 1);
+        colIndices10.put(1, 0);
+        colIndices10.put(2, 1);
+        colIndices10.put(3, 0);
+        colIndices10.put(4, 1);
+        colIndices10.put(5, 0);
+        colIndices10.put(6, 1);
+        colIndices10.put(7, 0);
+        colIndices10.put(8, 1);
+        colIndices10.put(9, 0);
+        colIndices10.put(10, 1);
+        colIndices10.put(11, 0);
+        colIndices10.put(12, 1);
+        colIndices10.put(13, 0);
+        colIndices10.put(14, 1);
+
+        // create col map for row 11
+        Map<Integer, Integer> colIndices11 = new HashMap<>();
+        colIndices11.put(0, 1);
+        colIndices11.put(1, 4);
+        colIndices11.put(2, 2);
+        colIndices11.put(3, 0);
+        colIndices11.put(4, 2);
+        colIndices11.put(5, 3);
+        colIndices11.put(6, 2);
+        colIndices11.put(7, 0);
+        colIndices11.put(8, 2);
+        colIndices11.put(9, 3);
+        colIndices11.put(10, 2);
+        colIndices11.put(11, 0);
+        colIndices11.put(12, 2);
+        colIndices11.put(13, 4);
+        colIndices11.put(14, 1);
+
+        // create col map for row 12
+        Map<Integer, Integer> colIndices12 = new HashMap<>();
+        colIndices12.put(0, 1);
+        colIndices12.put(1, 1);
+        colIndices12.put(2, 1);
+        colIndices12.put(3, 1);
+        colIndices12.put(4, 1);
+        colIndices12.put(5, 1);
+        colIndices12.put(6, 1);
+        colIndices12.put(7, 1);
+        colIndices12.put(8, 1);
+        colIndices12.put(9, 1);
+        colIndices12.put(10, 1);
+        colIndices12.put(11, 1);
+        colIndices12.put(12, 1);
+        colIndices12.put(13, 1);
+        colIndices12.put(14, 1);
+
+        // potential powerup squares 64
+        // potential powerup monsters 15
+
+        // place all column maps into a list
+        List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
+        colIndexMaps.add(colIndices0);
+        colIndexMaps.add(colIndices1);
+        colIndexMaps.add(colIndices2);
+        colIndexMaps.add(colIndices3);
+        colIndexMaps.add(colIndices4);
+        colIndexMaps.add(colIndices5);
+        colIndexMaps.add(colIndices6);
+        colIndexMaps.add(colIndices7);
+        colIndexMaps.add(colIndices8);
+        colIndexMaps.add(colIndices9);
+        colIndexMaps.add(colIndices10);
+        colIndexMaps.add(colIndices11);
+        colIndexMaps.add(colIndices12);
+
+        return colIndexMaps;
+    }
+
+
+
 
 }
