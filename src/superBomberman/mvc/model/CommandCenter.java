@@ -49,7 +49,7 @@ public class CommandCenter {
 
     public void initGame() {
         clearAll();
-        setLevel(3);
+        setLevel(1);
         setScore(0);
         setNumBombermans(3);
         setGameBoard();

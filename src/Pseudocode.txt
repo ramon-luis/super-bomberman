@@ -1,47 +1,38 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
-ENEMIES:
-make 3rd soldier - drone: randomly creates short blast
-add fading -> fades quickly between different colors
+USE RADIUS INSTEAD OF SIZE FOR COLLISION -> monsters & bomberman, blasts & enemies, shocks & bomberman
 
-factor monsters & bomberman to extend shared abstract class to define common movement patterns
+random move -> check if new direction is available.  PENDING
+improve AI of monsters? -> use pacMan logic? PENDING
+fix Bomberman shape PENDING
+update bomb wick -> white shape with flashing end?
 
-random move -> check if new direction is available.  if so, new random direction or 70%/30% choose new direction?
-
-POLISH FOR "FINAL"
-fix Bomberman shape
 check all sounds
     new level sound
     change exit reveal
     change background music?
 
-GAMEPLAY ADDITIONS:
-add extra life
-add kick as weapon
-add invincible power up
-add bad power up -> bomb count == 0 temporary, play bad music
-add shield -> only usable when holding down shield button
 
-
-VISUAL UPDATES:
-squares made up of different shaded triangles to add texture?
-create models that do not Collide for scenery -> stars, floorboards, etc?
-update bomb wick -> white shape with flashing end?
 update welcome screen
     // add each character to front
     // replace O with bomb in title
     // add flashing bomb to pause screen
 
 update win game:
-    call win game screen
-        create Bomb
-        assign random center point
-        add to list of Bombs
-        for each bomb in list
-            assign random color
-            draw bomb -> needed?
-        draw text: Victory!  All enemies defeated!  All levels completed!  You are the superbomber!
+    // draw text: Victory!  All enemies defeated!  All levels completed!  You are the superbomber!
+    // draw bomberman flashing different colors
+
+GAMEPLAY ADDITIONS:
+add extra life
+add kick as weapon
+add invincible power up
+add transport power up -> sends to random location
+add bad power up -> bomb count == 0 temporary, play bad music
+
+add fading -> fades quickly between different colors
+squares made up of different shaded triangles to add texture?
+create models that do not Collide for scenery -> stars, floorboards, etc?
 
 change lives display to be icon + #
 draw bomberman moving in different directions
@@ -50,21 +41,19 @@ add squares around key info: score, lives, bombs, power ups
 REFACTOR
 Clean up all code
 Create LevelData as Objects? -> assign instance variables to get?
-setCenter should use square
-
-
 
 EXTRAS IF TIME
 2-player mode or add boss
+
+
 correct movement of Bomberman & Monster - don't allow overlap of walls
-improve AI of monsters? -> use pacMan logic?
 add bomb-related music (Bombtrack, Super Bon Bon)
 bombs destroy power ups?
     have to check if blast that creates power up will also remove power up
 
 
-
 DONE
+make 3rd soldier - drone: randomly creates short blast
 make alien change colors when hit
 refactor Monsters - abstract class that inherits
 monsters block each other

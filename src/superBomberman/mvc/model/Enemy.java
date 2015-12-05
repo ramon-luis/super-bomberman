@@ -2,6 +2,7 @@ package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
 
 /**
  * Enemy class used to define common traits of enemies
@@ -11,7 +12,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class Enemy extends Sprite {
 
     // enum for types of power ups
-    public enum EnemyType {ALIEN, MONSTER, SOLDIER};
+    public enum EnemyType {
+        ALIEN, MONSTER, SOLDIER
+    }
+
+    ;
 
     public final int SIZE = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
 
@@ -20,22 +25,90 @@ public abstract class Enemy extends Sprite {
     private int mSpeed;
     private Direction mDirectionToMove;
     private PowerUp mPowerUpInside;
-    private boolean mFrozen;
+
+    private int mDirectionChangeCounter;
+    private Square mPriorSquare;
+    private Square mGoalSquare;
+    private ArrayList<Square> mSeekPath;
+
 
     // constructor
     public Enemy() {
         super();
         setTeam(Team.ENEMY);
         setSize(SIZE);
+        mSeekPath = new ArrayList<>();
     }
 
-    public boolean isFrozen() {
-        return mFrozen;
+
+    public boolean isMultipleOpenPaths() {
+        int iPathCount = 0;
+        Square squareUp = getCurrentSquare().getOffsetSquare(0, -1);
+        Square squareDown = getCurrentSquare().getOffsetSquare(0, 1);
+        Square squareRight = getCurrentSquare().getOffsetSquare(1, 0);
+        Square squareLeft = getCurrentSquare().getOffsetSquare(-1, 0);
+
+        Square[] surroundingSquares = {squareUp, squareDown, squareLeft, squareRight};
+
+        for (Square surroundingSquare : surroundingSquares) {
+            if (!surroundingSquare.isBlocked() && !surroundingSquare.hasEnemy()) {
+                iPathCount++;
+            }
+        }
+        return iPathCount > 2;
     }
 
-    public void setFrozen(boolean frozen) {
-        mFrozen = frozen;
+    public boolean inNewSquare() {
+        return getCurrentSquare() != mPriorSquare;
     }
+
+
+    public void setPriorSquare(Square square) {
+        mPriorSquare = square;
+    }
+
+    public Square getPriorSquare() {
+        return mPriorSquare;
+    }
+
+    public void updateDirection(Direction direction) {
+        resetDirectionChangeCounter();
+        mDirectionToMove = direction;
+    }
+
+    public void resetDirectionChangeCounter() {
+        mDirectionChangeCounter = 0;
+    }
+
+    public boolean recentlyChangedDirection() {
+        return mDirectionChangeCounter < 20;
+    }
+
+    public void tickDirectionChangeCounter() {
+        mDirectionChangeCounter++;
+    }
+
+    private boolean newDirectionPossible() {
+        boolean bIsNewDirection = false;
+
+        if (mPriorSquare == null)
+            return false;
+
+        if (inNewSquare()) {
+            if (mDirectionToMove == Direction.RIGHT || mDirectionToMove == Direction.LEFT) {
+                boolean bDownSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(0, -1).isWall() && mPriorSquare.getOffsetSquare(0, -1).isWall();
+                boolean bUpSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(0, -1).isWall() && mPriorSquare.getOffsetSquare(0, -1).isWall();
+                bIsNewDirection = bDownSquareIsNowOpen || bUpSquareIsNowOpen;
+            } else if (mDirectionToMove == Direction.UP || mDirectionToMove == Direction.DOWN) {
+                boolean bRightSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(1, 0).isWall() && mPriorSquare.getOffsetSquare(1, 0).isWall();
+                boolean bLeftSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(-1, 0).isWall() && mPriorSquare.getOffsetSquare(-1, 0).isWall();
+                bIsNewDirection = bRightSquareIsNowOpen || bLeftSquareIsNowOpen;
+            }
+        }
+        System.out.println("new direction possible: " + bIsNewDirection);
+        return bIsNewDirection;
+    }
+
 
     // set the center of the enemy
     public void setCenterFromSquare(Square square) {
@@ -87,51 +160,163 @@ public abstract class Enemy extends Sprite {
         return mPowerUpInside != null;
     }
 
+
+    // refresh the gameBoard used for seek
+    private void updateGoalSquare() {
+        // get bomberman location -> needs to be updated whenever gameBoard is updated
+        mGoalSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
+    }
+
+    public void removeCurrentSquareFromSeekPath() {
+        int iLastSquareIndex = mSeekPath.size() - 1;
+        if (mSeekPath.get(iLastSquareIndex).equals(getCurrentSquare())) {
+            mSeekPath.remove(iLastSquareIndex);
+        }
+    }
+
+    public void setSeekDirection() {
+        if (seek(getCurrentSquare(), mGoalSquare)) {
+
+            System.out.println("seek path:");
+            for (Square square : mSeekPath)
+                System.out.println("  " + square);
+            setDirectionForTargetSquare(getNextSeekSquare());
+            System.out.println("direction to move: " + mDirectionToMove);
+            if (inNewSquare()) {
+                removeNextSeekSquare();
+            }
+        } else {
+            setRandomDirection();
+        }
+    }
+
+    public void updateSeekPath() {
+        mSeekPath.clear();  // clear current seek path
+        updateGoalSquare();
+    }
+
+    // get the direction between current square and an adjacent square
+    private void setDirectionForTargetSquare(Square targetSquare) {
+        int iTargetSquareRow = targetSquare.getRow();
+        int iTargetSquareCol = targetSquare.getColumn();
+        int iCurrentSquareRow = getCurrentSquare().getRow();
+        int iCurrentSquareCol = getCurrentSquare().getColumn();
+
+        if (iTargetSquareRow > iCurrentSquareRow && iTargetSquareCol == iCurrentSquareCol)
+            mDirectionToMove = Direction.RIGHT;
+        else if (iTargetSquareRow < iCurrentSquareRow && iTargetSquareCol == iCurrentSquareCol)
+            mDirectionToMove = Direction.LEFT;
+        else if (iTargetSquareRow == iCurrentSquareRow && iTargetSquareCol > iCurrentSquareCol)
+            mDirectionToMove = Direction.DOWN;
+        else if (iTargetSquareRow == iCurrentSquareRow && iTargetSquareCol < iCurrentSquareCol)
+            mDirectionToMove = Direction.UP;
+        else
+            setRandomDirection();
+
+    }
+
+
+    private Square getNextSeekSquare() {
+        removeCurrentSquareFromSeekPath();
+        int iNextSeekSquareIndex = mSeekPath.size() - 1;  // list is stored in reverse order
+        return mSeekPath.get(iNextSeekSquareIndex);
+    }
+
+    private void removeNextSeekSquare() {
+        int iNextSeekSquareIndex = mSeekPath.size() - 1;  // list is stored in reverse order
+        mSeekPath.remove(iNextSeekSquareIndex);
+    }
+
+    private boolean seek(Square currentSquare, Square goalSquare) {
+        // unproductive path: wall or previously explored by this enemy
+        if (currentSquare.isSolidWall() || currentSquare.isExplored(this)) {
+            return false;
+
+            // base case: goal found
+        } else if (currentSquare.equals(goalSquare)) {
+
+            mSeekPath.add(currentSquare);  // add square to seek path
+            return true;
+
+            // new square (not a wall or goal): explore square
+        } else {
+
+            currentSquare.setExplored(this);
+            if (seek(currentSquare.getOffsetSquare(0, -1), goalSquare) || // left
+                    seek(currentSquare.getOffsetSquare(-1, 0), goalSquare) || // up
+                    seek(currentSquare.getOffsetSquare(1, 0), goalSquare) || // down
+                    seek(currentSquare.getOffsetSquare(0, 1), goalSquare)) { // right
+                mSeekPath.add(currentSquare);  // add square to seek path
+                return true;    // location leads to goal square
+            }
+            // unchoose
+        }
+        return false;   // does not lead to goal square
+    }
+
+    public boolean getRandomChoice() {
+        int iMin = 1;
+        int iMax = 2;
+        int iRandomChoice = ThreadLocalRandom.current().nextInt(iMin, iMax + 1);
+
+        return iRandomChoice == 1;
+    }
+
+    public void updateDirectionForMultiplePaths() {
+        if (isMultipleOpenPaths() && getRandomChoice() && !recentlyChangedDirection() && !isPastSquareMidPoint()) {
+            setRandomDirection();
+        }
+    }
+
     @Override
     public void move() {
 
-        if (!mFrozen) {
-            // define variables for where to move (square rol/col and sprite x/y)
-            int iAdjustRow = 0;
-            int iAdjustColumn = 0;
-            double dAdjustX = 0;
-            double dAdjustY = 0;
+        // set random direction (if needed)
+        if (mDirectionToMove == null)
+            setRandomDirection();
 
-            // set random direction (if needed)
-            if (mDirectionToMove == null)
-                setRandomDirection();
+        updateDirectionForMultiplePaths();
 
-            // set the target location (square and spite)
-            if (mDirectionToMove == Direction.DOWN) {
-                iAdjustRow = 1;
-                dAdjustY = mSpeed;
-            } else if (mDirectionToMove == Direction.UP) {
-                iAdjustRow = -1;
-                dAdjustY = -mSpeed;
-            } else if (mDirectionToMove == Direction.LEFT) {
-                iAdjustColumn = -1;
-                dAdjustX = -mSpeed;
-            } else if (mDirectionToMove == Direction.RIGHT) {
-                iAdjustColumn = 1;
-                dAdjustX = mSpeed;
-            }
+        // define variables for where to move (square rol/col and sprite x/y)
+        int iAdjustRow = 0;
+        int iAdjustColumn = 0;
+        double dAdjustX = 0;
+        double dAdjustY = 0;
 
-            // find the square that object is targeting to move into
-            int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
-            int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
-            Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
 
-            // if the square is not blocked and does not have a foe, then move
-            // otherwise set a new random direction
-            // checking for past halfway allows object to move closer to progress in current square until it is in the middle
-            if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy() && !getCurrentSquare().hasBlast()) || !isPastSquareMidPoint()) {
-                setDeltaX(dAdjustX);
-                setDeltaY(dAdjustY);
-                super.move();
-            } else {
-                setCenter(getCurrentSquare().getCenter());
-                setRandomDirection();
-            }
+        // set the target location (square and spite)
+        if (mDirectionToMove == Direction.DOWN) {
+            iAdjustRow = 1;
+            dAdjustY = mSpeed;
+        } else if (mDirectionToMove == Direction.UP) {
+            iAdjustRow = -1;
+            dAdjustY = -mSpeed;
+        } else if (mDirectionToMove == Direction.LEFT) {
+            iAdjustColumn = -1;
+            dAdjustX = -mSpeed;
+        } else if (mDirectionToMove == Direction.RIGHT) {
+            iAdjustColumn = 1;
+            dAdjustX = mSpeed;
+        }
+
+        // find the square that object is targeting to move into
+        int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
+        int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
+        Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
+
+        // if the square is not blocked and does not have a foe, then move
+        // otherwise set a new random direction
+        // checking for past halfway allows object to move closer to progress in current square until it is in the middle
+
+
+        if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy() && !getCurrentSquare().hasBlast()) || !isPastSquareMidPoint()) {
+            setDeltaX(dAdjustX);
+            setDeltaY(dAdjustY);
+            super.move();
+            tickDirectionChangeCounter();
+        } else {
+            setCenter(getCurrentSquare().getCenter());
+            setRandomDirection();
         }
     }
 
@@ -164,6 +349,7 @@ public abstract class Enemy extends Sprite {
 
         // set the direction to move
         setDirectionToMove(randomDirection);
+        resetDirectionChangeCounter();
     }
 
     // set the direction to move

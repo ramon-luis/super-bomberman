@@ -65,7 +65,6 @@ public class Bomberman extends Sprite {
 		ArrayList<Point> pntCs = new ArrayList<Point>();
 
 		// draw the bomberman
-		pntCs.add(new Point(0,5));
 		pntCs.add(new Point(1,6));
 		pntCs.add(new Point(2,6));
 		pntCs.add(new Point(2,5));
@@ -81,13 +80,11 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(2,-6));
 		pntCs.add(new Point(1,-6));
 		pntCs.add(new Point(0,-2));
-
 		pntCs.add(new Point(-1,-5));
 		pntCs.add(new Point(-2,-6));
 		pntCs.add(new Point(-4,-6));
 		pntCs.add(new Point(-4,-5));
 		pntCs.add(new Point(-3,-5));
-
 		pntCs.add(new Point(-3,-4));
 		pntCs.add(new Point(-4,-3));
 		pntCs.add(new Point(-5,-4));
@@ -96,7 +93,6 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(-6,-2));
 		pntCs.add(new Point(-5,-2));
 		pntCs.add(new Point(-5,2));
-
 		pntCs.add(new Point(-6,2));
 		pntCs.add(new Point(-6,5));
 		pntCs.add(new Point(-5,5));
@@ -110,8 +106,6 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(-1,5));
 		pntCs.add(new Point(0,2));
 		pntCs.add(new Point(1,6));
-
-
 		pntCs.add(new Point(2,6));
 		pntCs.add(new Point(2,5));
 		pntCs.add(new Point(4,5));
@@ -122,6 +116,8 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(3,2));
 		pntCs.add(new Point(2,3));
 		pntCs.add(new Point(2,5));
+		pntCs.add(new Point(2,6));
+		pntCs.add(new Point(1,6));
 
 		// assign to polar points
 		assignPolarPoints(pntCs);
@@ -150,7 +146,6 @@ public class Bomberman extends Sprite {
 		ArrayList<Point> pntCs = new ArrayList<Point>();
 		
 		// draw the bomberman
-		pntCs.add(new Point(0,5));
 		pntCs.add(new Point(1,6));
 		pntCs.add(new Point(2,6));
 		pntCs.add(new Point(2,5));
@@ -166,13 +161,11 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(2,-6));
 		pntCs.add(new Point(1,-6));
 		pntCs.add(new Point(0,-2));
-
 		pntCs.add(new Point(-1,-5));
 		pntCs.add(new Point(-2,-6));
 		pntCs.add(new Point(-4,-6));
 		pntCs.add(new Point(-4,-5));
 		pntCs.add(new Point(-3,-5));
-
 		pntCs.add(new Point(-3,-4));
 		pntCs.add(new Point(-4,-3));
 		pntCs.add(new Point(-5,-4));
@@ -181,7 +174,6 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(-6,-2));
 		pntCs.add(new Point(-5,-2));
 		pntCs.add(new Point(-5,2));
-
 		pntCs.add(new Point(-6,2));
 		pntCs.add(new Point(-6,5));
 		pntCs.add(new Point(-5,5));
@@ -195,8 +187,6 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(-1,5));
 		pntCs.add(new Point(0,2));
 		pntCs.add(new Point(1,6));
-
-
 		pntCs.add(new Point(2,6));
 		pntCs.add(new Point(2,5));
 		pntCs.add(new Point(4,5));
@@ -207,6 +197,8 @@ public class Bomberman extends Sprite {
 		pntCs.add(new Point(3,2));
 		pntCs.add(new Point(2,3));
 		pntCs.add(new Point(2,5));
+		pntCs.add(new Point(2,6));
+		pntCs.add(new Point(1,6));
 
 		// assign to polar points
 		assignPolarPoints(pntCs);

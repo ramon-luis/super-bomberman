@@ -117,14 +117,15 @@ public class Game implements Runnable, KeyListener {
 														// the frames of the animation
 
 
-
-			//this might be a good place to check for collisions
-			checkCollisions();
-			checkNewLevel();
-			//this might be a god place to check if the level is clear (no more enemies)
-			//if the level is clear then spawn some big asteroids -- the number of asteroids
-			//should increase with the level.
-			checkRevealExit();
+			if (CommandCenter.getInstance().isPlaying()) {
+				//this might be a good place to check for collisions
+				checkCollisions();
+				checkNewLevel();
+				//this might be a god place to check if the level is clear (no more enemies)
+				//if the level is clear then spawn some big asteroids -- the number of asteroids
+				//should increase with the level.
+				checkRevealExit();
+			}
 
 			try {
 				// The total amount of time is guaranteed to be at least ANI_DELAY long.  If processing (update)
@@ -310,10 +311,9 @@ public class Game implements Runnable, KeyListener {
 					} else {
 						CommandCenter.getInstance().getMovEnemies().remove(mov);
 						Sound.playSound("enemyDie.wav");
-
 					}
-
 					break;
+
 				case FRIEND:
 					if (operation == CollisionOp.Operation.ADD){
 						CommandCenter.getInstance().getMovFriends().add(mov);
@@ -335,10 +335,9 @@ public class Game implements Runnable, KeyListener {
 						CommandCenter.getInstance().getMovBombs().add(mov);
 					} else {
 						CommandCenter.getInstance().getMovBombs().remove(mov);
-
-
 					}
 					break;
+
 				case BLAST:
 					if (operation == CollisionOp.Operation.ADD){
 						CommandCenter.getInstance().getMovBlasts().add(mov);
@@ -346,6 +345,7 @@ public class Game implements Runnable, KeyListener {
 						CommandCenter.getInstance().getMovBlasts().remove(mov);
 					}
 					break;
+
 				case WALL:
 					if (operation == CollisionOp.Operation.ADD){
 						CommandCenter.getInstance().getMovWalls().add(mov);
@@ -354,6 +354,7 @@ public class Game implements Runnable, KeyListener {
 						mov.getCurrentSquare().removeWall();
 					}
 					break;
+
 				case EXIT:
 					if (operation == CollisionOp.Operation.ADD){
 						CommandCenter.getInstance().getMovExits().add(mov);
@@ -376,6 +377,10 @@ public class Game implements Runnable, KeyListener {
 			nTick = 0;
 		else
 			nTick++;
+	}
+
+	public int getnTick() {
+		return nTick;
 	}
 
 

@@ -1,6 +1,8 @@
 package superBomberman.mvc.model;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by RAM0N on 11/27/15.
@@ -26,6 +28,7 @@ public class Square extends Sprite {
     private Sprite mInside;
 
     private boolean mContainsBomb;
+    private List<Enemy> mExploredByEnemies;
 
     public Square(int row, int column) {
 
@@ -33,11 +36,30 @@ public class Square extends Sprite {
         mRow = row;
         mColumn = column;
 
+        mExploredByEnemies = new ArrayList<>();
+
         // create & assign center point for display
         // changed equation from TargetSpace
         mCenter = new Point(SQUARE_LENGTH * mColumn + SQUARE_LENGTH/2, SQUARE_LENGTH * mRow + SQUARE_LENGTH/2 );
         setCenter(mCenter);
 
+    }
+
+    // CHECK THIS CODE - WHERE TO PUT GAMEBOARD VAR
+    public Square getOffsetSquare(int rowOffset, int colOffset) {
+        return CommandCenter.getInstance().getGameBoard().getSquare(mRow + rowOffset, mColumn + colOffset);
+    }
+
+    public boolean isExplored(Enemy enemy) {
+        return mExploredByEnemies.contains(enemy);
+    }
+
+    public void setExplored(Enemy enemy) {
+        mExploredByEnemies.add(enemy);
+    }
+
+    public void removeExplored(Enemy enemy) {
+        mExploredByEnemies.remove(enemy);
     }
 
     public boolean isExit() {
@@ -124,6 +146,9 @@ public class Square extends Sprite {
     public int getColumn() {
         return mColumn;
     }
+
+
+
 
     public String toString() {
         return "row: " + getRow() + ", col: " + getColumn();

@@ -25,6 +25,17 @@ public class GameBoard {
     private int mEnemyPowerUpSourceCount;  // # of enemies used as source for power up
 
 
+    public GameBoard(GameBoard existingGameBoard) {
+        mLevel = existingGameBoard.getLevel();
+        mSquares = existingGameBoard.getSquares();
+        mPowerUps = existingGameBoard.getPowerUps();
+        mEnemies = existingGameBoard.getEnemies();
+        mBreakableWalls = existingGameBoard.getBreakableWalls();
+        createLevel();
+        createPowerUps();
+        createExit();
+    }
+
     // constructor
     public GameBoard(int level) {
         // assign level
@@ -42,6 +53,21 @@ public class GameBoard {
         createExit();  // assigned to random square with breakable wall (and no power up)
     }
 
+    public int getLevel() {
+        return mLevel;
+    }
+
+    public List<PowerUp> getPowerUps() {
+        return mPowerUps;
+    }
+
+    public List<Enemy> getEnemies() {
+        return mEnemies;
+    }
+
+    public List<Wall> getBreakableWalls() {
+        return mBreakableWalls;
+    }
 
     // get square based on row and col
     public Square getSquare(int row, int col) {
@@ -110,6 +136,12 @@ public class GameBoard {
                     alien.setCenterFromSquare(square);
                     mEnemies.add(alien);  // list is used for adding power ups
                     CommandCenter.getInstance().getOpsList().enqueue(alien, CollisionOp.Operation.ADD);
+                } else if (entry.getValue() == 5) {
+                    // create drone, add to OpsList
+                    Drone drone = new Drone();
+                    drone.setCenterFromSquare(square);
+                    mEnemies.add(drone);  // list is used for adding power ups
+                    CommandCenter.getInstance().getOpsList().enqueue(drone, CollisionOp.Operation.ADD);
                 }
 
 
@@ -315,7 +347,7 @@ public class GameBoard {
         colIndices5.put(3, 2);
         colIndices5.put(4, 0);
         colIndices5.put(5, 0);
-        colIndices5.put(6, 3);
+        colIndices5.put(6, 5);  // TEST DRONE
         colIndices5.put(7, 1);
         colIndices5.put(8, 3);
         colIndices5.put(9, 0);
