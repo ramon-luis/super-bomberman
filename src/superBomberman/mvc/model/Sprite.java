@@ -20,6 +20,8 @@ public abstract class Sprite implements Movable {
 	//we need to know what team we're on
 	private Team mTeam;
 
+	private Direction mDirection;
+
 	//the radius of circumscibing circle
 	private int nSize;
 
@@ -95,6 +97,16 @@ public abstract class Sprite implements Movable {
 
 	}
 
+	public Direction getDirection() {
+		return mDirection;
+	}
+
+	public void setDirection(Direction direction) {
+		mDirection = direction;
+	}
+
+	private Direction mDirectionToMove;
+
 	public double[] getLengths() {
 		return this.dLengths;
 	}
@@ -126,6 +138,47 @@ public abstract class Sprite implements Movable {
 		return CommandCenter.getInstance().getGameBoard().getSquare(iRow, iColumn);
 	}
 
+	public boolean isMultipleOpenPaths() {
+		int iPathCount = 0;
+		Square squareUp = getCurrentSquare().getOffsetSquare(0, -1);
+		Square squareDown = getCurrentSquare().getOffsetSquare(0, 1);
+		Square squareRight = getCurrentSquare().getOffsetSquare(1, 0);
+		Square squareLeft = getCurrentSquare().getOffsetSquare(-1, 0);
+
+		Square[] surroundingSquares = {squareUp, squareDown, squareLeft, squareRight};
+
+		for (Square surroundingSquare : surroundingSquares) {
+			if (!surroundingSquare.isBlocked()) {
+				iPathCount++;
+			}
+		}
+		return iPathCount > 2;
+	}
+
+
+	public boolean isInVerticalRange() {
+		double iProximity = 21;
+
+		return getCenter().getY() <= getCurrentSquare().getCenter().getY() + iProximity &&
+				getCenter().getY() >= getCurrentSquare().getCenter().getY() - iProximity;
+	}
+
+	public boolean isInHorizontalRange() {
+		double iProximity = 21;
+
+		return getCenter().getX() <= getCurrentSquare().getCenter().getX() + iProximity &&
+				getCenter().getX() >= getCurrentSquare().getCenter().getX() - iProximity;
+
+	}
+
+	public boolean isInVerticalCenterOfSquare() {
+		return getCenter().getY() == getCurrentSquare().getCenter().getY();
+	}
+
+	public boolean isInHorizontalCenterOfSquare() {
+		double iProximity = 2;
+		return getCenter().getX() == getCurrentSquare().getCenter().getX();
+	}
 
 	public int points() {
 		//default is zero

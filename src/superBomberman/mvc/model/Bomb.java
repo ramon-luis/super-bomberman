@@ -19,7 +19,7 @@ public class Bomb extends Sprite {
 
     // constants for size & life (expiration)
     private final int SIZE = Square.SQUARE_LENGTH / 2;
-    private final int EXPIRE = 30; // life of object before expiry
+    private final int EXPIRE = 40; // life of object before expiry
 
     // private instance members -> used to alternate sizes and colors
     private boolean mIsSmall;
@@ -34,6 +34,7 @@ public class Bomb extends Sprite {
         // set team, shape, expiration, and size
         setTeam(Team.BOMB);
         setShape(getShapeAsCartesianPoints());
+        setSize(SIZE);
         setExpire(EXPIRE);
     }
 
@@ -64,8 +65,8 @@ public class Bomb extends Sprite {
         Color cWickFill = (mIsRedWick) ? Color.RED : Color.WHITE;
 
         // set coordinates to draw the circle of bomb
-        int iDrawX = (int) getCenter().getX() - iSize + 10;
-        int iDrawY = (int) getCenter().getY() - iSize + 10;
+        int iDrawX = (int) getCenter().getX() - iSize + iSize / 4;
+        int iDrawY = (int) getCenter().getY() - iSize + iSize / 4;
 
         // set color & draw circle for bomb
         g.setColor(cBombFill);
@@ -74,6 +75,7 @@ public class Bomb extends Sprite {
         // set color & draw wick
         g.setColor(cWickFill);
         g.drawPolygon(getXcoords(), getYcoords(), dDegrees.length);
+
     }
 
     // create blasts and remove bomb
@@ -177,28 +179,28 @@ public class Bomb extends Sprite {
         ArrayList<Point> pntCs = new ArrayList<>();
 
         // add each point to outline shape
-        pntCs.add(new Point(10, 0));
-        pntCs.add(new Point(11, -1));
-        pntCs.add(new Point(12, -2));
-        pntCs.add(new Point(12, -3));
-        pntCs.add(new Point(12, -4));
-        pntCs.add(new Point(13, -5));
-        pntCs.add(new Point(14, -6));
-        pntCs.add(new Point(14, -7));
-        pntCs.add(new Point(14, -8));
-        pntCs.add(new Point(15, -9));
-        pntCs.add(new Point(15, -10));
-        pntCs.add(new Point(14, -10));
-        pntCs.add(new Point(14, -9));
-        pntCs.add(new Point(13, -8));
-        pntCs.add(new Point(13, -7));
-        pntCs.add(new Point(13, -6));
-        pntCs.add(new Point(12, -5));
-        pntCs.add(new Point(11, -4));
-        pntCs.add(new Point(11, -3));
-        pntCs.add(new Point(11, -2));
-        pntCs.add(new Point(10, -1));
-        pntCs.add(new Point(9, 0));
+        pntCs.add(new Point(10,0));
+        pntCs.add(new Point(11,-1));
+        pntCs.add(new Point(12,-2));
+        pntCs.add(new Point(12,-3));
+        pntCs.add(new Point(12,-4));
+        pntCs.add(new Point(13,-5));
+        pntCs.add(new Point(14,-6));
+        pntCs.add(new Point(14,-7));
+        pntCs.add(new Point(14,-8));
+        pntCs.add(new Point(15,-9));
+        pntCs.add(new Point(15,-10));
+        pntCs.add(new Point(14,-10));
+        pntCs.add(new Point(14,-9));
+        pntCs.add(new Point(13,-8));
+        pntCs.add(new Point(13,-7));
+        pntCs.add(new Point(13,-6));
+        pntCs.add(new Point(12,-5));
+        pntCs.add(new Point(11,-4));
+        pntCs.add(new Point(11,-3));
+        pntCs.add(new Point(11,-2));
+        pntCs.add(new Point(10,-1));
+        pntCs.add(new Point(9,0));
 
         // return the list
         return pntCs;

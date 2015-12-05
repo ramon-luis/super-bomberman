@@ -1,27 +1,22 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
+increase points for new level + bonus points for each life remaining
+increase points based on type of enemy
+make blasts grow -> starts at middle and then expands & contracts in size?
 USE RADIUS INSTEAD OF SIZE FOR COLLISION -> monsters & bomberman, blasts & enemies, shocks & bomberman
-
-random move -> check if new direction is available.  PENDING
-improve AI of monsters? -> use pacMan logic? PENDING
-fix Bomberman shape PENDING
-update bomb wick -> white shape with flashing end?
+update colors/flashing/action for hits to enemy
+alternate colors for bomberman when protected (yellow, teal, white or any random?)
 
 check all sounds
     new level sound
     change exit reveal
     change background music?
 
-
-update welcome screen
-    // add each character to front
-    // replace O with bomb in title
-    // add flashing bomb to pause screen
-
 update win game:
     // draw text: Victory!  All enemies defeated!  All levels completed!  You are the superbomber!
     // draw bomberman flashing different colors
+
 
 GAMEPLAY ADDITIONS:
 add extra life
@@ -44,15 +39,17 @@ Create LevelData as Objects? -> assign instance variables to get?
 
 EXTRAS IF TIME
 2-player mode or add boss
-
-
-correct movement of Bomberman & Monster - don't allow overlap of walls
 add bomb-related music (Bombtrack, Super Bon Bon)
 bombs destroy power ups?
     have to check if blast that creates power up will also remove power up
 
 
 DONE
+update welcome screen
+    // add each character to front
+correct movement of Bomberman & Monster - don't allow overlap of walls
+fix Bomberman shape
+random move -> check if new direction is available.
 make 3rd soldier - drone: randomly creates short blast
 make alien change colors when hit
 refactor Monsters - abstract class that inherits

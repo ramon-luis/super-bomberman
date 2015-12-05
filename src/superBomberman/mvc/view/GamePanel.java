@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import superBomberman.mvc.model.Sprite.Direction;
 
 
 public class GamePanel extends Panel {
@@ -198,19 +199,20 @@ public class GamePanel extends Panel {
     }
 
     // REFACTOR TO DRAW BOMBERMAN TO CERTAIN SIZE
-    private void drawTitleBomberMan(Graphics g, int xLocation, int yLocation) {
-        Bomberman bomberman = new Bomberman(false);
+    private void drawBomberman(Graphics g, int xLocation, int yLocation, int size) {
+        Bomberman bomberman = new Bomberman();
         double[] dLens = bomberman.getLengths();
         int nLen = bomberman.getDegrees().length;
         Point[] pntMs = new Point[nLen];
         int[] nXs = new int[nLen];
         int[] nYs = new int[nLen];
+        int iSize = size;
 
         //convert to cartesian points
         for (int nC = 0; nC < nLen; nC++) {
-            pntMs[nC] = new Point((int) (75 * dLens[nC] * Math.sin(Math
+            pntMs[nC] = new Point((int) (iSize * dLens[nC] * Math.sin(Math
                     .toRadians(180) + bomberman.getDegrees()[nC])),
-                    (int) (75 * dLens[nC] * Math.cos(Math.toRadians(180)
+                    (int) (iSize * dLens[nC] * Math.cos(Math.toRadians(180)
                             + bomberman.getDegrees()[nC])));
         }
 
@@ -225,9 +227,171 @@ public class GamePanel extends Panel {
         g.fillPolygon(nXs, nYs, nLen);
     }
 
-    // REFACTOR TO DRAW BOMBERMAN TO CERTAIN SIZE
-    private void drawTitleBomb() {
+    // draw a bomb
+    private void drawBomb(Graphics g, int xLocation, int yLocation, int size) {
+        Bomb bomb = new Bomb();
+        double[] dLens = bomb.getLengths();
+        int nLen = bomb.getDegrees().length;
+        Point[] pntMs = new Point[nLen];
+        int[] nXs = new int[nLen];
+        int[] nYs = new int[nLen];
+        int iSize = size;
 
+        //convert to cartesian points
+        for (int nC = 0; nC < nLen; nC++) {
+            pntMs[nC] = new Point((int) (iSize * dLens[nC] * Math.sin(Math
+                    .toRadians(180) + bomb.getDegrees()[nC])),
+                    (int) (iSize * dLens[nC] * Math.cos(Math.toRadians(180)
+                            + bomb.getDegrees()[nC])));
+        }
+
+        //set the color to white
+        g.setColor(Color.white);
+        //create x and y values for the object to the bottom right using cartesian points again
+        for (int nC = 0; nC < bomb.getDegrees().length; nC++) {
+            nXs[nC] = pntMs[nC].x + xLocation;
+            nYs[nC] = pntMs[nC].y + yLocation;
+        }
+        g.fillPolygon(nXs, nYs, nLen);
+
+        // set coordinates to draw the circle of bomb
+        int iDrawX = xLocation - iSize + iSize / 4;
+        int iDrawY = yLocation - iSize + iSize / 4;
+
+        // set color & draw circle for bomb
+        g.setColor(Color.DARK_GRAY);
+        g.fillOval(iDrawX, iDrawY, iSize * 2 - 15, iSize * 2 - 15);
+
+    }
+
+    // draw a blast
+    private void drawBlast(Graphics g, int xLocation, int yLocation, int size, Direction direction) {
+        Blast blast = new Blast(direction);
+        double[] dLens = blast.getLengths();
+        int nLen = blast.getDegrees().length;
+        Point[] pntMs = new Point[nLen];
+        int[] nXs = new int[nLen];
+        int[] nYs = new int[nLen];
+        int iSize = size;
+
+        //convert to cartesian points
+        for (int nC = 0; nC < nLen; nC++) {
+            pntMs[nC] = new Point((int) (iSize * dLens[nC] * Math.sin(Math
+                    .toRadians(180) + blast.getDegrees()[nC])),
+                    (int) (iSize * dLens[nC] * Math.cos(Math.toRadians(180)
+                            + blast.getDegrees()[nC])));
+        }
+
+        //set the color to white
+        g.setColor(Color.orange);
+        //for each falcon left (not including the one that is playing)
+        //create x and y values for the objects to the bottom right using cartesean points again
+        for (int nC = 0; nC < blast.getDegrees().length; nC++) {
+            nXs[nC] = pntMs[nC].x + xLocation;
+            nYs[nC] = pntMs[nC].y + yLocation;
+        }
+        g.fillPolygon(nXs, nYs, nLen);
+    }
+
+    // draw a soldier
+    private void drawSoldier(Graphics g, int xLocation, int yLocation, int size) {
+        Soldier soldier = new Soldier();
+        double[] dLens = soldier.getLengths();
+        int nLen = soldier.getDegrees().length;
+        Point[] pntMs = new Point[nLen];
+        int[] nXs = new int[nLen];
+        int[] nYs = new int[nLen];
+        int iSize = size;
+
+        //convert to cartesian points
+        for (int nC = 0; nC < nLen; nC++) {
+            pntMs[nC] = new Point((int) (iSize * dLens[nC] * Math.sin(Math
+                    .toRadians(180) + soldier.getDegrees()[nC])),
+                    (int) (iSize * dLens[nC] * Math.cos(Math.toRadians(180)
+                            + soldier.getDegrees()[nC])));
+        }
+
+        //set the color to white
+        g.setColor(Color.red);
+        //for each falcon left (not including the one that is playing)
+        //create x and y values for the objects to the bottom right using cartesean points again
+        for (int nC = 0; nC < soldier.getDegrees().length; nC++) {
+            nXs[nC] = pntMs[nC].x + xLocation;
+            nYs[nC] = pntMs[nC].y + yLocation;
+        }
+        g.fillPolygon(nXs, nYs, nLen);
+    }
+
+    // draw an alien
+    private void drawAlien(Graphics g, int xLocation, int yLocation, int size) {
+        Alien alien = new Alien();
+        double[] dLens = alien.getLengths();
+        int nLen = alien.getDegrees().length;
+        Point[] pntMs = new Point[nLen];
+        int[] nXs = new int[nLen];
+        int[] nYs = new int[nLen];
+        int iSize = size;
+
+        //convert to cartesian points
+        for (int nC = 0; nC < nLen; nC++) {
+            pntMs[nC] = new Point((int) (iSize * dLens[nC] * Math.sin(Math
+                    .toRadians(180) + alien.getDegrees()[nC])),
+                    (int) (iSize * dLens[nC] * Math.cos(Math.toRadians(180)
+                            + alien.getDegrees()[nC])));
+        }
+
+        //set the color to white
+        g.setColor(Color.green);
+        //for each falcon left (not including the one that is playing)
+        //create x and y values for the objects to the bottom right using cartesean points again
+        for (int nC = 0; nC < alien.getDegrees().length; nC++) {
+            nXs[nC] = pntMs[nC].x + xLocation;
+            nYs[nC] = pntMs[nC].y + yLocation;
+        }
+        g.fillPolygon(nXs, nYs, nLen);
+
+        // draw outer eye
+        int iDrawX = xLocation - size / 4;
+        int iDrawY = yLocation - size / 2;
+        g.setColor(Color.WHITE);
+        g.fillOval(iDrawX, iDrawY, size / 2, size / 2);
+
+        // draw inner eye
+        iDrawX= xLocation - size / 8;
+        iDrawY = yLocation - size / 3;
+        g.setColor(Color.BLACK);
+        g.fillOval(iDrawX, iDrawY, size / 4, size / 4);
+
+
+    }
+
+    // draw a drone
+    private void drawDrone(Graphics g, int xLocation, int yLocation, int size) {
+        Drone drone = new Drone();
+        double[] dLens = drone.getLengths();
+        int nLen = drone.getDegrees().length;
+        Point[] pntMs = new Point[nLen];
+        int[] nXs = new int[nLen];
+        int[] nYs = new int[nLen];
+        int iSize = size;
+
+        //convert to cartesian points
+        for (int nC = 0; nC < nLen; nC++) {
+            pntMs[nC] = new Point((int) (iSize * dLens[nC] * Math.sin(Math
+                    .toRadians(45) + drone.getDegrees()[nC])),
+                    (int) (iSize * dLens[nC] * Math.cos(Math.toRadians(45)
+                            + drone.getDegrees()[nC])));
+        }
+
+        //set the color to white
+        g.setColor(Color.lightGray);
+        //for each falcon left (not including the one that is playing)
+        //create x and y values for the objects to the bottom right using cartesean points again
+        for (int nC = 0; nC < drone.getDegrees().length; nC++) {
+            nXs[nC] = pntMs[nC].x + xLocation;
+            nYs[nC] = pntMs[nC].y + yLocation;
+        }
+        g.fillPolygon(nXs, nYs, nLen);
     }
 
     private void initView() {
@@ -263,7 +427,25 @@ public class GamePanel extends Panel {
         grpOff.drawString(title6, iTitleX, nFontHeight * 8);
         grpOff.drawString(title7, iTitleX, nFontHeight * 9);
 
-        drawTitleBomberMan(grpOff, iTitleX * 4, nFontHeight * 15);
+
+        drawBlast(grpOff, iTitleX * 6, nFontHeight * 19, 50, null);
+        drawBlast(grpOff, iTitleX * 7, nFontHeight * 19, 40, Direction.RIGHT);
+        drawBlast(grpOff, iTitleX * 8, nFontHeight * 19, 30, Direction.RIGHT);
+        drawBlast(grpOff, iTitleX * 8 + iTitleX / 2, nFontHeight * 19, 25, Direction.RIGHT);
+        drawBlast(grpOff, iTitleX * 9, nFontHeight * 19, 20, Direction.RIGHT);
+
+        drawBomberman(grpOff, iTitleX * 4, nFontHeight * 17, 75);
+        drawBomb(grpOff, iTitleX * 6, nFontHeight * 19, 40);
+
+
+
+        drawAlien(grpOff, iTitleX * 12, nFontHeight * 17, 75);
+        drawDrone(grpOff, iTitleX * 14 + iTitleX / 2, nFontHeight * 17, 50);
+        drawSoldier(grpOff, iTitleX * 17, nFontHeight * 17, 75);
+
+
+
+
 
         int iTextVerticalOffset = 30;
 

@@ -20,7 +20,7 @@ public class Bomberman extends Sprite {
 	private int mProtectedCounter;
 
 	private final int SPEED = 10;
-	private final int RADIUS = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
+	private final int RADIUS = Square.SQUARE_LENGTH / 2 + 5;
 	private final int MOVES_PER_SQUARE = Square.SQUARE_LENGTH / SPEED;
 
 	final int DEGREE_STEP = 7;
@@ -50,91 +50,6 @@ public class Bomberman extends Sprite {
 	// CONSTRUCTOR 
 	// ==============================================================
 
-
-	public Bomberman (Boolean isForGamePlay) {
-		super();
-
-		if (isForGamePlay) {
-			throw new IllegalArgumentException("used for image only");
-		}
-//		setTeam(Team.FRIEND);
-//		mBombCount = 2;
-//		mBlastPower = 1;
-//		mDirectionToMove = Direction.UP;
-
-		ArrayList<Point> pntCs = new ArrayList<Point>();
-
-		// draw the bomberman
-		pntCs.add(new Point(1,6));
-		pntCs.add(new Point(2,6));
-		pntCs.add(new Point(2,5));
-		pntCs.add(new Point(4,5));
-		pntCs.add(new Point(4,6));
-		pntCs.add(new Point(5,5));
-		pntCs.add(new Point(6,4));
-		pntCs.add(new Point(6,-4));
-		pntCs.add(new Point(5,-5));
-		pntCs.add(new Point(4,-6));
-		pntCs.add(new Point(4,-5));
-		pntCs.add(new Point(2,-5));
-		pntCs.add(new Point(2,-6));
-		pntCs.add(new Point(1,-6));
-		pntCs.add(new Point(0,-2));
-		pntCs.add(new Point(-1,-5));
-		pntCs.add(new Point(-2,-6));
-		pntCs.add(new Point(-4,-6));
-		pntCs.add(new Point(-4,-5));
-		pntCs.add(new Point(-3,-5));
-		pntCs.add(new Point(-3,-4));
-		pntCs.add(new Point(-4,-3));
-		pntCs.add(new Point(-5,-4));
-		pntCs.add(new Point(-5,-5));
-		pntCs.add(new Point(-6,-5));
-		pntCs.add(new Point(-6,-2));
-		pntCs.add(new Point(-5,-2));
-		pntCs.add(new Point(-5,2));
-		pntCs.add(new Point(-6,2));
-		pntCs.add(new Point(-6,5));
-		pntCs.add(new Point(-5,5));
-		pntCs.add(new Point(-5,4));
-		pntCs.add(new Point(-4,3));
-		pntCs.add(new Point(-3,4));
-		pntCs.add(new Point(-3,5));
-		pntCs.add(new Point(-4,5));
-		pntCs.add(new Point(-4,6));
-		pntCs.add(new Point(-2,6));
-		pntCs.add(new Point(-1,5));
-		pntCs.add(new Point(0,2));
-		pntCs.add(new Point(1,6));
-		pntCs.add(new Point(2,6));
-		pntCs.add(new Point(2,5));
-		pntCs.add(new Point(4,5));
-		pntCs.add(new Point(4,-5));
-		pntCs.add(new Point(2,-5));
-		pntCs.add(new Point(2,-3));
-		pntCs.add(new Point(3,-2));
-		pntCs.add(new Point(3,2));
-		pntCs.add(new Point(2,3));
-		pntCs.add(new Point(2,5));
-		pntCs.add(new Point(2,6));
-		pntCs.add(new Point(1,6));
-
-		// assign to polar points
-		assignPolarPoints(pntCs);
-//
-//		setColor(Color.white);
-
-//		// place in bottom upper left corner
-//		mRow = 1;
-//		mColumn = 1;
-//		mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
-//		setCenter(mCurrentSquare.getCenter());
-
-
-		//this is the size of the falcon
-		//setSize(RADIUS);
-
-	}
 
 	public Bomberman() {
 		super();
@@ -255,11 +170,16 @@ public class Bomberman extends Sprite {
 			Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
 
 			if (!targetSquare.isBlocked() || !isPastSquareMidPoint()) {
-				setDeltaX(dAdjustX);
-				setDeltaY(dAdjustY);
-				super.move();
-
+				if (isCenteredForMove()) {
+					setDeltaX(dAdjustX);
+					setDeltaY(dAdjustY);
+					super.move();
+				} else {
+					setCenter(getCurrentSquare().getCenter());
+				}
 			}
+
+
 
 		}
 
@@ -279,6 +199,28 @@ public class Bomberman extends Sprite {
 
 	} //end move
 
+
+	public boolean isCenteredForMove() {
+		boolean bCentered = false;
+		if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
+			bCentered = isInHorizontalCenterOfSquare();
+		} else if (mDirectionToMove == Direction.LEFT || mDirectionToMove == Direction.RIGHT) {
+			bCentered = isInVerticalCenterOfSquare();
+		}
+		return bCentered;
+	}
+
+	public boolean isInRangeForMove() {
+		boolean bInRange = false;
+		if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
+			bInRange = isInHorizontalRange();
+		} else if (mDirectionToMove == Direction.LEFT || mDirectionToMove == Direction.RIGHT) {
+			bInRange = isInVerticalRange();
+		}
+		return bInRange;
+	}
+
+
 	public void setProtectedCounter(int number) {
 		mProtectedCounter = number;
 	}
@@ -288,30 +230,12 @@ public class Bomberman extends Sprite {
 	}
 
 	public void finishMove() {
-
-//		//setCenter(getCurrentSquare().getCenter());
-//
-//		int iAdjustRow = 0;
-//		int iAdjustColumn = 0;
-//
-//		if (mDirectionToMove == Direction.DOWN ) {
-//			iAdjustRow = 1;
-//		} else if (mDirectionToMove == Direction.UP ) {
-//			iAdjustRow = -1;
-//		} else if (mDirectionToMove == Direction.LEFT ) {
-//			iAdjustColumn = -1;
-//		} else if (mDirectionToMove == Direction.RIGHT ) {
-//			iAdjustColumn = 1;
+//		if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
+//			setCenter(new Point((int) getCurrentSquare().getCenter().getX(), (int) getCenter().getY()));
+//		} else if (mDirectionToMove == Direction.LEFT || mDirectionToMove == Direction.RIGHT) {
+//			setCenter(new Point((int) getCenter().getX(), (int) getCurrentSquare().getCenter().getY()));
 //		}
-//
-//
-//		int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
-//		int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
-//		Square finalSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
-//		if (!finalSquare.isBlocked()) {
-//			setCenter(finalSquare.getCenter());
-//		}
-
+//		System.out.println("center updated");
 	}
 
 	public int getBombCount() {

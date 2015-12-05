@@ -349,7 +349,7 @@ public class GameBoard {
         colIndices5.put(5, 0);
         colIndices5.put(6, 5);  // TEST DRONE
         colIndices5.put(7, 1);
-        colIndices5.put(8, 3);
+        colIndices5.put(8, 4);
         colIndices5.put(9, 0);
         colIndices5.put(10, 0);
         colIndices5.put(11, 2);

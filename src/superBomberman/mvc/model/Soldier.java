@@ -20,6 +20,7 @@ public class Soldier extends Enemy {
         super();
 
         // set shape, color, speed, and hits to destroy
+        setSize(getSize() + 5);
         setShape(getShapeAsCartesianPoints());
         setColor(Color.RED);
         setSpeed(SPEED);

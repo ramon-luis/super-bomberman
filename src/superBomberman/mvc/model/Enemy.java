@@ -18,7 +18,7 @@ public abstract class Enemy extends Sprite {
 
     ;
 
-    public final int SIZE = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2;
+    public final int SIZE = Square.SQUARE_LENGTH / 2;
 
     // private instance members
     private int mHitsToDestroy;
@@ -41,22 +41,7 @@ public abstract class Enemy extends Sprite {
     }
 
 
-    public boolean isMultipleOpenPaths() {
-        int iPathCount = 0;
-        Square squareUp = getCurrentSquare().getOffsetSquare(0, -1);
-        Square squareDown = getCurrentSquare().getOffsetSquare(0, 1);
-        Square squareRight = getCurrentSquare().getOffsetSquare(1, 0);
-        Square squareLeft = getCurrentSquare().getOffsetSquare(-1, 0);
 
-        Square[] surroundingSquares = {squareUp, squareDown, squareLeft, squareRight};
-
-        for (Square surroundingSquare : surroundingSquares) {
-            if (!surroundingSquare.isBlocked() && !surroundingSquare.hasEnemy()) {
-                iPathCount++;
-            }
-        }
-        return iPathCount > 2;
-    }
 
     public boolean inNewSquare() {
         return getCurrentSquare() != mPriorSquare;
@@ -310,10 +295,14 @@ public abstract class Enemy extends Sprite {
 
 
         if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy() && !getCurrentSquare().hasBlast()) || !isPastSquareMidPoint()) {
-            setDeltaX(dAdjustX);
-            setDeltaY(dAdjustY);
-            super.move();
-            tickDirectionChangeCounter();
+            if (isCenteredForMove()) {
+                setDeltaX(dAdjustX);
+                setDeltaY(dAdjustY);
+                super.move();
+                tickDirectionChangeCounter();
+            } else {
+                setCenter(getCurrentSquare().getCenter());
+            }
         } else {
             setCenter(getCurrentSquare().getCenter());
             setRandomDirection();
@@ -330,6 +319,16 @@ public abstract class Enemy extends Sprite {
     // ****************
     //  HELPER METHODS
     // ****************
+
+    private boolean isCenteredForMove() {
+        boolean bCentered = false;
+        if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
+            bCentered = isInHorizontalCenterOfSquare();
+        } else if (mDirectionToMove == Direction.LEFT || mDirectionToMove == Direction.RIGHT) {
+            bCentered = isInVerticalCenterOfSquare();
+        }
+        return bCentered;
+    }
 
     // set random direction to move
     private void setRandomDirection() {

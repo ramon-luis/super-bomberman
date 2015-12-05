@@ -2,6 +2,8 @@ package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Alien object is a type of enemy
@@ -26,6 +28,7 @@ public class Alien extends Enemy {
         // set shape, color, speed, and hits to destroy
         setShape(getShapeAsCartesianPoints());
         setColor(Color.GREEN);
+        setSize(getSize() + 10);
         setSpeed(SPEED);
         setHitsToDestroy(INITIAL_HITS_TO_DESTROY);
     }
@@ -39,7 +42,20 @@ public class Alien extends Enemy {
             setColor(Color.YELLOW);  // add fast flash
         }
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+
+        // draw outer eye
+        int iDrawX = (int) getCenter().getX() - getSize() / 4;
+        int iDrawY = (int) getCenter().getY() - getSize() / 2;
+        g.setColor(Color.WHITE);
+        g.fillOval(iDrawX, iDrawY, getSize() / 2, getSize() / 2);
+
+        // draw inner eye
+        iDrawX= (int) getCenter().getX() - getSize() / 8;
+        iDrawY = (int) getCenter().getY() - getSize() / 3;
+        g.setColor(Color.BLACK);
+        g.fillOval(iDrawX, iDrawY, getSize() / 4, getSize() / 4);
     }
+
 
 
     // get the shape of the object
