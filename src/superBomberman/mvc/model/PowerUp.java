@@ -9,7 +9,9 @@ import superBomberman.sounds.Sound;
 public abstract class PowerUp extends Sprite {
 
     // enum for types of power ups
-    public enum PowerUpType {BLAST, BOMB}
+    public enum PowerUpType {
+        BLAST, BOMB, KICK
+    }
 
     // constant for size
     public static final int SIZE = Square.SQUARE_LENGTH / 2 - 5;
@@ -34,7 +36,7 @@ public abstract class PowerUp extends Sprite {
     }
 
     // process the power up -> called during collision
-    public void process(){
+    public void process() {
         // collision occurs multiple times before OpsList removes PowerUp
         // check if PowerUp has been processed so that it is only applied 1x before it is removed
         if (!mHasBeenProcessed) {
@@ -43,6 +45,9 @@ public abstract class PowerUp extends Sprite {
                 CommandCenter.getInstance().getBomberman().increaseBlastPower();
             } else if (mPowerUpType == PowerUpType.BOMB) {
                 CommandCenter.getInstance().getBomberman().addBombToUse();
+            } else if (mPowerUpType == PowerUpType.KICK) {
+                CommandCenter.getInstance().getBomberman().addKickAbility();
+                System.out.println("bomberman can kick");
             }
 
             Sound.playSound("powerup.wav");

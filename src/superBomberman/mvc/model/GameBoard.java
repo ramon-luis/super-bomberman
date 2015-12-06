@@ -21,7 +21,8 @@ public class GameBoard {
 
     private int mLevel;
     private int mPowerUpBombCount;  // # of powerUp bombs
-    private int mPowerUpBlastCount;  // # of powerUp  blasts
+    private int mPowerUpBlastCount;  // # of powerUp blasts
+    private int mPowerUpKickCount;  // # of powerUp kicks
     private int mEnemyPowerUpSourceCount;  // # of enemies used as source for power up
 
 
@@ -51,6 +52,11 @@ public class GameBoard {
         createLevel();  // squares, walls, and monsters
         createPowerUps();  // assigned to breakable walls & monsters
         createExit();  // assigned to random square with breakable wall (and no power up)
+        PowerUp newKickPowerUp = new PowerUpKick();
+        newKickPowerUp.setSquare(getSquare(2,1));
+        CommandCenter.getInstance().getOpsList().enqueue(newKickPowerUp, CollisionOp.Operation.ADD);
+
+
     }
 
     public int getLevel() {
@@ -196,6 +202,7 @@ public class GameBoard {
         // breakable walls are source for remaining power ups
         mPowerUpBombCount = 3;
         mPowerUpBlastCount = 4;
+        mPowerUpKickCount = 1;
         mEnemyPowerUpSourceCount = 2;  // this should be less than total power ups
 
         // update power up counts based on level

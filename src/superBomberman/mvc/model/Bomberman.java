@@ -11,9 +11,6 @@ public class Bomberman extends Sprite {
     // ==============================================================
 
     private Direction mDirectionToMove;
-    private int mRow;
-    private int mColumn;
-    private Square mCurrentSquare;
 
     private int mBombCount;
     private Color mColor;
@@ -21,15 +18,10 @@ public class Bomberman extends Sprite {
 
     private final int SPEED = 10;
     private final int RADIUS = Square.SQUARE_LENGTH / 2 + 5;
-    private final int MOVES_PER_SQUARE = Square.SQUARE_LENGTH / SPEED;
-
-    final int DEGREE_STEP = 7;
 
     private int mBlastPower;
     private boolean mHasKickAbility;
 
-    private boolean bShield = false;
-    private boolean bFlame = false;
     private boolean bProtected; //for fade in and out
 
     private boolean bMoving = false;
@@ -37,15 +29,6 @@ public class Bomberman extends Sprite {
     private boolean bTurningLeft = false;
 
     private int nShield;
-
-    private final double[] FLAME = {23 * Math.PI / 24 + Math.PI / 2,
-            Math.PI + Math.PI / 2, 25 * Math.PI / 24 + Math.PI / 2};
-
-    private int[] nXFlames = new int[FLAME.length];
-    private int[] nYFlames = new int[FLAME.length];
-
-    private Point[] pntFlames = new Point[FLAME.length];
-
 
     // ==============================================================
     // CONSTRUCTOR
@@ -58,7 +41,6 @@ public class Bomberman extends Sprite {
         mBombCount = 2;
         mBlastPower = 1;
         mDirectionToMove = Direction.UP;
-        mHasKickAbility = true;
 
         ArrayList<Point> pntCs = new ArrayList<Point>();
 
@@ -121,18 +103,7 @@ public class Bomberman extends Sprite {
         assignPolarPoints(pntCs);
 
         setColor(Color.white);
-
-        // place in bottom upper left corner
-        mRow = 1;
-        mColumn = 1;
-        //mCurrentSquare = CommandCenter.getInstance().getGameBoard().getSquare(mRow, mColumn);
-        //setCenter(mCurrentSquare.getCenter());
-
-
-        //this is the size of the falcon
         setSize(RADIUS);
-
-        //these are falcon specific
         setProtected(true);
         setFadeValue(0);
     }
@@ -352,7 +323,6 @@ public class Bomberman extends Sprite {
 
     public void moveOff() {
         bMoving = false;
-        bFlame = false;
     }
 
     private int adjustColor(int nCol, int nAdj) {
