@@ -15,7 +15,7 @@ public class Shock extends Enemy {
 
     // constants for default radius and expiration
     private static final int EXPIRE = 8;
-    private static final int SIZE = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2 - EXPIRE / 2;
+    private static final int SIZE = Square.SQUARE_LENGTH / 3;
 
 
     // private members

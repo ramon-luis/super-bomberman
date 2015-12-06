@@ -53,6 +53,7 @@ public class Drone extends Enemy {
         // create shock
         if (!hasActiveShocks() && isRandomTick(getRandomTick(35, 75))) {
             setOrientation(0);
+            setCenter(getCurrentSquare().getCenter());
             shock();
 
         }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CommandCenter {
 
-    public static final int MAX_LEVEL = 7;
+    public static final int MAX_LEVEL = 1;
     private boolean mAllLevelsComplete;
 
     private GameBoard mGameBoard;
@@ -28,6 +28,7 @@ public class CommandCenter {
     private List<Movable> movEnemies = new ArrayList<Movable>(200);
     private List<Movable> movPowerUps = new ArrayList<Movable>(50);
     private List<Movable> movExits = new ArrayList<>();
+    private List<Movable> movDisplays = new ArrayList<>();
 
     private GameOpsList opsList = new GameOpsList();
 
@@ -63,12 +64,11 @@ public class CommandCenter {
 
     public void startNextLevel() {
         clearAll();
-        setLevel(getLevel() + 1); // need to end game after last level
-        setScore(0);
+        setScore(getScore() + 1000 * getLevel() + getNumBombermans() * 1000);
+        setLevel(getLevel() + 1);
         setNumBombermans(3);
         setGameBoard();
         spawnBomberman(true);
-
     }
 
     public GameBoard getGameBoard() {
@@ -113,6 +113,7 @@ public class CommandCenter {
         movEnemies.clear();
         movPowerUps.clear();
         movExits.clear();
+        movDisplays.clear();
     }
 
     public boolean currentLevelIsMaxLevel() {
@@ -207,4 +208,6 @@ public class CommandCenter {
     }
 
     public List<Movable> getMovExits() {return movExits;}
+
+    public List<Movable> getMovDisplays() {return movDisplays;}
 }

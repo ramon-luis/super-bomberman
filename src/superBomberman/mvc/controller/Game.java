@@ -172,7 +172,14 @@ public class Game implements Runnable, KeyListener {
                         // add hit to enemy
                         enemy.hitByBlast();
                         // increase score
-                        CommandCenter.getInstance().setScore(CommandCenter.getInstance().getScore() + 100);
+                        CommandCenter.getInstance().setScore(CommandCenter.getInstance().getScore() + enemy.getScore());
+
+                        // add a bodyBlast
+                        if (!(enemy instanceof Shock)) {
+                            BodyBlast bodyBlast = new BodyBlast();
+                            bodyBlast.setCenter(enemy.getCenter());
+                            CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
+                        }
 
                         // check if monster dead
                         if (enemy.isDead()) {
@@ -214,13 +221,19 @@ public class Game implements Runnable, KeyListener {
 
             // check blast against bomberman
             if (CommandCenter.getInstance().getBomberman() != null) {
+                Bomberman bomberman = CommandCenter.getInstance().getBomberman();
                 // get square bomberman
-                Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
+                Square bombermanSquare = bomberman.getCurrentSquare();
 
                 // collision if blast and bomberman same square
                 if (blastSquare.equals(bombermanSquare)) {
-                    if (!CommandCenter.getInstance().getBomberman().getProtected()) {
-                        CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getBomberman(), CollisionOp.Operation.REMOVE);
+                    if (!bomberman.getProtected()) {
+                        BodyBlast bodyBlast = new BodyBlast();
+                        bodyBlast.setCenter(bomberman.getCenter());
+                        CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
+
+
+                        CommandCenter.getInstance().getOpsList().enqueue(bomberman, CollisionOp.Operation.REMOVE);
                         CommandCenter.getInstance().spawnBomberman(false);
                         Sound.playSound("bombermanDie.wav");
                     }
@@ -248,12 +261,19 @@ public class Game implements Runnable, KeyListener {
             // check enemies against bomberman
             if (CommandCenter.getInstance().getBomberman() != null) {
                 // get square for bomberman
-                Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
+                Bomberman bomberman = CommandCenter.getInstance().getBomberman();
+                Square bombermanSquare = bomberman.getCurrentSquare();
+
 
                 // collision if blast and bomberman same square
                 if (enemySquare.equals(bombermanSquare)) {
-                    if (!CommandCenter.getInstance().getBomberman().getProtected()) {
-                        CommandCenter.getInstance().getOpsList().enqueue(CommandCenter.getInstance().getBomberman(), CollisionOp.Operation.REMOVE);
+                    if (!bomberman.getProtected()) {
+
+                        BodyBlast bodyBlast = new BodyBlast();
+                        bodyBlast.setCenter(bomberman.getCenter());
+                        CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
+
+                        CommandCenter.getInstance().getOpsList().enqueue(bomberman, CollisionOp.Operation.REMOVE);
                         CommandCenter.getInstance().spawnBomberman(false);
                         Sound.playSound("bombermanDie.wav");
                     }
@@ -262,7 +282,7 @@ public class Game implements Runnable, KeyListener {
 
             // check shocks against bombs
             if (movEnemy instanceof Shock) {
-                if(movEnemy.getCurrentSquare().containsBomb()) {
+                if (movEnemy.getCurrentSquare().containsBomb()) {
                     movEnemy.getCurrentSquare().getBombInside().explode();
                 }
             }
@@ -281,6 +301,9 @@ public class Game implements Runnable, KeyListener {
 
                 // collision if exit and bomberman same square
                 if (exitSquare.equals(bombermanSquare)) {
+                    BodyBlast bodyBlast = new BodyBlast();
+                    bodyBlast.setCenter(exitSquare.getCenter());
+                    CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
                     exitLevel();
                 }
             }
@@ -298,6 +321,11 @@ public class Game implements Runnable, KeyListener {
 
                 // collision if exit and bomberman same square
                 if (powerUpSquare.equals(bombermanSquare)) {
+                    BodyBlast bodyBlast = new BodyBlast();
+                    bodyBlast.setCenter(bombermanSquare.getCenter());
+                    bodyBlast.setColor(Color.YELLOW);
+                    CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
+
                     // process the power up (cast from Movable to PowerUp), then remove it
                     ((PowerUp) movPowerUp).process();
                     CommandCenter.getInstance().getOpsList().enqueue(movPowerUp, CollisionOp.Operation.REMOVE);
@@ -369,6 +397,15 @@ public class Game implements Runnable, KeyListener {
                     } else {
                         CommandCenter.getInstance().getMovExits().remove(mov);
                     }
+                    break;
+
+                case DISPLAY:
+                    if (operation == CollisionOp.Operation.ADD) {
+                        CommandCenter.getInstance().getMovDisplays().add(mov);
+                    } else {
+                        CommandCenter.getInstance().getMovDisplays().remove(mov);
+                    }
+                    break;
             }
 
         }
@@ -460,9 +497,15 @@ public class Game implements Runnable, KeyListener {
         int nKey = e.getKeyCode();
         // System.out.println(nKey);
 
-        if (nKey == START && !CommandCenter.getInstance().isPlaying())
-            startGame();
-
+        if (nKey == START)
+            if (!CommandCenter.getInstance().isPlaying())
+                if (!CommandCenter.getInstance().allLevelsComplete()) {
+                    startGame();
+                } else {
+                    CommandCenter.getInstance().setPlaying(false);
+                    CommandCenter.getInstance().setPaused(false);
+                    CommandCenter.getInstance().setAllLevelsComplete(false);
+                }
         if (bomberman != null) {
 
             switch (nKey) {
@@ -546,7 +589,6 @@ public class Game implements Runnable, KeyListener {
                     if (bomberman.hasKickAbility() && bomberman.nearBomb()) {
                         bomberman.kickBomb();
                     }
-
 
 
                     //special is a special weapon, current it just fires the cruise missile.

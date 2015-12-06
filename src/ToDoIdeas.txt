@@ -1,47 +1,39 @@
-ADD KICK
-Assign direction to bomberman with arrow - DONE
 Change shape based on direction - TODO
 GetShape from direction - TODO
-Add kickboolean to bomberman
-
-Kick
-Bomb has kick Boolean
-Bomberman kicks bomb he is facing
-Update bomb kicked Boolean and assign direction in single "kickBomb" method
-
-Bomb move
-Assign speed to bomb
-If bomb is kicked then set move direction -> if stopped by wall bomberman or enemy, then set stopped (update Boolean for kicked and remove direction)
-
-SPARK
-update - add collision with bomb to cause bomb to explode
-
-SHIMMER
+SHIMMER - TODO
 For breakable walls -> interior color randomly rotates between similar shades and white -> get current RGB?  Set limits from current?
 
-KILL
-creates KillCloud -> team wordCloud
-Move wordCloud after walls, before everything else
-Enemy is killed ->
-ZAP (takes color)
-BOOM
-BLAST
-POW
 
-if bomberman
-ARGH
-SHUCKS
-UH-OH
+KICK - DONE
+Assign direction to bomberman with arrow - DONE
+Add kickboolean to bomberman - DONE
+Add kick Display to Game Panel - DONE
 
-Place on word cloud shape, expand and then contract to zero very quickly
+SPARK - DONE
+update - add collision with bomb to cause bomb to explode - DONE
 
-BAD POWER UP
+
+
+WORD CLOUD - DONE
+creates KillCloud -> team wordCloud - DONE
+customize for PowerUps & Bomberman - TODO
+
+
+BAD POWER UP - TODO
 On Bomberman BombsDisabled
 Store currentBombCount In normalBombCount
 Set current bomb count to zero
 Set disabledCounter
 If disabled then flash red  and update disabled -> reduce counter, if zero then restore
 
+
+GAMEOVER - DONE
+If M pressed then reset to preGame mode (null or empty) set not playing.
+
+BOSS - TODO
+If level 7 and all enemies defeated, then add boss to level
+
+---------------- SKIP 2 PLAYER  ----------------
 TWO PLAYER
 Add color
 
@@ -72,8 +64,3 @@ Update input keys if 2player mode
 
 
 
-GAMEOVER
-If M pressed then reset to preGame mode (null or empty) set not playing.
-
-BOSS
-If level 7 and all enemies defeated, then add boss to level

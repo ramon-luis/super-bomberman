@@ -38,7 +38,7 @@ public class Bomberman extends Sprite {
     public Bomberman() {
         super();
         setTeam(Team.FRIEND);
-        mBombCount = 2;
+        mBombCount = 1;
         mBlastPower = 1;
         mDirectionToMove = Direction.UP;
 
@@ -213,6 +213,11 @@ public class Bomberman extends Sprite {
     public void kickBomb() {
         if (mHasKickAbility) {
             getBombToKick().isKicked(mDirectionToMove);
+            BodyBlast bodyBlast = new BodyBlast();
+            bodyBlast.setColor(Color.white);
+            bodyBlast.setCenter(getCenter());
+            bodyBlast.setExpire(6);
+            CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
         }
     }
 

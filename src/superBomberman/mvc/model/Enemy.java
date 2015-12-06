@@ -253,6 +253,18 @@ public abstract class Enemy extends Sprite {
         }
     }
 
+    public int getScore() {
+        int iScore = 0;
+        if (this instanceof Soldier) {
+            iScore = 100;
+        } else if (this instanceof Alien) {
+            iScore = 250;
+        } else if (this instanceof Drone) {
+            iScore = 300;
+        }
+        return iScore;
+    }
+
     @Override
     public void move() {
 

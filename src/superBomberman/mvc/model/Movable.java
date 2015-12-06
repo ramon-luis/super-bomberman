@@ -6,7 +6,7 @@ public interface Movable {
 
     // enum for team of each movable -> used to handle collision logic
     enum Team {
-        FRIEND, ENEMY, POWERUP, BOMB, WALL, BLAST, EXIT
+        FRIEND, ENEMY, POWERUP, BOMB, WALL, BLAST, EXIT, DISPLAY
     }
 
     // animation methods: animation occurs as objects are moved and drawn

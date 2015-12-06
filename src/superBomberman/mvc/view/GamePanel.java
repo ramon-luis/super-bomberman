@@ -3,12 +3,10 @@ package superBomberman.mvc.view;
 import superBomberman.mvc.controller.Game;
 import superBomberman.mvc.model.*;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+
 import superBomberman.mvc.model.Sprite.Direction;
 
 
@@ -59,28 +57,6 @@ public class GamePanel extends Panel {
     // ==============================================================
 
 
-    private void drawScore(Graphics g) {
-        g.setColor(Color.white);
-        g.setFont(fnt);
-        g.drawString("SCORE :  " + CommandCenter.getInstance().getScore(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, nFontHeight * 2);
-    }
-
-    public void drawBackground(Graphics g) {
-        try {
-            backgroundImage = ImageIO.read(new File("/Users/RAM0N/mpcs51036/proFinal/src/superBomberman/images/spaceBackground.png"));
-            g.drawImage(backgroundImage, 0, 0, Game.DIM.width, Game.DIM.height, this);
-        } catch (IOException e) {
-            System.out.println("Error getting image: \n" + e);
-        }
-    }
-
-    private void drawLevel(Graphics g) {
-        g.setColor(Color.white);
-        g.setFont(fnt);
-        g.drawString("LEVEL :  " + CommandCenter.getInstance().getLevel(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, nFontHeight * 4);
-    }
-
-
     @SuppressWarnings("unchecked")
     public void update(Graphics g) {
         if (grpOff == null || Game.DIM.width != dimOff.width
@@ -96,24 +72,14 @@ public class GamePanel extends Panel {
 
         grpOff.fillRect(0, 0, Game.DIM.width, Game.DIM.height);
 
-        drawScore(grpOff);
-
         if (!CommandCenter.getInstance().isPlaying() && !CommandCenter.getInstance().allLevelsComplete()) {
-            displayTextOnScreen();
+            drawGameWelcomeScreen();
         } else if (CommandCenter.getInstance().isPaused()) {
             strDisplay = "Game Paused";
             grpOff.drawString(strDisplay,
                     (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
         } else if (CommandCenter.getInstance().allLevelsComplete()) {
-            strDisplay = "All enemies defeated!  All levels completed!";
-            grpOff.drawString(strDisplay,
-                    (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4);
-
-            strDisplay = "'S' to Start Game Over";
-            grpOff.drawString(strDisplay,
-                    (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 4
-                            + nFontHeight * 20);
-
+            drawGameCompleteScreen();
         }
 
         //playing and not paused!
@@ -122,21 +88,24 @@ public class GamePanel extends Panel {
             //draw them in decreasing level of importance
             //friends will be on top layer and debris on the bottom
             iterateMovables(grpOff,
+                    (ArrayList<Movable>) CommandCenter.getInstance().getMovWalls(),
+                    (ArrayList<Movable>) CommandCenter.getInstance().getMovExits(),
+                    (ArrayList<Movable>) CommandCenter.getInstance().getMovPowerUps(),
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovFriends(),
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovEnemies(),
-                    (ArrayList<Movable>) CommandCenter.getInstance().getMovPowerUps(),
-                    (ArrayList<Movable>) CommandCenter.getInstance().getMovBombs(),
-                    (ArrayList<Movable>) CommandCenter.getInstance().getMovWalls(),
                     (ArrayList<Movable>) CommandCenter.getInstance().getMovBlasts(),
-                    (ArrayList<Movable>) CommandCenter.getInstance().getMovExits());
+                    (ArrayList<Movable>) CommandCenter.getInstance().getMovBombs(),
+                    (ArrayList<Movable>) CommandCenter.getInstance().getMovDisplays());
 
-
-            drawNumberLivesLeft(grpOff);
-            drawNumberBombs(grpOff);
+            drawScore(grpOff);
             drawLevel(grpOff);
+            drawNumberBombs(grpOff);
+            drawBlastPower(grpOff);
+            drawKickAbility(grpOff);
+            drawNumberLivesLeft(grpOff);
+
             if (CommandCenter.getInstance().isGameOver()) {
                 CommandCenter.getInstance().setPlaying(false);
-                //bPlaying = false;
             }
         }
 
@@ -147,29 +116,62 @@ public class GamePanel extends Panel {
 
     //for each movable array, process it.
     private void iterateMovables(Graphics g, ArrayList<Movable>... movMovz) {
-
         for (ArrayList<Movable> movMovs : movMovz) {
             for (Movable mov : movMovs) {
-
                 mov.move();
                 mov.draw(g);
-
             }
         }
-
     }
+
+    private void drawScore(Graphics g) {
+        g.setColor(Color.YELLOW);
+        g.setFont(fnt);
+        g.drawString("SCORE :  " + String.format("%,d", CommandCenter.getInstance().getScore()), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, (nFontHeight + 2) * 2);
+    }
+
+    private void drawLevel(Graphics g) {
+        g.setColor(Color.CYAN);
+        g.setFont(fnt);
+        g.drawString("LEVEL :  " + CommandCenter.getInstance().getLevel(), GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, (nFontHeight + 2) * 3);
+    }
+
 
     // Draw the number of bombs available
     private void drawNumberBombs(Graphics g) {
         g.setColor(Color.white);
         g.setFont(fnt);
         g.drawString("BOMBS:  " + CommandCenter.getInstance().getBomberman().getBombCount(),
-                GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, 75);
+                GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, (nFontHeight + 2) * 5);
+    }
+
+    // Draw the number of bombs available
+    private void drawBlastPower(Graphics g) {
+        g.setColor(Color.white);
+        g.setFont(fnt);
+        g.drawString("BLAST POWER:  " + CommandCenter.getInstance().getBomberman().getBlastPower(),
+                GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, (nFontHeight + 2) * 6);
+    }
+
+    private void drawKickAbility(Graphics g) {
+        if (CommandCenter.getInstance().getBomberman().hasKickAbility()) {
+            g.setColor(Color.RED);
+            g.setFont(fnt);
+            g.drawString("KICK POWER ACTIVE",
+                    GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, (nFontHeight + 2) * 8);
+        }
     }
 
 
     // Draw the number of falcons left on the bottom-right of the screen.
     private void drawNumberLivesLeft(Graphics g) {
+
+        g.setColor(Color.white);
+        g.setFont(fnt);
+        g.drawString("LIVES REMAINING",
+                GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2, (nFontHeight + 2) * 10);
+
+
         Bomberman bomberman = CommandCenter.getInstance().getBomberman();
         double[] dLens = bomberman.getLengths();
         int nLen = bomberman.getDegrees().length;
@@ -192,11 +194,12 @@ public class GamePanel extends Panel {
             //create x and y values for the objects to the bottom right using cartesean points again
             for (int nC = 0; nC < bomberman.getDegrees().length; nC++) {
                 nXs[nC] = pntMs[nC].x + GameBoard.COL_COUNT * Square.SQUARE_LENGTH + Square.SQUARE_LENGTH / 2 + (nD - 1) * nFontWidth + 6 + nD * 5;
-                nYs[nC] = pntMs[nC].y + nFontHeight * 6 + 10;
+                nYs[nC] = pntMs[nC].y + (nFontHeight + 2) * 11 + 5;
             }
             g.fillPolygon(nXs, nYs, nLen);
         }
     }
+
 
     // REFACTOR TO DRAW BOMBERMAN TO CERTAIN SIZE
     private void drawBomberman(Graphics g, int xLocation, int yLocation, int size) {
@@ -357,7 +360,7 @@ public class GamePanel extends Panel {
         g.fillOval(iDrawX, iDrawY, size / 2, size / 2);
 
         // draw inner eye
-        iDrawX= xLocation - size / 8;
+        iDrawX = xLocation - size / 8;
         iDrawY = yLocation - size / 3;
         g.setColor(Color.BLACK);
         g.fillOval(iDrawX, iDrawY, size / 4, size / 4);
@@ -403,9 +406,32 @@ public class GamePanel extends Panel {
         g.setFont(fntBig);                    // set font info
     }
 
+    private void drawGameCompleteScreen() {
+
+        drawBomberman(grpOff, Game.DIM.width / 2 - 150, Game.DIM.height / 2 - 100, 250);
+        drawBomb(grpOff, Game.DIM.width / 2 + 50, Game.DIM.height / 2 + 50, 75);
+        drawBlast(grpOff, Game.DIM.width - 200, 150, 150, null);
+        drawDrone(grpOff, Game.DIM.width - 125, 100, 65);
+        drawAlien(grpOff, Game.DIM.width - 200, 150, 75);
+        drawSoldier(grpOff, Game.DIM.width - 275, 200, 75);
+
+        grpOff.setFont(fntBig);
+
+        grpOff.setColor(Color.YELLOW);
+        strDisplay = "All enemies defeated!  All levels complete!";
+        grpOff.drawString(strDisplay, 50, Game.DIM.height / 2 + 175);
+
+        grpOff.setColor(Color.WHITE);
+        strDisplay = "Final Score:  " + String.format("%,d", CommandCenter.getInstance().getScore());
+        grpOff.drawString(strDisplay, 300, Game.DIM.height / 2 + 215);
+
+        grpOff.setColor(Color.CYAN);
+        strDisplay = "'S' to Start Game Over";
+        grpOff.drawString(strDisplay, 250, Game.DIM.height / 2 + 255);
+    }
 
     // This method draws some text to the middle of the screen before/after a game
-    private void displayTextOnScreen() {
+    private void drawGameWelcomeScreen() {
 
         String title1 = " _______ __   __ _______ _______ ______     _______ _______ __   __ _______ _______ ______   __   __ _______ __    _ ";
         String title2 = "|       |  | |  |       |       |    _ |   |  _    |       |  |_|  |  _    |       |    _ | |  |_|  |   _   |  |  | |";
@@ -427,7 +453,6 @@ public class GamePanel extends Panel {
         grpOff.drawString(title6, iTitleX, nFontHeight * 8);
         grpOff.drawString(title7, iTitleX, nFontHeight * 9);
 
-
         drawBlast(grpOff, iTitleX * 6, nFontHeight * 19, 50, null);
         drawBlast(grpOff, iTitleX * 7, nFontHeight * 19, 40, Direction.RIGHT);
         drawBlast(grpOff, iTitleX * 8, nFontHeight * 19, 30, Direction.RIGHT);
@@ -437,15 +462,9 @@ public class GamePanel extends Panel {
         drawBomberman(grpOff, iTitleX * 4, nFontHeight * 17, 75);
         drawBomb(grpOff, iTitleX * 6, nFontHeight * 19, 40);
 
-
-
         drawAlien(grpOff, iTitleX * 12, nFontHeight * 17, 75);
         drawDrone(grpOff, iTitleX * 14 + iTitleX / 2, nFontHeight * 17, 50);
         drawSoldier(grpOff, iTitleX * 17, nFontHeight * 17, 75);
-
-
-
-
 
         int iTextVerticalOffset = 30;
 
@@ -457,31 +476,36 @@ public class GamePanel extends Panel {
         grpOff.setFont(fnt);
         grpOff.setColor(Color.WHITE);
 
-		strDisplay = "use the arrow keys to move";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
-						+ nFontHeight + iTextVerticalOffset * 3);
+        strDisplay = "ARROW KEYS to move";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
+                        + nFontHeight + iTextVerticalOffset * 3);
 
-		strDisplay = "use the space bar to set a bomb";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
-						+ nFontHeight + iTextVerticalOffset * 4);
+        strDisplay = "SPACE BAR to set a bomb";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
+                        + nFontHeight + iTextVerticalOffset * 4);
+
+        strDisplay = "'K' to kick a bomb (POWER UP)";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
+                        + nFontHeight + iTextVerticalOffset * 5);
 
         grpOff.setFont(fnt);
-		strDisplay = "'S' to Start";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
-						+ nFontHeight + iTextVerticalOffset * 5);
+        strDisplay = "'S' to Start";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
+                        + nFontHeight + iTextVerticalOffset * 6);
 
-		strDisplay = "'P' to Pause";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
-						+ nFontHeight + iTextVerticalOffset * 6);
+        strDisplay = "'P' to Pause";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
+                        + nFontHeight + iTextVerticalOffset * 7);
 
-		strDisplay = "'Q' to Quit";
-		grpOff.drawString(strDisplay,
-				(Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
-						+ nFontHeight + iTextVerticalOffset * 7);
+        strDisplay = "'Q' to Quit";
+        grpOff.drawString(strDisplay,
+                (Game.DIM.width - fmt.stringWidth(strDisplay)) / 2, Game.DIM.height / 2
+                        + nFontHeight + iTextVerticalOffset * 8);
 
     }
 

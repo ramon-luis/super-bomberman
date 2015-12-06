@@ -19,7 +19,7 @@ public class Bomb extends Sprite {
 
     // constants for size & life (expiration)
     private final int SIZE = Square.SQUARE_LENGTH / 2;
-    private final int EXPIRE = 80; // life of object before expiry
+    private final int EXPIRE = 50; // life of object before expiry
     private final int SPEED = 25;
 
     // private instance members -> used to alternate sizes and colors

@@ -1,61 +1,38 @@
 // GAME DESIGN NOTES
 
-FROM CLASS:
-create Scorable interface
-score() - returns a LONG
-add score() to movable
-if Scorable, getScore from instance + score of movable
-could add to gameboard based on level -> add score when level complete
-
-use SVG make images better -> piazza
-get imamge and convert to SVG OR draw PNG with paint
-
-
 TODO LIST:
-increase points for new level + bonus points for each life remaining
-increase points based on type of enemy
-make blasts grow -> starts at middle and then expands & contracts in size?
-USE RADIUS INSTEAD OF SIZE FOR COLLISION -> monsters & bomberman, blasts & enemies, shocks & bomberman
-update colors/flashing/action for hits to enemy
-alternate colors for bomberman when protected (yellow, teal, white or any random?)
+check gameboard for all levels -> NEED ALL TYPES OF ENEMIES + ALL POWER UP TYPES
 
 check all sounds
     new level sound
     change exit reveal
     change background music?
-
-update win game:
-    // draw text: Victory!  All enemies defeated!  All levels completed!  You are the superbomber!
-    // draw bomberman flashing different colors
-
+    add bomb-related music (Bombtrack, Super Bon Bon)
 
 GAMEPLAY ADDITIONS:
-add extra life
-add kick as weapon
-add invincible power up
-add transport power up -> sends to random location
-add bad power up -> bomb count == 0 temporary, play bad music
-
-add fading -> fades quickly between different colors
-squares made up of different shaded triangles to add texture?
-create models that do not Collide for scenery -> stars, floorboards, etc?
-
-change lives display to be icon + #
+update colors/flashing/action for hits to enemy - CHECK DRONE AND ALIEN (use fading & flashing)
 draw bomberman moving in different directions
-add squares around key info: score, lives, bombs, power ups
+add bad power up -> bomb count == 0 & flases red
+animate kick -> currenlt pop up
+temporary, play bad music
+add extra life
+
 
 REFACTOR
 Clean up all code
-Create LevelData as Objects? -> assign instance variables to get?
-
-EXTRAS IF TIME
-2-player mode or add boss
-add bomb-related music (Bombtrack, Super Bon Bon)
-bombs destroy power ups?
-    have to check if blast that creates power up will also remove power up
 
 
 DONE
+add fading -> fades quickly between different colors
+squares made up of different shaded triangles to add texture?
+DRONE + SHOCK DO NOT ALIGN - FIX!!!
+REDUCE SIZE OF BLAST & SHOCK
+REMOVE WORDS FROM WORD CLOUD -> change to explosion
+update win game
+change lives display to be icon + #
+increase points for new level + bonus points for each life remaining
+increase points based on type of enemy
+add kick as weapon
 update welcome screen
     // add each character to front
 correct movement of Bomberman & Monster - don't allow overlap of walls
@@ -75,6 +52,16 @@ create larger blast power up
 Exit only revealed when ALL ENEMIES GONE
 update visuals: blasts, walls. background
 check if blast square == wall square, if YES -> no blast
+
+
+IGNORE
+make blasts grow -> starts at middle and then expands & contracts in size?
+add invincible power up
+add transport power up -> sends to random location
+add squares around key info: score, lives, bombs, power ups
+bombs destroy power ups?
+    have to check if blast that creates power up will also remove power up
+2-player mode or add boss
 
 
 

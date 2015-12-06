@@ -2,6 +2,7 @@ package superBomberman.mvc.model;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Wall object
@@ -22,6 +23,10 @@ public class Wall extends Sprite {
     // private instance members
     private WallType mWallType;
     private PowerUp mPowerUpInside;
+    private boolean mColorDown;
+    private int mRed;
+    private int mGreen;
+    private int mBlue;
 
     // constructor
     public Wall (Square square, WallType wallType) {
@@ -43,7 +48,11 @@ public class Wall extends Sprite {
         // assign Polar Points
         assignPolarPoints(pntCs);
 
-        // set color, center, and size
+        // assign intial inner color RGB -> overridden later
+        mRed = 0;
+        mGreen = getRandomColorIndex(0,255);
+        mBlue = mGreen;
+
         setColor((mWallType == WallType.BREAKABLE) ? new Color(0, 125, 255) : new Color(55, 55, 55));
         setCenter(square.getCenter());
         setSize(SIZE);
@@ -56,7 +65,7 @@ public class Wall extends Sprite {
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
 
         // set color and draw inner square
-        g.setColor((mWallType == WallType.BREAKABLE) ? Color.CYAN : new Color(105, 105, 105));
+        g.setColor((mWallType == WallType.BREAKABLE) ? getShiftedColor() : new Color(105, 105, 105));
         int iDrawX = (int) getCenter().getX() - SIZE / 2;
         int iDrawY = (int) getCenter().getY() - SIZE / 2;
         g.fillRect(iDrawX, iDrawY, SIZE, SIZE);
@@ -81,5 +90,64 @@ public class Wall extends Sprite {
     public boolean isBreakable() {
         return mWallType == WallType.BREAKABLE;
     }
+
+
+    private int getRandomColorIndex(int iColorMin, int iColorMax) {
+        int iMin = iColorMin;
+        int iMax = iColorMax;
+        return ThreadLocalRandom.current().nextInt(iMin, iMax);
+    }
+
+    private Color getShiftedColor() {
+        int iColorShift = 5;
+        int iBlueMin = 0 + iColorShift;
+        int iBlueMax = 255 - iColorShift;
+        int iColorAdjustment = colorAdjustment(getBlue(), iBlueMin, iBlueMax, iColorShift);
+        setBlue(getBlue() + iColorAdjustment);
+        setGreen(getGreen() + iColorAdjustment);
+        return(new Color(getRed(), getGreen(), getBlue()));
+
+    }
+
+    public int getRed() {
+        return mRed;
+    }
+
+    public void setRed(int red) {
+        mRed = red;
+    }
+
+    public int getGreen() {
+        return mGreen;
+    }
+
+    public void setGreen(int green) {
+        mGreen = green;
+    }
+
+    public int getBlue() {
+        return mBlue;
+    }
+
+    public void setBlue(int blue) {
+        mBlue = blue;
+    }
+
+    private int colorAdjustment(int nCol, int iMinCol, int iMaxCol, int nAdj) {
+        if (nCol <= iMinCol && mColorDown) {
+            mColorDown = false;
+            return nAdj;
+        } else if (nCol >= iMaxCol && !mColorDown) {
+            mColorDown = true;
+            return -nAdj;
+        } else if (mColorDown) {
+            return - nAdj;
+        } else {
+            return nAdj;
+        }
+    }
+
+
+
 
 }

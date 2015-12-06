@@ -52,11 +52,6 @@ public class GameBoard {
         createLevel();  // squares, walls, and monsters
         createPowerUps();  // assigned to breakable walls & monsters
         createExit();  // assigned to random square with breakable wall (and no power up)
-        PowerUp newKickPowerUp = new PowerUpKick();
-        newKickPowerUp.setSquare(getSquare(2,1));
-        CommandCenter.getInstance().getOpsList().enqueue(newKickPowerUp, CollisionOp.Operation.ADD);
-
-
     }
 
     public int getLevel() {
@@ -283,7 +278,7 @@ public class GameBoard {
         colIndices1.put(4, 1);
         colIndices1.put(5, 0);
         colIndices1.put(6, 0);
-        colIndices1.put(7, 3);
+        colIndices1.put(7, 5);
         colIndices1.put(8, 0);
         colIndices1.put(9, 0);
         colIndices1.put(10, 1);
@@ -354,9 +349,9 @@ public class GameBoard {
         colIndices5.put(3, 2);
         colIndices5.put(4, 0);
         colIndices5.put(5, 0);
-        colIndices5.put(6, 5);  // TEST DRONE
+        colIndices5.put(6, 3);
         colIndices5.put(7, 1);
-        colIndices5.put(8, 4);
+        colIndices5.put(8, 3);
         colIndices5.put(9, 0);
         colIndices5.put(10, 0);
         colIndices5.put(11, 2);
