@@ -23,15 +23,12 @@ public class Drone extends Enemy {
 
     private int mTick;
     private int mActiveShockExpiry;
-    private ArrayList<Shock> mActiveShocks;
 
     // constructor
     public Drone() {
 
         // call super constructor
         super();
-
-        mActiveShocks = new ArrayList<>();
 
         // set shape, color, speed, and hits to destroy
         setShape(getShapeAsCartesianPoints());

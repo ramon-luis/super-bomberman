@@ -259,6 +259,14 @@ public class Game implements Runnable, KeyListener {
                     }
                 }
             }
+
+            // check shocks against bombs
+            if (movEnemy instanceof Shock) {
+                if(movEnemy.getCurrentSquare().containsBomb()) {
+                    movEnemy.getCurrentSquare().getBombInside().explode();
+                }
+            }
+
         }
 
         // check Exit
