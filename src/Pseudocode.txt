@@ -1,18 +1,12 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
-check all sounds
-    new level sound
-    change exit reveal
-    change background music?
-    add bomb-related music (Bombtrack, Super Bon Bon)
-
 GAMEPLAY ADDITIONS:
 update colors/flashing/action for hits to enemy - CHECK DRONE AND ALIEN (use fading & flashing)
 add bad power up -> bomb count == 0 & flashes red
 add extra life power up
 draw bomberman moving in different directions
-
+add cool music
 
 REFACTOR
 Clean up all code

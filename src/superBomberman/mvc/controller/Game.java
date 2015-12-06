@@ -304,6 +304,8 @@ public class Game implements Runnable, KeyListener {
                     BodyBlast bodyBlast = new BodyBlast();
                     bodyBlast.setCenter(exitSquare.getCenter());
                     CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
+                    Sound.playSound("exitLevel.wav");
+
                     exitLevel();
                 }
             }
@@ -455,7 +457,7 @@ public class Game implements Runnable, KeyListener {
                 for (Square square : CommandCenter.getInstance().getGameBoard().getSquares()) {
                     if (square.isExit() && !square.isWall()) {
                         CommandCenter.getInstance().getOpsList().enqueue(new Exit(square), CollisionOp.Operation.ADD);
-                        Sound.playSound("clearLevel.wav");
+                        Sound.playSound("exitReveal.wav");
                     }
                 }
             }
@@ -588,6 +590,7 @@ public class Game implements Runnable, KeyListener {
                 case KICK:
                     if (bomberman.hasKickAbility() && bomberman.nearBomb()) {
                         bomberman.kickBomb();
+                        Sound.playSound("bombKick.wav");
                     }
 
 

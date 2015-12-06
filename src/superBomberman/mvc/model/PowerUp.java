@@ -50,7 +50,7 @@ public abstract class PowerUp extends Sprite {
                 System.out.println("bomberman can kick");
             }
 
-            Sound.playSound("powerup.wav");
+            Sound.playSound("powerUp.wav");
 
             // update boolean so that only processed 1x
             mHasBeenProcessed = !mHasBeenProcessed;

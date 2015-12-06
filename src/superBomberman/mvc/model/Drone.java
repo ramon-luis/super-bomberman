@@ -114,7 +114,7 @@ public class Drone extends Enemy {
             }
 
             // update shock sound
-            Sound.playSound("blast.wav");
+            Sound.playSound("zap.wav");
     }
 
 

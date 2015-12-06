@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import superBomberman.mvc.model.Sprite.Direction;
+import superBomberman.sounds.Sound;
 
 
 public class GamePanel extends Panel {
@@ -105,6 +106,7 @@ public class GamePanel extends Panel {
             drawNumberLivesLeft(grpOff);
 
             if (CommandCenter.getInstance().isGameOver()) {
+                Sound.playSound("gameOver.wav");
                 CommandCenter.getInstance().setPlaying(false);
             }
         }
