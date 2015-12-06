@@ -84,12 +84,12 @@ public class Bomb extends Sprite {
                         setDeltaY(dAdjustY);
                         super.move();
                     } else {
-
                         setCenter(getCurrentSquare().getCenter());
                     }
                 } else {
                     mIsKicked = false;
                     getCurrentSquare().addBomb(this);
+                    setCenter(getCurrentSquare().getCenter());
                 }
 
             }

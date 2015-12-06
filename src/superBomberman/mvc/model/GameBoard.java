@@ -99,13 +99,13 @@ public class GameBoard {
         else if (mLevel == 3)
             squareDataMaps = getSquareDataMapsLevel3();
         else if (mLevel == 4)
-            squareDataMaps = getSquareDataMapsLevel3();
+            squareDataMaps = getSquareDataMapsLevel4();
         else if (mLevel == 5)
-            squareDataMaps = getSquareDataMapsLevel3();
+            squareDataMaps = getSquareDataMapsLevel5();
         else if (mLevel == 6)
-            squareDataMaps = getSquareDataMapsLevel3();
+            squareDataMaps = getSquareDataMapsLevel6();
         else if (mLevel == 7)
-            squareDataMaps = getSquareDataMapsLevel3();
+            squareDataMaps = getSquareDataMapsLevel7();
 
         // for through each row
         for (int i = 0; i < ROW_COUNT; i++) {
@@ -171,6 +171,11 @@ public class GameBoard {
             mPowerUps.add(new PowerUpBlast());
         }
 
+        // create power up blasts
+        for (int i = 0; i < mPowerUpKickCount; i++) {
+            mPowerUps.add(new PowerUpKick());
+        }
+
         // shuffle power ups, monsters, and breakable walls so that power ups are randomly assigned
         Collections.shuffle(mPowerUps);
         Collections.shuffle(mEnemies);
@@ -197,7 +202,6 @@ public class GameBoard {
         // breakable walls are source for remaining power ups
         mPowerUpBombCount = 3;
         mPowerUpBlastCount = 4;
-        mPowerUpKickCount = 1;
         mEnemyPowerUpSourceCount = 2;  // this should be less than total power ups
 
         // update power up counts based on level
@@ -208,22 +212,27 @@ public class GameBoard {
         } else if (mLevel == 3) {
             mPowerUpBombCount = 5;
             mPowerUpBlastCount = 5;
+            mPowerUpKickCount = 1;
             mEnemyPowerUpSourceCount = 3;
         } else if (mLevel == 4) {
             mPowerUpBombCount = 6;
             mPowerUpBlastCount = 6;
+            mPowerUpKickCount = 1;
             mEnemyPowerUpSourceCount = 4;
         } else if (mLevel == 5) {
             mPowerUpBombCount = 6;
             mPowerUpBlastCount = 8;
+            mPowerUpKickCount = 2;
             mEnemyPowerUpSourceCount = 5;
         } else if (mLevel == 6) {
             mPowerUpBombCount = 7;
             mPowerUpBlastCount = 10;
+            mPowerUpKickCount = 2;
             mEnemyPowerUpSourceCount = 5;
         } else if (mLevel == 7) {
             mPowerUpBombCount = 10;
             mPowerUpBlastCount = 15;
+            mPowerUpKickCount = 4;
             mEnemyPowerUpSourceCount = 7;
         }
     }
@@ -278,7 +287,7 @@ public class GameBoard {
         colIndices1.put(4, 1);
         colIndices1.put(5, 0);
         colIndices1.put(6, 0);
-        colIndices1.put(7, 5);
+        colIndices1.put(7, 3);
         colIndices1.put(8, 0);
         colIndices1.put(9, 0);
         colIndices1.put(10, 1);
@@ -484,9 +493,6 @@ public class GameBoard {
         colIndices12.put(12, 1);
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
-
-        // potential powerup squares 31
-        // potential powerup monsters 5
 
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
@@ -748,9 +754,6 @@ public class GameBoard {
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
 
-        // potential powerup squares 30
-        // potential powerup monsters 6
-
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
         colIndexMaps.add(colIndices0);
@@ -1010,9 +1013,6 @@ public class GameBoard {
         colIndices12.put(12, 1);
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
-
-        // potential powerup squares 31
-        // potential powerup monsters 7
 
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
@@ -1274,9 +1274,6 @@ public class GameBoard {
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
 
-        // potential powerup squares 31
-        // potential powerup monsters 8
-
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
         colIndexMaps.add(colIndices0);
@@ -1401,7 +1398,7 @@ public class GameBoard {
         colIndices5.put(4, 2);
         colIndices5.put(5, 1);
         colIndices5.put(6, 1);
-        colIndices5.put(7, 2);
+        colIndices5.put(7, 0);
         colIndices5.put(8, 1);
         colIndices5.put(9, 1);
         colIndices5.put(10, 2);
@@ -1418,9 +1415,9 @@ public class GameBoard {
         colIndices6.put(3, 2);
         colIndices6.put(4, 2);
         colIndices6.put(5, 0);
-        colIndices6.put(6, 2);
-        colIndices6.put(7, 2);
-        colIndices6.put(8, 2);
+        colIndices6.put(6, 0);
+        colIndices6.put(7, 5);
+        colIndices6.put(8, 0);
         colIndices6.put(9, 0);
         colIndices6.put(10, 2);
         colIndices6.put(11, 2);
@@ -1435,11 +1432,11 @@ public class GameBoard {
         colIndices7.put(2, 1);
         colIndices7.put(3, 0);
         colIndices7.put(4, 1);
-        colIndices7.put(5, 0);
+        colIndices7.put(5, 2);
         colIndices7.put(6, 1);
-        colIndices7.put(7, 2);
+        colIndices7.put(7, 1);
         colIndices7.put(8, 1);
-        colIndices7.put(9, 0);
+        colIndices7.put(9, 2);
         colIndices7.put(10, 1);
         colIndices7.put(11, 0);
         colIndices7.put(12, 1);
@@ -1455,7 +1452,7 @@ public class GameBoard {
         colIndices8.put(4, 1);
         colIndices8.put(5, 0);
         colIndices8.put(6, 1);
-        colIndices8.put(7, 2);
+        colIndices8.put(7, 0);
         colIndices8.put(8, 1);
         colIndices8.put(9, 0);
         colIndices8.put(10, 1);
@@ -1471,11 +1468,11 @@ public class GameBoard {
         colIndices9.put(2, 0);
         colIndices9.put(3, 3);
         colIndices9.put(4, 2);
-        colIndices9.put(5, 4);
+        colIndices9.put(5, 0);
         colIndices9.put(6, 0);
-        colIndices9.put(7, 2);
+        colIndices9.put(7, 4);
         colIndices9.put(8, 0);
-        colIndices9.put(9, 4);
+        colIndices9.put(9, 0);
         colIndices9.put(10, 2);
         colIndices9.put(11, 3);
         colIndices9.put(12, 0);
@@ -1536,9 +1533,6 @@ public class GameBoard {
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
 
-        // potential powerup squares 41
-        // potential powerup monsters 9
-
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
         colIndexMaps.add(colIndices0);
@@ -1587,8 +1581,8 @@ public class GameBoard {
         colIndices1.put(0, 1);
         colIndices1.put(1, 0);
         colIndices1.put(2, 0);
-        colIndices1.put(3, 2);
-        colIndices1.put(4, 0);
+        colIndices1.put(3, 0);
+        colIndices1.put(4, 2);
         colIndices1.put(5, 0);
         colIndices1.put(6, 0);
         colIndices1.put(7, 2);
@@ -1697,11 +1691,11 @@ public class GameBoard {
         colIndices7.put(2, 0);
         colIndices7.put(3, 0);
         colIndices7.put(4, 2);
-        colIndices7.put(5, 3);
+        colIndices7.put(5, 5);
         colIndices7.put(6, 0);
         colIndices7.put(7, 2);
         colIndices7.put(8, 0);
-        colIndices7.put(9, 3);
+        colIndices7.put(9, 5);
         colIndices7.put(10, 2);
         colIndices7.put(11, 0);
         colIndices7.put(12, 0);
@@ -1798,9 +1792,6 @@ public class GameBoard {
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
 
-        // potential powerup squares 41
-        // potential powerup monsters 12
-
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();
         colIndexMaps.add(colIndices0);
@@ -1867,11 +1858,11 @@ public class GameBoard {
         colIndices2.put(0, 1);
         colIndices2.put(1, 0);
         colIndices2.put(2, 1);
-        colIndices2.put(3, 0);
+        colIndices2.put(3, 2);
         colIndices2.put(4, 1);
         colIndices2.put(5, 2);
         colIndices2.put(6, 1);
-        colIndices2.put(7, 4);
+        colIndices2.put(7, 5);
         colIndices2.put(8, 1);
         colIndices2.put(9, 2);
         colIndices2.put(10, 1);
@@ -1885,15 +1876,15 @@ public class GameBoard {
         colIndices3.put(0, 1);
         colIndices3.put(1, 2);
         colIndices3.put(2, 2);
-        colIndices3.put(3, 2);
-        colIndices3.put(4, 2);
-        colIndices3.put(5, 2);
+        colIndices3.put(3, 0);
+        colIndices3.put(4, 4);
+        colIndices3.put(5, 0);
         colIndices3.put(6, 2);
         colIndices3.put(7, 2);
         colIndices3.put(8, 2);
-        colIndices3.put(9, 2);
-        colIndices3.put(10, 2);
-        colIndices3.put(11, 2);
+        colIndices3.put(9, 0);
+        colIndices3.put(10, 4);
+        colIndices3.put(11, 0);
         colIndices3.put(12, 2);
         colIndices3.put(13, 2);
         colIndices3.put(14, 1);
@@ -1957,15 +1948,15 @@ public class GameBoard {
         colIndices7.put(0, 1);
         colIndices7.put(1, 2);
         colIndices7.put(2, 2);
-        colIndices7.put(3, 2);
+        colIndices7.put(3, 0);
         colIndices7.put(4, 2);
-        colIndices7.put(5, 2);
+        colIndices7.put(5, 0);
         colIndices7.put(6, 2);
-        colIndices7.put(7, 2);
+        colIndices7.put(7, 0);
         colIndices7.put(8, 2);
-        colIndices7.put(9, 2);
+        colIndices7.put(9, 0);
         colIndices7.put(10, 2);
-        colIndices7.put(11, 2);
+        colIndices7.put(11, 0);
         colIndices7.put(12, 2);
         colIndices7.put(13, 2);
         colIndices7.put(14, 1);
@@ -1975,15 +1966,15 @@ public class GameBoard {
         colIndices8.put(0, 1);
         colIndices8.put(1, 2);
         colIndices8.put(2, 1);
-        colIndices8.put(3, 3);
+        colIndices8.put(3, 5);
         colIndices8.put(4, 1);
-        colIndices8.put(5, 0);
+        colIndices8.put(5, 4);
         colIndices8.put(6, 1);
-        colIndices8.put(7, 4);
+        colIndices8.put(7, 5);
         colIndices8.put(8, 1);
-        colIndices8.put(9, 0);
+        colIndices8.put(9, 4);
         colIndices8.put(10, 1);
-        colIndices8.put(11, 3);
+        colIndices8.put(11, 5);
         colIndices8.put(12, 1);
         colIndices8.put(13, 2);
         colIndices8.put(14, 1);
@@ -2059,9 +2050,6 @@ public class GameBoard {
         colIndices12.put(12, 1);
         colIndices12.put(13, 1);
         colIndices12.put(14, 1);
-
-        // potential powerup squares 64
-        // potential powerup monsters 15
 
         // place all column maps into a list
         List<Map<Integer, Integer>> colIndexMaps = new ArrayList<>();

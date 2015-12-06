@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CommandCenter {
 
-    public static final int MAX_LEVEL = 1;
+    public static final int MAX_LEVEL = 7;
     private boolean mAllLevelsComplete;
 
     private GameBoard mGameBoard;

@@ -1,8 +1,6 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
-check gameboard for all levels -> NEED ALL TYPES OF ENEMIES + ALL POWER UP TYPES
-
 check all sounds
     new level sound
     change exit reveal
@@ -11,18 +9,16 @@ check all sounds
 
 GAMEPLAY ADDITIONS:
 update colors/flashing/action for hits to enemy - CHECK DRONE AND ALIEN (use fading & flashing)
+add bad power up -> bomb count == 0 & flashes red
+add extra life power up
 draw bomberman moving in different directions
-add bad power up -> bomb count == 0 & flases red
-animate kick -> currenlt pop up
-temporary, play bad music
-add extra life
 
 
 REFACTOR
 Clean up all code
 
-
 DONE
+check gameboard for all levels -> NEED ALL TYPES OF ENEMIES + ALL POWER UP TYPES
 add fading -> fades quickly between different colors
 squares made up of different shaded triangles to add texture?
 DRONE + SHOCK DO NOT ALIGN - FIX!!!
