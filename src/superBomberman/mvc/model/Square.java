@@ -27,7 +27,7 @@ public class Square extends Sprite {
     private Point mCenter;
     private Sprite mInside;
 
-    private boolean mContainsBomb;
+    private Bomb mBombInside;
     private List<Enemy> mExploredByEnemies;
 
     public Square(int row, int column) {
@@ -45,7 +45,23 @@ public class Square extends Sprite {
 
     }
 
-    // CHECK THIS CODE - WHERE TO PUT GAMEBOARD VAR
+
+    public Square getNextSquareUp() {
+        return getOffsetSquare(-1, 0);
+    }
+
+    public Square getNextSquareDown() {
+        return getOffsetSquare(1, 0);
+    }
+
+    public Square getNextSquareRight() {
+        return getOffsetSquare(0, 1);
+    }
+
+    public Square getNextSquareLeft() {
+        return getOffsetSquare(0, 1);
+    }
+
     public Square getOffsetSquare(int rowOffset, int colOffset) {
         return CommandCenter.getInstance().getGameBoard().getSquare(mRow + rowOffset, mColumn + colOffset);
     }
@@ -90,15 +106,19 @@ public class Square extends Sprite {
     }
 
     public boolean containsBomb() {
-        return mContainsBomb;
+        return mBombInside != null;
+    }
+
+    public Bomb getBombInside() {
+        return mBombInside;
     }
 
     public void removeBomb() {
-        mContainsBomb = false;
+        mBombInside = null;
     }
 
-    public void addBomb() {
-        mContainsBomb = true;
+    public void addBomb(Bomb bomb) {
+        mBombInside = bomb;
     }
 
     // valid move if square is not a wall, block, or breakable
@@ -109,6 +129,14 @@ public class Square extends Sprite {
     public boolean hasEnemy() {
         for (Movable movEnemy : CommandCenter.getInstance().getMovEnemies()) {
             if (movEnemy.getCurrentSquare().equals(this))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean hasBomberman() {
+        for (Movable movFriend : CommandCenter.getInstance().getMovFriends()) {
+            if (movFriend.getCurrentSquare().equals(this))
                 return true;
         }
         return false;

@@ -1,5 +1,16 @@
 // GAME DESIGN NOTES
 
+FROM CLASS:
+create Scorable interface
+score() - returns a LONG
+add score() to movable
+if Scorable, getScore from instance + score of movable
+could add to gameboard based on level -> add score when level complete
+
+use SVG make images better -> piazza
+get imamge and convert to SVG OR draw PNG with paint
+
+
 TODO LIST:
 increase points for new level + bonus points for each life remaining
 increase points based on type of enemy

@@ -105,7 +105,6 @@ public abstract class Sprite implements Movable {
 		mDirection = direction;
 	}
 
-	private Direction mDirectionToMove;
 
 	public double[] getLengths() {
 		return this.dLengths;
@@ -140,10 +139,10 @@ public abstract class Sprite implements Movable {
 
 	public boolean isMultipleOpenPaths() {
 		int iPathCount = 0;
-		Square squareUp = getCurrentSquare().getOffsetSquare(0, -1);
-		Square squareDown = getCurrentSquare().getOffsetSquare(0, 1);
-		Square squareRight = getCurrentSquare().getOffsetSquare(1, 0);
-		Square squareLeft = getCurrentSquare().getOffsetSquare(-1, 0);
+		Square squareUp = getCurrentSquare().getNextSquareUp();
+		Square squareDown = getCurrentSquare().getNextSquareDown();
+		Square squareRight = getCurrentSquare().getNextSquareRight();
+		Square squareLeft = getCurrentSquare().getNextSquareLeft();
 
 		Square[] surroundingSquares = {squareUp, squareDown, squareLeft, squareRight};
 

@@ -4,18 +4,19 @@ import java.awt.*;
 
 public interface Movable {
 
-	public static enum Team {
-		FRIEND, ENEMY, POWERUP, BOMB, WALL, BLAST, EXIT
-	}
+    // enum for team of each movable -> used to handle collision logic
+    enum Team {
+        FRIEND, ENEMY, POWERUP, BOMB, WALL, BLAST, EXIT
+    }
 
-	//for the game to move and draw movable objects
-	public void move();
-	public void draw(Graphics g);
+    // animation methods: animation occurs as objects are moved and drawn
+    void move();  // moves the location of an object
+    void draw(Graphics g);  // draws the object
 
-	//for collision detection
-	public Point getCenter();
-	public int getSize();
-	public Team getTeam();
-	public Square getCurrentSquare();
+    // getter methods
+    Point getCenter();  //for collision detection & placement
+    int getSize();  // get the size of an object
+    Team getTeam();  // get the team of the object
+    Square getCurrentSquare();  // for placement in draw
 
-} //end Movable
+}

@@ -81,12 +81,12 @@ public abstract class Enemy extends Sprite {
 
         if (inNewSquare()) {
             if (mDirectionToMove == Direction.RIGHT || mDirectionToMove == Direction.LEFT) {
-                boolean bDownSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(0, -1).isWall() && mPriorSquare.getOffsetSquare(0, -1).isWall();
-                boolean bUpSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(0, -1).isWall() && mPriorSquare.getOffsetSquare(0, -1).isWall();
+                boolean bDownSquareIsNowOpen = !getCurrentSquare().getNextSquareDown().isWall() && mPriorSquare.getNextSquareDown().isWall();
+                boolean bUpSquareIsNowOpen = !getCurrentSquare().getNextSquareUp().isWall() && mPriorSquare.getNextSquareUp().isWall();
                 bIsNewDirection = bDownSquareIsNowOpen || bUpSquareIsNowOpen;
             } else if (mDirectionToMove == Direction.UP || mDirectionToMove == Direction.DOWN) {
-                boolean bRightSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(1, 0).isWall() && mPriorSquare.getOffsetSquare(1, 0).isWall();
-                boolean bLeftSquareIsNowOpen = !getCurrentSquare().getOffsetSquare(-1, 0).isWall() && mPriorSquare.getOffsetSquare(-1, 0).isWall();
+                boolean bRightSquareIsNowOpen = !getCurrentSquare().getNextSquareRight().isWall() && mPriorSquare.getNextSquareRight().isWall();
+                boolean bLeftSquareIsNowOpen = !getCurrentSquare().getNextSquareLeft().isWall() && mPriorSquare.getNextSquareLeft().isWall();
                 bIsNewDirection = bRightSquareIsNowOpen || bLeftSquareIsNowOpen;
             }
         }
@@ -227,10 +227,10 @@ public abstract class Enemy extends Sprite {
         } else {
 
             currentSquare.setExplored(this);
-            if (seek(currentSquare.getOffsetSquare(0, -1), goalSquare) || // left
-                    seek(currentSquare.getOffsetSquare(-1, 0), goalSquare) || // up
-                    seek(currentSquare.getOffsetSquare(1, 0), goalSquare) || // down
-                    seek(currentSquare.getOffsetSquare(0, 1), goalSquare)) { // right
+            if (seek(currentSquare.getNextSquareDown(), goalSquare) || // left
+                    seek(currentSquare.getNextSquareUp(), goalSquare) || // up
+                    seek(currentSquare.getNextSquareLeft(), goalSquare) || // down
+                    seek(currentSquare.getNextSquareRight(), goalSquare)) { // right
                 mSeekPath.add(currentSquare);  // add square to seek path
                 return true;    // location leads to goal square
             }
@@ -294,7 +294,7 @@ public abstract class Enemy extends Sprite {
         // checking for past halfway allows object to move closer to progress in current square until it is in the middle
 
 
-        if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy() && !getCurrentSquare().hasBlast()) || !isPastSquareMidPoint()) {
+        if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy()) || !isPastSquareMidPoint()) {
             if (isCenteredForMove()) {
                 setDeltaX(dAdjustX);
                 setDeltaY(dAdjustY);

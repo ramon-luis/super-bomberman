@@ -19,12 +19,14 @@ public class Bomb extends Sprite {
 
     // constants for size & life (expiration)
     private final int SIZE = Square.SQUARE_LENGTH / 2;
-    private final int EXPIRE = 40; // life of object before expiry
+    private final int EXPIRE = 80; // life of object before expiry
+    private final int SPEED = 25;
 
     // private instance members -> used to alternate sizes and colors
     private boolean mIsSmall;
     private boolean mIsRedWick;
     private boolean mIsExploded;
+    private boolean mIsKicked;
 
     // constructor
     public Bomb() {
@@ -40,13 +42,57 @@ public class Bomb extends Sprite {
 
     @Override
     public void move() {
-        super.move();
+
 
         // if expired, then explode
         if (getExpire() == 0) {
             explode();  // create blast in each direction & remove from queue
         } else {
-            setExpire(getExpire() - 1);  // tick closer to expiration
+            // tick closer to expiration
+            setExpire(getExpire() - 1);
+
+            // check if kicked -> moves if kicked
+            if (mIsKicked) {
+
+                int iAdjustRow = 0;
+                int iAdjustColumn = 0;
+                double dAdjustX = 0;
+                double dAdjustY = 0;
+
+                if (getDirection() == Direction.DOWN) {
+                    iAdjustRow = 1;
+                    dAdjustY = SPEED;
+                } else if (getDirection() == Direction.UP) {
+                    iAdjustRow = -1;
+                    dAdjustY = -SPEED;
+                } else if (getDirection() == Direction.LEFT) {
+                    iAdjustColumn = -1;
+                    dAdjustX = -SPEED;
+                } else if (getDirection() == Direction.RIGHT) {
+                    iAdjustColumn = 1;
+                    dAdjustX = SPEED;
+
+                }
+
+                int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
+                int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
+
+                Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
+                if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy() && !targetSquare.hasBomberman()) || !isPastSquareMidPoint()) {
+                    if (isCenteredForMove()) {
+                        setDeltaX(dAdjustX);
+                        setDeltaY(dAdjustY);
+                        super.move();
+                    } else {
+
+                        setCenter(getCurrentSquare().getCenter());
+                    }
+                } else {
+                    mIsKicked = false;
+                    getCurrentSquare().addBomb(this);
+                }
+
+            }
         }
     }
 
@@ -103,9 +149,39 @@ public class Bomb extends Sprite {
         }
     }
 
+    public void isKicked(Direction directionKicked) {
+        mIsKicked = true;
+        setDirection(directionKicked);
+        getCurrentSquare().removeBomb();
+    }
+
+
     // ****************
     //  HELPER METHODS
     // ****************
+
+    private boolean isPastSquareMidPoint() {
+        if (getDirection() == Direction.DOWN) {
+            return getCenter().getY() >= getCurrentSquare().getCenter().getY();
+        } else if (getDirection() == Direction.UP) {
+            return getCenter().getY() <= getCurrentSquare().getCenter().getY();
+        } else if (getDirection() == Direction.LEFT) {
+            return getCenter().getX() <= getCurrentSquare().getCenter().getX();
+        } else if (getDirection() == Direction.RIGHT) {
+            return getCenter().getX() >= getCurrentSquare().getCenter().getX();
+        }
+        throw new IllegalArgumentException("could not determine direction");
+    }
+
+    public boolean isCenteredForMove() {
+        boolean bCentered = false;
+        if (getDirection() == Direction.DOWN || getDirection() == Direction.UP) {
+            bCentered = isInHorizontalCenterOfSquare();
+        } else if (getDirection() == Direction.LEFT || getDirection() == Direction.RIGHT) {
+            bCentered = isInVerticalCenterOfSquare();
+        }
+        return bCentered;
+    }
 
     // alternate the size of the bomb
     private void updateBombSize() {
