@@ -17,14 +17,22 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Drone extends Enemy {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     public static final int SPEED = 3;
     public static final int INITIAL_HITS_TO_DESTROY = 2;
     public static final int SHOCK_POWER = 1;
 
     private int mTick;
+    private int mRandomShockMin;
+    private int mRandomShockMax;
     private int mActiveShockExpiry;
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
     public Drone() {
 
         // call super constructor
@@ -35,7 +43,13 @@ public class Drone extends Enemy {
         setColor(Color.lightGray);
         setSpeed(SPEED);
         setHitsToDestroy(INITIAL_HITS_TO_DESTROY);
+        mRandomShockMin = 50;
+        mRandomShockMax = 90;
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     @Override
     public void move() {
@@ -50,14 +64,38 @@ public class Drone extends Enemy {
             super.move();
         }
 
+        // shocks more frequently when close to death
+        if (getHitsToDestroy() == 1) {
+            mRandomShockMin = mRandomShockMin / 2;
+            mRandomShockMax = mRandomShockMax / 2;
+        }
+
         // create shock
-        if (!hasActiveShocks() && isRandomTick(getRandomTick(35, 75))) {
+        if (!hasActiveShocks() && isRandomTick(getRandomTick(mRandomShockMin, mRandomShockMax))) {
             setOrientation(0);
             setCenter(getCurrentSquare().getCenter());
             shock();
 
         }
     }
+
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+        // flashes if close to dead
+        if (getHitsToDestroy() == 1) {
+            if(getColor() == Color.lightGray) {
+                setColor(Color.RED);
+            } else {
+                setColor(Color.lightGray);
+            }
+        }
+        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+    }
+
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     private int getRandomOrientation() {
         int iMin = 0;
@@ -84,15 +122,6 @@ public class Drone extends Enemy {
             mActiveShockExpiry--;
     }
 
-    @Override
-    public void draw(Graphics g) {
-        super.draw(g);
-        if (getHitsToDestroy() == 1) {
-            setColor(Color.yellow);  // add fast flash
-        }
-        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
-    }
-
     private void tick() {
         if (mTick == Integer.MAX_VALUE)
             mTick = 0;
@@ -116,7 +145,6 @@ public class Drone extends Enemy {
             // update shock sound
             Sound.playSound("zap.wav");
     }
-
 
     // returns a map of squares and directions used to create new shocks from the drone
     private Map<Square, Direction> getShockSquares() {
