@@ -49,8 +49,19 @@ public class Alien extends Enemy {
     public void draw(Graphics g) {
         super.draw(g);
         if (getHitsToDestroy() == INITIAL_HITS_TO_DESTROY - 1) {
-            setColor(Color.ORANGE);  // add slow flash
+            if (getColor() == Color.GREEN) {
+                setColor(Color.YELLOW);
+
+            } else {
+                setColor(Color.GREEN);
+            }
         } else if (getHitsToDestroy() == 1) {
+            if (getColor() == Color.RED) {
+                setColor(Color.GREEN);
+            } else {
+                setColor(Color.RED);
+            }
+
             setColor(Color.YELLOW);  // add fast flash
         }
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
