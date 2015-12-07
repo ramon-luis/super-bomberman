@@ -17,6 +17,10 @@ import java.util.Map;
 
 public class Bomb extends Sprite {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // constants for size & life (expiration)
     private final int SIZE = Square.SQUARE_LENGTH / 2;
     private final int EXPIRE = 50; // life of object before expiry
@@ -28,7 +32,10 @@ public class Bomb extends Sprite {
     private boolean mIsExploded;
     private boolean mIsKicked;
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public Bomb() {
         // call super constructor
         super();
@@ -40,9 +47,12 @@ public class Bomb extends Sprite {
         setExpire(EXPIRE);
     }
 
+    // ===============================================
+    // METHODS
+    // ===============================================
+
     @Override
     public void move() {
-
 
         // if expired, then explode
         if (getExpire() == 0) {
@@ -76,22 +86,23 @@ public class Bomb extends Sprite {
 
                 int iNextRow = getCurrentSquare().getRow() + iAdjustRow;
                 int iNextCol = getCurrentSquare().getColumn() + iAdjustColumn;
-
                 Square targetSquare = CommandCenter.getInstance().getGameBoard().getSquare(iNextRow, iNextCol);
+
+                // move the bomb if the target square is available (no enemy, bomberman, wall, or bomb)
                 if ((!targetSquare.isBlocked() && !targetSquare.hasEnemy() && !targetSquare.hasBomberman()) || !isPastSquareMidPoint()) {
                     if (isCenteredForMove()) {
                         setDeltaX(dAdjustX);
                         setDeltaY(dAdjustY);
                         super.move();
                     } else {
-                        setCenter(getCurrentSquare().getCenter());
+                        setCenter(getCurrentSquare().getCenter());  // move the bomb to center if its not centered
                     }
                 } else {
-                    mIsKicked = false;
-                    getCurrentSquare().addBomb(this);
-                    setCenter(getCurrentSquare().getCenter());
+                    // bomb has been "stopped"
+                    mIsKicked = false;  // update kick status
+                    getCurrentSquare().addBomb(this);  // add the bomb to the current square
+                    setCenter(getCurrentSquare().getCenter());  // set the bomb center
                 }
-
             }
         }
     }
@@ -149,6 +160,7 @@ public class Bomb extends Sprite {
         }
     }
 
+    // is kicked by bomberman -> set direction and kick status, remove bomb from current square
     public void isKicked(Direction directionKicked) {
         mIsKicked = true;
         setDirection(directionKicked);
@@ -156,10 +168,11 @@ public class Bomb extends Sprite {
     }
 
 
-    // ****************
-    //  HELPER METHODS
-    // ****************
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
+    // check if it is past the midpoint of the current square based on direction
     private boolean isPastSquareMidPoint() {
         if (getDirection() == Direction.DOWN) {
             return getCenter().getY() >= getCurrentSquare().getCenter().getY();
@@ -173,6 +186,7 @@ public class Bomb extends Sprite {
         throw new IllegalArgumentException("could not determine direction");
     }
 
+    // check if bomb is centered -> can only move if it is relatively in the center of a square based on direction
     public boolean isCenteredForMove() {
         boolean bCentered = false;
         if (getDirection() == Direction.DOWN || getDirection() == Direction.UP) {

@@ -11,16 +11,23 @@ import java.util.ArrayList;
 
 public class Blast extends Sprite {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // constants for default radius and expiration
     private static final int EXPIRE = 16;
     private static final int SIZE = (int) Math.sqrt(2 * (Square.SQUARE_LENGTH * Square.SQUARE_LENGTH)) / 2 - EXPIRE / 2;
-
 
     // private members
     private Direction mDirection;
     private ArrayList<Enemy> mBlastedEnemies;
 
-    // constructor
+
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public Blast(Direction direction) {
         // call super constructor
         super();
@@ -36,14 +43,9 @@ public class Blast extends Sprite {
         setExpire(EXPIRE);
     }
 
-    public void addToBlastedMonsters(Enemy blastedEnemy) {
-        mBlastedEnemies.add(blastedEnemy);
-    }
-
-    public boolean alreadyBlastedThisEnemy(Enemy enemy) {
-        return mBlastedEnemies.contains(enemy);
-    }
-
+    // ===============================================
+    // METHODS
+    // ===============================================
     @Override
     public void move() {
         // call super method move
@@ -69,9 +71,20 @@ public class Blast extends Sprite {
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
 
-    // ****************
-    //  HELPER METHODS
-    // ****************
+    // adds an enemy to this blast
+    public void addToBlastedEnemies(Enemy blastedEnemy) {
+        mBlastedEnemies.add(blastedEnemy);
+    }
+
+    // checks if enemy has already collided with this blast
+    public boolean alreadyBlastedThisEnemy(Enemy enemy) {
+        return mBlastedEnemies.contains(enemy);
+    }
+
+
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // grow size for 1st half of life, then shrink
     private void updateSize() {

@@ -16,10 +16,18 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Alien extends Enemy {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     public static final int SPEED = 6;
     public static final int INITIAL_HITS_TO_DESTROY = 3;
 
-    // constructor
+
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public Alien() {
 
         // call super constructor
@@ -32,6 +40,10 @@ public class Alien extends Enemy {
         setSpeed(SPEED);
         setHitsToDestroy(INITIAL_HITS_TO_DESTROY);
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     @Override
     public void draw(Graphics g) {
@@ -56,7 +68,9 @@ public class Alien extends Enemy {
         g.fillOval(iDrawX, iDrawY, getSize() / 4, getSize() / 4);
     }
 
-
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // get the shape of the object
     private ArrayList<Point> getShapeAsCartesianPoints() {

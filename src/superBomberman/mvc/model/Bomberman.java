@@ -20,7 +20,7 @@ public class Bomberman extends Sprite {
     private final int RADIUS = Square.SQUARE_LENGTH / 2 + 5;
 
     private int mBlastPower;
-    private boolean mHasKickAbility = true;
+    private boolean mHasKickAbility;
 
     private boolean bProtected; //for fade in and out
 
@@ -229,7 +229,7 @@ public class Bomberman extends Sprite {
         mHasKickAbility = true;
     }
 
-    public boolean nearBomb() {
+    public boolean isFacingBomb() {
         return inSameSquareAsBomb() || nextToBomb();
     }
 

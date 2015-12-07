@@ -12,12 +12,11 @@ public class GameOpsList extends LinkedList {
     private ReentrantLock lock;
 
     public GameOpsList() {
-        this.lock =   new ReentrantLock();
+        this.lock = new ReentrantLock();
     }
 
     public void enqueue(Movable mov, CollisionOp.Operation operation) {
-
-       try {
+        try {
             lock.lock();
             addLast(new CollisionOp(mov, operation));
         } finally {
@@ -25,11 +24,10 @@ public class GameOpsList extends LinkedList {
         }
     }
 
-
     public CollisionOp dequeue() {
         try {
             lock.lock();
-           return (CollisionOp) super.removeFirst();
+            return (CollisionOp) super.removeFirst();
         } finally {
             lock.unlock();
         }

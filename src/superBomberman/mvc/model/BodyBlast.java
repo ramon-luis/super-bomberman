@@ -11,14 +11,17 @@ import java.util.ArrayList;
 
 public class BodyBlast extends Sprite {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // constants for default radius and expiration
     public static final int EXPIRE = 16;
     public static final int SIZE = Square.SQUARE_LENGTH / 2;
 
-
-    private boolean mDisplayed;
-    private String mDisplayString;
-    private FontMetrics fmt;
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
 
     public BodyBlast() {
         // call super constructor
@@ -32,6 +35,10 @@ public class BodyBlast extends Sprite {
         setSize(SIZE);
         setExpire(EXPIRE);
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     @Override
     public void move() {
@@ -53,9 +60,9 @@ public class BodyBlast extends Sprite {
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
 
-    // ****************
-    //  HELPER METHODS
-    // ****************
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // grow size for 1st half of life, then shrink
     private void updateSize() {
