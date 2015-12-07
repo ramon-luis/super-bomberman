@@ -58,7 +58,7 @@ public class Drone extends Enemy {
         updateActiveShockExpiry();
 
         // rotate
-        if (!hasActiveShocks() && isRandomTick(getRandomTick(1,3))) {
+        if (!hasActiveShocks() && isRandomTick(getRandomTick(1, 3))) {
             setOrientation(getRandomOrientation());
             setOrientation(getOrientation() + 1);
             super.move();
@@ -84,7 +84,7 @@ public class Drone extends Enemy {
         super.draw(g);
         // flashes if close to dead
         if (getHitsToDestroy() == 1) {
-            if(getColor() == Color.lightGray) {
+            if (getColor() == Color.lightGray) {
                 setColor(Color.RED);
             } else {
                 setColor(Color.lightGray);
@@ -104,7 +104,10 @@ public class Drone extends Enemy {
     }
 
     private boolean isRandomTick(int randomTick) {
-        return mTick %  randomTick == 0;
+        if (randomTick == 0)
+            return false;
+        else
+            return mTick % randomTick == 0;
     }
 
     private int getRandomTick(int tickMin, int tickMax) {
@@ -131,19 +134,19 @@ public class Drone extends Enemy {
 
     // create shock
     private void shock() {
-            // get map of squares that should contain shocks and their direction from current square
-            Map<Square, Direction> shockSquares = getShockSquares();
+        // get map of squares that should contain shocks and their direction from current square
+        Map<Square, Direction> shockSquares = getShockSquares();
 
-            // add a shock (with direction) for each square in map to the OpsList
-            for (Square shockSquare : shockSquares.keySet()) {
-                Shock shock = new Shock(shockSquares.get(shockSquare));
-                mActiveShockExpiry = shock.getExpire();
-                shock.setCenter(shockSquare.getCenter());
-                CommandCenter.getInstance().getOpsList().enqueue(shock, CollisionOp.Operation.ADD);
-            }
+        // add a shock (with direction) for each square in map to the OpsList
+        for (Square shockSquare : shockSquares.keySet()) {
+            Shock shock = new Shock(shockSquares.get(shockSquare));
+            mActiveShockExpiry = shock.getExpire();
+            shock.setCenter(shockSquare.getCenter());
+            CommandCenter.getInstance().getOpsList().enqueue(shock, CollisionOp.Operation.ADD);
+        }
 
-            // update shock sound
-            Sound.playSound("zap.wav");
+        // update shock sound
+        Sound.playSound("zap.wav");
     }
 
     // returns a map of squares and directions used to create new shocks from the drone
@@ -202,51 +205,51 @@ public class Drone extends Enemy {
         ArrayList<Point> pntCs = new ArrayList<>();
 
         // add each point to outline shape
-        pntCs.add(new Point(-2,2));
-        pntCs.add(new Point(-3,7));
-        pntCs.add(new Point(-6,10));
-        pntCs.add(new Point(-3,12));
-        pntCs.add(new Point(-6,14));
-        pntCs.add(new Point(-5,15));
-        pntCs.add(new Point(5,15));
-        pntCs.add(new Point(6,14));
-        pntCs.add(new Point(3,12));
-        pntCs.add(new Point(6,10));
-        pntCs.add(new Point(3,7));
-        pntCs.add(new Point(2,2));
-        pntCs.add(new Point(7,3));
-        pntCs.add(new Point(10,6));
-        pntCs.add(new Point(12,3));
-        pntCs.add(new Point(14,6));
-        pntCs.add(new Point(15,5));
-        pntCs.add(new Point(15,-5));
-        pntCs.add(new Point(14,-6));
-        pntCs.add(new Point(12,-3));
-        pntCs.add(new Point(10,-6));
-        pntCs.add(new Point(7,-3));
-        pntCs.add(new Point(2,-2));
-        pntCs.add(new Point(3,-7));
-        pntCs.add(new Point(6,-10));
-        pntCs.add(new Point(3,-12));
-        pntCs.add(new Point(6,-14));
-        pntCs.add(new Point(5,-15));
-        pntCs.add(new Point(-5,-15));
-        pntCs.add(new Point(-6,-14));
-        pntCs.add(new Point(-3,-12));
-        pntCs.add(new Point(-6,-10));
-        pntCs.add(new Point(-3,-7));
-        pntCs.add(new Point(-2,-2));
-        pntCs.add(new Point(-7,-3));
-        pntCs.add(new Point(-10,-6));
-        pntCs.add(new Point(-12,-3));
-        pntCs.add(new Point(-14,-6));
-        pntCs.add(new Point(-15,-5));
-        pntCs.add(new Point(-15,5));
-        pntCs.add(new Point(-14,6));
-        pntCs.add(new Point(-12,3));
-        pntCs.add(new Point(-10,6));
-        pntCs.add(new Point(-7,3));
-        pntCs.add(new Point(-2,2));
+        pntCs.add(new Point(-2, 2));
+        pntCs.add(new Point(-3, 7));
+        pntCs.add(new Point(-6, 10));
+        pntCs.add(new Point(-3, 12));
+        pntCs.add(new Point(-6, 14));
+        pntCs.add(new Point(-5, 15));
+        pntCs.add(new Point(5, 15));
+        pntCs.add(new Point(6, 14));
+        pntCs.add(new Point(3, 12));
+        pntCs.add(new Point(6, 10));
+        pntCs.add(new Point(3, 7));
+        pntCs.add(new Point(2, 2));
+        pntCs.add(new Point(7, 3));
+        pntCs.add(new Point(10, 6));
+        pntCs.add(new Point(12, 3));
+        pntCs.add(new Point(14, 6));
+        pntCs.add(new Point(15, 5));
+        pntCs.add(new Point(15, -5));
+        pntCs.add(new Point(14, -6));
+        pntCs.add(new Point(12, -3));
+        pntCs.add(new Point(10, -6));
+        pntCs.add(new Point(7, -3));
+        pntCs.add(new Point(2, -2));
+        pntCs.add(new Point(3, -7));
+        pntCs.add(new Point(6, -10));
+        pntCs.add(new Point(3, -12));
+        pntCs.add(new Point(6, -14));
+        pntCs.add(new Point(5, -15));
+        pntCs.add(new Point(-5, -15));
+        pntCs.add(new Point(-6, -14));
+        pntCs.add(new Point(-3, -12));
+        pntCs.add(new Point(-6, -10));
+        pntCs.add(new Point(-3, -7));
+        pntCs.add(new Point(-2, -2));
+        pntCs.add(new Point(-7, -3));
+        pntCs.add(new Point(-10, -6));
+        pntCs.add(new Point(-12, -3));
+        pntCs.add(new Point(-14, -6));
+        pntCs.add(new Point(-15, -5));
+        pntCs.add(new Point(-15, 5));
+        pntCs.add(new Point(-14, 6));
+        pntCs.add(new Point(-12, 3));
+        pntCs.add(new Point(-10, 6));
+        pntCs.add(new Point(-7, 3));
+        pntCs.add(new Point(-2, 2));
 
         // return the list
         return pntCs;
