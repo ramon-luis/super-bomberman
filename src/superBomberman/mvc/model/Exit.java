@@ -4,7 +4,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by RAM0N on 11/29/15.
+ * Exit object is created on a square once all enemies are defeated
+ * Exit is randomly hidden under breakable wall when assigned at gameboard creation
  */
 public class Exit extends Sprite {
 

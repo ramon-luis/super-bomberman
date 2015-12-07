@@ -5,9 +5,16 @@ import java.util.*;
 import superBomberman.mvc.model.Wall.WallType;
 
 /**
- * Created by RAM0N on 11/28/15.
+ * GameBoard object contains grid of squares
+ * Squares can comtain various movable objects such as walls, enemies, bombs, etc.
+ * A new GameBoard is created for each level
  */
+
 public class GameBoard {
+
+    // ===============================================
+    // FIELDS
+    // ===============================================
 
     // constants for size of game board
     public static final int ROW_COUNT = 13;
@@ -25,19 +32,9 @@ public class GameBoard {
     private int mPowerUpKickCount;  // # of powerUp kicks
     private int mEnemyPowerUpSourceCount;  // # of enemies used as source for power up
 
-
-    public GameBoard(GameBoard existingGameBoard) {
-        mLevel = existingGameBoard.getLevel();
-        mSquares = existingGameBoard.getSquares();
-        mPowerUps = existingGameBoard.getPowerUps();
-        mEnemies = existingGameBoard.getEnemies();
-        mBreakableWalls = existingGameBoard.getBreakableWalls();
-        createLevel();
-        createPowerUps();
-        createExit();
-    }
-
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
     public GameBoard(int level) {
         // assign level
         mLevel = level;
@@ -53,6 +50,10 @@ public class GameBoard {
         createPowerUps();  // assigned to breakable walls & monsters
         createExit();  // assigned to random square with breakable wall (and no power up)
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     public int getLevel() {
         return mLevel;
@@ -84,9 +85,9 @@ public class GameBoard {
     }
 
 
-    // ****************
-    //  HELPER METHODS
-    // ****************
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // create level (squares, walls, and monsters)
     private void createLevel() {
@@ -159,7 +160,7 @@ public class GameBoard {
 
         // make sure that there are enough sources for power ups
         if ((mPowerUpBombCount + mPowerUpBlastCount - mEnemyPowerUpSourceCount) > mBreakableWalls.size() || mEnemyPowerUpSourceCount > mEnemies.size())
-            throw new IllegalArgumentException("power up sources exceed available monsters & walls");
+            throw new IllegalArgumentException("power up sources exceed available enemies & walls");
 
         // create power up bombs
         for (int i = 0; i < mPowerUpBombCount; i++) {
@@ -251,9 +252,19 @@ public class GameBoard {
         }
     }
 
-    // ******************************
-    //  GAMEBOARD DATA FOR EACH LEVEL
-    // ******************************
+    // ===============================================
+    // GAMEBOARD DATA FOR EACH LEVEL
+    // ===============================================
+
+    // Each col is mapped by row -> the entire map represents cols for a specific row
+    // The map contains col index + inside of square based on code below:
+        // 0 == EMPTY
+        // 1 == SOLID WALL
+        // 2 == BREAKABLE WALL
+        // 3 == SOLDIER
+        // 4 == ALIEN
+        // 5 == DRONE
+
 
     // Level 1: get list of maps with data for each square
     private List<Map<Integer, Integer>> getSquareDataMapsLevel1() {
