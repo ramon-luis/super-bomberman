@@ -8,6 +8,7 @@ import superBomberman.mvc.model.Wall.WallType;
  * GameBoard object contains grid of squares
  * Squares can comtain various movable objects such as walls, enemies, bombs, etc.
  * A new GameBoard is created for each level
+ * game board consists of 143 playable squares (13 wide x 11 tall) and an exterior wall (0 & 14 for x values, 0 & 12 for y values)
  */
 
 public class GameBoard {

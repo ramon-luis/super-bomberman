@@ -10,10 +10,17 @@ import java.util.ArrayList;
 
 public class PowerUpBlast extends PowerUp {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // private instance members
     private Color mSquareColor;  // used to flash color of square that surrounds power up
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public PowerUpBlast() {
         // call super constructor
         super();
@@ -23,6 +30,10 @@ public class PowerUpBlast extends PowerUp {
         setPowerUpType(PowerUpType.BLAST);
         setShape(getShapeAsCartesianPoints());
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     @Override
     public void draw(Graphics g) {
@@ -44,6 +55,10 @@ public class PowerUpBlast extends PowerUp {
         super.draw(g);
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
     }
+
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // get the shape of the object
     private ArrayList<Point> getShapeAsCartesianPoints() {

@@ -11,10 +11,17 @@ import java.util.ArrayList;
 
 public class PowerUpKick extends PowerUp {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // private instance members
     private Color mSquareColor;  // used to flash color of square that surrounds power up
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public PowerUpKick() {
         // call super constructor, team, and type of power up
         super();
@@ -24,6 +31,10 @@ public class PowerUpKick extends PowerUp {
         setPowerUpType(PowerUpType.KICK);
         setShape(getShapeAsCartesianPoints());
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     @Override
     public void draw(Graphics g) {
@@ -46,6 +57,10 @@ public class PowerUpKick extends PowerUp {
         g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
 
     }
+
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // get the shape of the object
     private ArrayList<Point> getShapeAsCartesianPoints() {

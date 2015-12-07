@@ -13,15 +13,20 @@ import java.util.ArrayList;
 
 public class Shock extends Enemy {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // constants for default radius and expiration
     private static final int EXPIRE = 8;
     private static final int SIZE = Square.SQUARE_LENGTH / 3;
 
-
     // private members
     private Direction mDirection;
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
     public Shock(Direction direction) {
         // call super constructor
         super();
@@ -34,6 +39,10 @@ public class Shock extends Enemy {
         setSize(SIZE);
         setExpire(EXPIRE);
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     @Override
     public void move() {
@@ -61,9 +70,9 @@ public class Shock extends Enemy {
     }
 
 
-    // ****************
-    //  HELPER METHODS
-    // ****************
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // grow size for 1st half of life, then shrink
     private void updateSize() {

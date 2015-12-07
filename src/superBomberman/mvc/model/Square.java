@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by RAM0N on 11/27/15.
+ * Square object is used to create a grid of playable "spaces" on a GameBoard
+ * each square object is created as a single "point" on an XY place,
+ * but is drawn by the program as a larger object with height, width, center
  */
 public class Square extends Sprite {
 
-    // game board consists of 143 playable squares (13 wide x 11 tall) and an exterior wall (0 & 14 for x values, 0 & 12 for y values)
-    // each square object is created as a single "point" on an XY place, but is drawn by the program as a larger object with height, width, center, etc.
+    // ===============================================
+    // FIELDS
+    // ===============================================
 
     // constants for height & width of each grid square
     public static final int SQUARE_LENGTH = 50;
@@ -30,6 +33,10 @@ public class Square extends Sprite {
     private Bomb mBombInside;
     private List<Enemy> mExploredByEnemies;
 
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public Square(int row, int column) {
 
         // assign row and column
@@ -45,6 +52,9 @@ public class Square extends Sprite {
 
     }
 
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     public Square getNextSquareUp() {
         return getOffsetSquare(-1, 0);
@@ -64,18 +74,6 @@ public class Square extends Sprite {
 
     public Square getOffsetSquare(int rowOffset, int colOffset) {
         return CommandCenter.getInstance().getGameBoard().getSquare(mRow + rowOffset, mColumn + colOffset);
-    }
-
-    public boolean isExplored(Enemy enemy) {
-        return mExploredByEnemies.contains(enemy);
-    }
-
-    public void setExplored(Enemy enemy) {
-        mExploredByEnemies.add(enemy);
-    }
-
-    public void removeExplored(Enemy enemy) {
-        mExploredByEnemies.remove(enemy);
     }
 
     public boolean isExit() {
@@ -142,13 +140,6 @@ public class Square extends Sprite {
         return false;
     }
 
-    public boolean hasBlast() {
-        for (Movable movBlast : CommandCenter.getInstance().getMovBlasts())
-            if (movBlast.getCurrentSquare().equals(this))
-                return true;
-        return false;
-    }
-
     @Override
     public Point getCenter() {
         return mCenter;
@@ -174,9 +165,6 @@ public class Square extends Sprite {
     public int getColumn() {
         return mColumn;
     }
-
-
-
 
     public String toString() {
         return "row: " + getRow() + ", col: " + getColumn();

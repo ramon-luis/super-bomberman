@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Wall object
- * Wall covers single square on gameboard
+ * Wall object covers single square on gameboard
  * Wall can be solid or breakable -> blasts can destroy breakable walls
  * Wall blocks movement of Bomberman, Monster, and blast
  * Wall can contain a PowerUp if breakable -> spawns PowerUp when destroyed
@@ -14,6 +13,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Wall extends Sprite {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
     // enum for type of wall
     public enum WallType {SOLID, BREAKABLE}
 
@@ -23,12 +25,14 @@ public class Wall extends Sprite {
     // private instance members
     private WallType mWallType;
     private PowerUp mPowerUpInside;
-    private boolean mColorDown;
-    private int mRed;
-    private int mGreen;
-    private int mBlue;
+    private boolean mColorDown;  // used for inside of breakable walls
+    private int mRed;  // used for inside of breakable walls
+    private int mGreen;  // used for inside of breakable walls
+    private int mBlue;  // used for inside of breakable walls
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
     public Wall (Square square, WallType wallType) {
 
         // call super constructor & set team
@@ -48,7 +52,7 @@ public class Wall extends Sprite {
         // assign Polar Points
         assignPolarPoints(pntCs);
 
-        // assign intial inner color RGB -> overridden later
+        // assign initial inner color RGB -> overridden later
         mRed = 0;
         mGreen = getRandomColorIndex(0,255);
         mBlue = mGreen;
@@ -58,6 +62,9 @@ public class Wall extends Sprite {
         setSize(SIZE);
     }
 
+    // ===============================================
+    // METHODS
+    // ===============================================
     @Override
     public void draw(Graphics g) {
         // draw Wall shape
@@ -92,12 +99,18 @@ public class Wall extends Sprite {
     }
 
 
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
+
+    // get a random color index between two numbers
     private int getRandomColorIndex(int iColorMin, int iColorMax) {
         int iMin = iColorMin;
         int iMax = iColorMax;
         return ThreadLocalRandom.current().nextInt(iMin, iMax);
     }
 
+    // return a shifted color
     private Color getShiftedColor() {
         int iColorShift = 5;
         int iBlueMin = 0 + iColorShift;
@@ -133,6 +146,7 @@ public class Wall extends Sprite {
         mBlue = blue;
     }
 
+    // adjust a color given a color index value, min, max, and incremental change value
     private int colorAdjustment(int nCol, int iMinCol, int iMaxCol, int nAdj) {
         if (nCol <= iMinCol && mColorDown) {
             mColorDown = false;
@@ -146,8 +160,5 @@ public class Wall extends Sprite {
             return nAdj;
         }
     }
-
-
-
 
 }

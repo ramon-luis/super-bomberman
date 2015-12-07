@@ -8,6 +8,10 @@ import superBomberman.sounds.Sound;
  */
 public abstract class PowerUp extends Sprite {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     // enum for types of power ups
     public enum PowerUpType {
         BLAST, BOMB, KICK
@@ -20,11 +24,18 @@ public abstract class PowerUp extends Sprite {
     private PowerUpType mPowerUpType;
     private boolean mHasBeenProcessed;
 
-    // constructor
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
+
     public PowerUp() {
         super();
         setSize(SIZE);
     }
+
+    // ===============================================
+    // METHODS
+    // ===============================================
 
     // set the power up type
     public void setPowerUpType(PowerUpType powerUpType) {

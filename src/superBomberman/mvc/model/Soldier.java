@@ -10,10 +10,17 @@ import java.util.ArrayList;
 
 public class Soldier extends Enemy {
 
+    // ===============================================
+    // FIELDS
+    // ===============================================
+
     public static final int SPEED = 3;
     public static final int INITIAL_HITS_TO_DESTROY = 1;
 
-    // constructor
+
+    // ===============================================
+    // CONSTRUCTOR
+    // ===============================================
     public Soldier() {
 
         // call super constructor
@@ -27,6 +34,11 @@ public class Soldier extends Enemy {
         setHitsToDestroy(INITIAL_HITS_TO_DESTROY);
 
     }
+
+
+    // ===============================================
+    // HELPER METHODS
+    // ===============================================
 
     // get the shape of the object
     private ArrayList<Point> getShapeAsCartesianPoints() {
