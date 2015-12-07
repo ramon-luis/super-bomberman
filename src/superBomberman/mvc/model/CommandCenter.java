@@ -111,7 +111,7 @@ public class CommandCenter {
     // initialize the game -> occurs 1x at very start of game
     public void initGame() {
         clearAll();  // clear all objects from movable lists
-        setLevel(1);  // set level to start at 1
+        setLevel(6);  // set level to start at 1
         setLevelIsComplete(false);  // level is not yet complete
         setScore(0);  // start with score of 0
         setNumBombermans(3);  // 3 lives

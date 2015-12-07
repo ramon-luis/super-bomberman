@@ -1,6 +1,6 @@
 Change shape based on direction - TODO
 GetShape from direction - TODO
-SHIMMER - TODO
+SHIMMER - DONE
 For breakable walls -> interior color randomly rotates between similar shades and white -> get current RGB?  Set limits from current?
 
 
@@ -16,7 +16,7 @@ update - add collision with bomb to cause bomb to explode - DONE
 
 WORD CLOUD - DONE
 creates KillCloud -> team wordCloud - DONE
-customize for PowerUps & Bomberman - TODO
+customize for PowerUps & Bomberman - DONE
 
 
 BAD POWER UP - TODO

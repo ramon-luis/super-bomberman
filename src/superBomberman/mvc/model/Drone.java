@@ -43,8 +43,8 @@ public class Drone extends Enemy {
         setColor(Color.lightGray);
         setSpeed(SPEED);
         setHitsToDestroy(INITIAL_HITS_TO_DESTROY);
-        mRandomShockMin = 50;
-        mRandomShockMax = 90;
+        mRandomShockMin = 35;
+        mRandomShockMax = 55;
     }
 
     // ===============================================
@@ -65,10 +65,10 @@ public class Drone extends Enemy {
         }
 
         // shocks more frequently when close to death
-        if (getHitsToDestroy() == 1) {
-            mRandomShockMin = mRandomShockMin / 2;
-            mRandomShockMax = mRandomShockMax / 2;
-        }
+//        if (getHitsToDestroy() == 1) {
+//            mRandomShockMin = mRandomShockMin / 2;
+//            mRandomShockMax = mRandomShockMax / 2;
+//        }
 
         // create shock
         if (!hasActiveShocks() && isRandomTick(getRandomTick(mRandomShockMin, mRandomShockMax))) {

@@ -1,12 +1,7 @@
 // GAME DESIGN NOTES
 
 TODO LIST:
-REFACTOR
-Clean up all code
-
-
 GAMEPLAY ADDITIONS:
-update colors/flashing/action for hits to enemy - CHECK DRONE AND ALIEN (use fading & flashing)
 add bad power up -> bomb count == 0 & flashes red
 add extra life power up
 draw bomberman moving in different directions
@@ -15,6 +10,8 @@ add cool music
 
 
 DONE
+Clean up all code
+update colors/flashing/action for hits to enemy - CHECK DRONE AND ALIEN (use fading & flashing)
 check gameboard for all levels -> NEED ALL TYPES OF ENEMIES + ALL POWER UP TYPES
 add fading -> fades quickly between different colors
 squares made up of different shaded triangles to add texture?
