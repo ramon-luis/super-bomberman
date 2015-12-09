@@ -10,98 +10,29 @@ public class Bomberman extends Sprite {
     // FIELDS
     // ==============================================================
 
-    private Direction mDirectionToMove;
-
-    private int mBombCount;
-    private Color mColor;
-    private int mProtectedCounter;
-
     private final int SPEED = 10;
     private final int RADIUS = Square.SQUARE_LENGTH / 2 + 5;
-
+    private Color mColor;
+    private Direction mDirectionToMove;
+    private int mBombCount;
     private int mBlastPower;
     private boolean mHasKickAbility;
-
-    private boolean bProtected; //for fade in and out
-
+    private int mProtectedCounter;
+    private boolean bProtected;
     private boolean bMoving = false;
-    private boolean bTurningRight = false;
-    private boolean bTurningLeft = false;
-
     private int nShield;
 
     // ==============================================================
     // CONSTRUCTOR
     // ==============================================================
 
-
     public Bomberman() {
         super();
         setTeam(Team.FRIEND);
         mBombCount = 1;
         mBlastPower = 1;
-        mDirectionToMove = Direction.UP;
 
-        ArrayList<Point> pntCs = new ArrayList<Point>();
-
-        // draw the bomberman
-        pntCs.add(new Point(1, 6));
-        pntCs.add(new Point(2, 6));
-        pntCs.add(new Point(2, 5));
-        pntCs.add(new Point(4, 5));
-        pntCs.add(new Point(4, 6));
-        pntCs.add(new Point(5, 5));
-        pntCs.add(new Point(6, 4));
-        pntCs.add(new Point(6, -4));
-        pntCs.add(new Point(5, -5));
-        pntCs.add(new Point(4, -6));
-        pntCs.add(new Point(4, -5));
-        pntCs.add(new Point(2, -5));
-        pntCs.add(new Point(2, -6));
-        pntCs.add(new Point(1, -6));
-        pntCs.add(new Point(0, -2));
-        pntCs.add(new Point(-1, -5));
-        pntCs.add(new Point(-2, -6));
-        pntCs.add(new Point(-4, -6));
-        pntCs.add(new Point(-4, -5));
-        pntCs.add(new Point(-3, -5));
-        pntCs.add(new Point(-3, -4));
-        pntCs.add(new Point(-4, -3));
-        pntCs.add(new Point(-5, -4));
-        pntCs.add(new Point(-5, -5));
-        pntCs.add(new Point(-6, -5));
-        pntCs.add(new Point(-6, -2));
-        pntCs.add(new Point(-5, -2));
-        pntCs.add(new Point(-5, 2));
-        pntCs.add(new Point(-6, 2));
-        pntCs.add(new Point(-6, 5));
-        pntCs.add(new Point(-5, 5));
-        pntCs.add(new Point(-5, 4));
-        pntCs.add(new Point(-4, 3));
-        pntCs.add(new Point(-3, 4));
-        pntCs.add(new Point(-3, 5));
-        pntCs.add(new Point(-4, 5));
-        pntCs.add(new Point(-4, 6));
-        pntCs.add(new Point(-2, 6));
-        pntCs.add(new Point(-1, 5));
-        pntCs.add(new Point(0, 2));
-        pntCs.add(new Point(1, 6));
-        pntCs.add(new Point(2, 6));
-        pntCs.add(new Point(2, 5));
-        pntCs.add(new Point(4, 5));
-        pntCs.add(new Point(4, -5));
-        pntCs.add(new Point(2, -5));
-        pntCs.add(new Point(2, -3));
-        pntCs.add(new Point(3, -2));
-        pntCs.add(new Point(3, 2));
-        pntCs.add(new Point(2, 3));
-        pntCs.add(new Point(2, 5));
-        pntCs.add(new Point(2, 6));
-        pntCs.add(new Point(1, 6));
-
-        // assign to polar points
-        assignPolarPoints(pntCs);
-
+        setShape(getShapeAsCartesianPoints());
         setColor(Color.white);
         setSize(RADIUS);
         setProtected(true);
@@ -115,6 +46,20 @@ public class Bomberman extends Sprite {
 
     public void move() {
 
+        // flash if protected
+        if (getProtectedCounter() == 0) {
+            setProtected(false);
+        }
+        if (getProtected()) {
+            if (mColor == Color.WHITE)
+                mColor = Color.YELLOW;
+            else
+                mColor = Color.WHITE;
+            setProtectedCounter(getProtectedCounter() - 1);
+        } else
+            mColor = Color.WHITE;
+
+        // move if direction arrow being pressed
         if (bMoving) {
 
             int iAdjustRow = 0;
@@ -151,28 +96,16 @@ public class Bomberman extends Sprite {
                     setCenter(getCurrentSquare().getCenter());
                 }
             }
-
-
         }
+    }
 
+    public void draw(Graphics g) {
+        super.draw(g);
+        g.setColor(mColor);
+        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
+    }
 
-        //implementing the fadeInOut functionality - added by Dmitriy
-        if (getProtectedCounter() == 0) {
-            setProtected(false);
-        }
-        if (getProtected()) {
-            if (mColor == Color.WHITE)
-                mColor = Color.YELLOW;
-            else
-                mColor = Color.WHITE;
-            setProtectedCounter(getProtectedCounter() - 1);
-        } else
-            mColor = Color.WHITE;
-
-    } //end move
-
-
-    public boolean isCenteredForMove() {
+    private boolean isCenteredForMove() {
         boolean bCentered = false;
         if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
             bCentered = isInHorizontalCenterOfSquare();
@@ -182,32 +115,12 @@ public class Bomberman extends Sprite {
         return bCentered;
     }
 
-    public boolean isInRangeForMove() {
-        boolean bInRange = false;
-        if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
-            bInRange = isInHorizontalRange();
-        } else if (mDirectionToMove == Direction.LEFT || mDirectionToMove == Direction.RIGHT) {
-            bInRange = isInVerticalRange();
-        }
-        return bInRange;
-    }
-
-
     public void setProtectedCounter(int number) {
         mProtectedCounter = number;
     }
 
     public int getProtectedCounter() {
         return mProtectedCounter;
-    }
-
-    public void finishMove() {
-//		if (mDirectionToMove == Direction.DOWN || mDirectionToMove == Direction.UP) {
-//			setCenter(new Point((int) getCurrentSquare().getCenter().getX(), (int) getCenter().getY()));
-//		} else if (mDirectionToMove == Direction.LEFT || mDirectionToMove == Direction.RIGHT) {
-//			setCenter(new Point((int) getCenter().getX(), (int) getCurrentSquare().getCenter().getY()));
-//		}
-//		System.out.println("center updated");
     }
 
     public void kickBomb() {
@@ -317,10 +230,7 @@ public class Bomberman extends Sprite {
 
     public void setDirectionToMove(Direction direction) {
         mDirectionToMove = direction;
-
-
     }
-
 
     public void moveOn() {
         bMoving = true;
@@ -329,37 +239,6 @@ public class Bomberman extends Sprite {
     public void moveOff() {
         bMoving = false;
     }
-
-    private int adjustColor(int nCol, int nAdj) {
-        if (nCol - nAdj <= 0) {
-            return 0;
-        } else {
-            return nCol - nAdj;
-        }
-    }
-
-    public void draw(Graphics g) {
-
-
-//		//shield on
-//		if (bShield && nShield > 0) {
-//
-//			setShield(getShield() - 1);
-//
-//			g.setColor(Color.cyan);
-//			g.drawOval(getCenter().x - getSize(),
-//					getCenter().y - getSize(), getSize() * 2,
-//					getSize() * 2);
-//
-//		} //end if shield
-
-
-        super.draw(g);
-        g.setColor(mColor);
-        g.fillPolygon(getXcoords(), getYcoords(), dDegrees.length);
-
-    } //end draw()
-
 
     public int getBlastPower() {
         return mBlastPower;
@@ -376,18 +255,73 @@ public class Bomberman extends Sprite {
         bProtected = bParam;
     }
 
-
     public boolean getProtected() {
         return bProtected;
     }
 
-    public void setShield(int n) {
-        nShield = n;
+    // get the shape of the object
+    private ArrayList<Point> getShapeAsCartesianPoints() {
+
+        // define list to store points
+        ArrayList<Point> pntCs = new ArrayList<>();
+
+        // add each point to outline shape
+        pntCs.add(new Point(1, 6));
+        pntCs.add(new Point(2, 6));
+        pntCs.add(new Point(2, 5));
+        pntCs.add(new Point(4, 5));
+        pntCs.add(new Point(4, 6));
+        pntCs.add(new Point(5, 5));
+        pntCs.add(new Point(6, 4));
+        pntCs.add(new Point(6, -4));
+        pntCs.add(new Point(5, -5));
+        pntCs.add(new Point(4, -6));
+        pntCs.add(new Point(4, -5));
+        pntCs.add(new Point(2, -5));
+        pntCs.add(new Point(2, -6));
+        pntCs.add(new Point(1, -6));
+        pntCs.add(new Point(0, -2));
+        pntCs.add(new Point(-1, -5));
+        pntCs.add(new Point(-2, -6));
+        pntCs.add(new Point(-4, -6));
+        pntCs.add(new Point(-4, -5));
+        pntCs.add(new Point(-3, -5));
+        pntCs.add(new Point(-3, -4));
+        pntCs.add(new Point(-4, -3));
+        pntCs.add(new Point(-5, -4));
+        pntCs.add(new Point(-5, -5));
+        pntCs.add(new Point(-6, -5));
+        pntCs.add(new Point(-6, -2));
+        pntCs.add(new Point(-5, -2));
+        pntCs.add(new Point(-5, 2));
+        pntCs.add(new Point(-6, 2));
+        pntCs.add(new Point(-6, 5));
+        pntCs.add(new Point(-5, 5));
+        pntCs.add(new Point(-5, 4));
+        pntCs.add(new Point(-4, 3));
+        pntCs.add(new Point(-3, 4));
+        pntCs.add(new Point(-3, 5));
+        pntCs.add(new Point(-4, 5));
+        pntCs.add(new Point(-4, 6));
+        pntCs.add(new Point(-2, 6));
+        pntCs.add(new Point(-1, 5));
+        pntCs.add(new Point(0, 2));
+        pntCs.add(new Point(1, 6));
+        pntCs.add(new Point(2, 6));
+        pntCs.add(new Point(2, 5));
+        pntCs.add(new Point(4, 5));
+        pntCs.add(new Point(4, -5));
+        pntCs.add(new Point(2, -5));
+        pntCs.add(new Point(2, -3));
+        pntCs.add(new Point(3, -2));
+        pntCs.add(new Point(3, 2));
+        pntCs.add(new Point(2, 3));
+        pntCs.add(new Point(2, 5));
+        pntCs.add(new Point(2, 6));
+        pntCs.add(new Point(1, 6));;
+
+        // return the list
+        return pntCs;
     }
 
-    public int getShield() {
-        return nShield;
-    }
-
-
-} //end class
+}

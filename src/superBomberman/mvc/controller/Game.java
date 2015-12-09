@@ -263,30 +263,6 @@ public class Game implements Runnable, KeyListener {
 
         }
 
-        // check Exit Collisions: loop through all exits (only 1)
-        for (Movable movExit : CommandCenter.getInstance().getMovExits()) {
-            // get square for enemy
-            Square exitSquare = movExit.getCurrentSquare();
-
-            // check exit against bomberman
-            if (CommandCenter.getInstance().getBomberman() != null) {
-                // get square for bomberman
-                Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
-
-                // collision if exit and bomberman same square
-                if (exitSquare.equals(bombermanSquare)) {
-                    // add a body blast -> visual effect
-                    BodyBlast bodyBlast = new BodyBlast();
-                    bodyBlast.setCenter(exitSquare.getCenter());
-                    CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
-
-                    // exit level
-                    Sound.playSound("exitLevel.wav");
-                    CommandCenter.getInstance().levelIsComplete();
-                }
-            }
-        }
-
         // Check PowerUp Collisions: loop through all PowerUps
         for (Movable movPowerUp : CommandCenter.getInstance().getMovPowerUps()) {
             // get square for enemy
@@ -308,6 +284,30 @@ public class Game implements Runnable, KeyListener {
                     // process the power up (cast from Movable to PowerUp), then remove it
                     ((PowerUp) movPowerUp).process();
                     CommandCenter.getInstance().getOpsList().enqueue(movPowerUp, CollisionOp.Operation.REMOVE);
+                }
+            }
+        }
+
+        // check Exit Collisions: loop through all exits (only 1)
+        for (Movable movExit : CommandCenter.getInstance().getMovExits()) {
+            // get square for enemy
+            Square exitSquare = movExit.getCurrentSquare();
+
+            // check exit against bomberman
+            if (CommandCenter.getInstance().getBomberman() != null) {
+                // get square for bomberman
+                Square bombermanSquare = CommandCenter.getInstance().getBomberman().getCurrentSquare();
+
+                // collision if exit and bomberman same square
+                if (exitSquare.equals(bombermanSquare)) {
+                    // add a body blast -> visual effect
+                    BodyBlast bodyBlast = new BodyBlast();
+                    bodyBlast.setCenter(exitSquare.getCenter());
+                    CommandCenter.getInstance().getOpsList().enqueue(bodyBlast, CollisionOp.Operation.ADD);
+
+                    // exit level
+                    Sound.playSound("exitLevel.wav");
+                    CommandCenter.getInstance().setLevelIsComplete(true);
                 }
             }
         }
