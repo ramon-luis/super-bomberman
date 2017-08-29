@@ -2,7 +2,7 @@
 
 Super Bomberman is a multi-threaded Java game that is loosely inspired by the original [Super Bomberman](https://www.youtube.com/watch?v=Xef0tkXmSp4) video game for the Nintendo Entertainment System. The player competes against the computer by attempting to use bombs to destroy enemies and clear the game map. A secret door to complete each level is revealed after all enemies have been defeated. Power-ups with special abilities are available to help the player defeat increasingly difficult enemies.
 
-Getting Started / Installing / Deployment
+## Getting Started / Installing / Deployment
 
 Compile the src directory and call Main.  The main method is located in mvc/controller/Game.java.
 
