@@ -12,7 +12,6 @@ $ java src/superBomberman/mvc/controller/Game
 ```
 
 Or open in your favorite IDE (Eclipse, IntelliJ) and run Main in Game.java.
-A step by step series of examples that tell you have to get a development env running
 
 ### Prerequisites
 
